@@ -12,11 +12,77 @@ confirmation — there is nothing to confirm when inference is local.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 from app.eval.dataset import load_dataset
 from app.eval.harness import AblationConfig, EvalHarness, ablation_table
+from app.eval.metrics import Outcome, Report
+
+
+def per_case_table(report: Report) -> str:
+    """Per-case results, worst outcome first.
+
+    A run over the full set takes long enough that an aggregate-only report
+    is close to useless: the rates tell you something is wrong without
+    telling you where. Sorted by severity so the false assurances -- the
+    failures that cost a user money -- are the first thing on screen.
+    """
+    order = {
+        o: i
+        for i, o in enumerate(
+            [
+                Outcome.FALSE_ASSURANCE,
+                Outcome.UNDER_ABSTENTION,
+                Outcome.FALSE_ALARM,
+                Outcome.DIRECTION_ERROR,
+                Outcome.ERROR,
+                Outcome.OVER_ABSTENTION,
+                Outcome.CORRECT_ABSTENTION,
+                Outcome.CORRECT,
+            ]
+        )
+    }
+    rows = sorted(report.evaluations, key=lambda e: (order[e.outcome], e.case_id))
+    lines = [f"{'case':<34} {'expected':<13} {'got':<13} outcome", "-" * 82]
+    for e in rows:
+        flag = "" if e.outcome in (Outcome.CORRECT, Outcome.CORRECT_ABSTENTION) else "*"
+        lines.append(
+            f"{e.case_id:<34} {e.expected:<13} {e.predicted:<13} "
+            f"{flag}{e.outcome.value}"
+        )
+    return "\n".join(lines)
+
+
+def _serialisable(report: Report) -> dict:
+    return {
+        "cases": [
+            {
+                "case_id": e.case_id,
+                "category": e.category.value,
+                "expected": e.expected,
+                "predicted": e.predicted,
+                "outcome": e.outcome.value,
+                "cited": sorted(e.cited),
+                "missing_required_citations": sorted(e.missing_required_citations),
+                "forbidden_citations": sorted(e.forbidden_citations),
+                "date_error": e.date_error,
+                "error": e.error,
+            }
+            for e in report.evaluations
+        ],
+        "totals": {
+            "n": report.total,
+            "accuracy": report.accuracy,
+            "false_assurance_rate": report.false_assurance_rate,
+            "correct_abstention_rate": report.correct_abstention_rate,
+            "over_abstention_rate": report.over_abstention_rate,
+            "contested_rate": report.contested_rate,
+            "grounding_accuracy": report.grounding_accuracy,
+            "errors": report.error_count,
+        },
+    }
 
 ABLATION_ARMS = [
     AblationConfig(name="full"),
@@ -115,6 +181,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--yes", action="store_true", help="skip the spend confirmation prompt"
     )
+    parser.add_argument(
+        "--save",
+        type=Path,
+        default=None,
+        help="write per-case results as JSON, so a long run stays inspectable",
+    )
     args = parser.parse_args(argv)
 
     if args.model is None:
@@ -152,12 +224,19 @@ def main(argv: list[str] | None = None) -> int:
     else:
         report = harness.run(cases)
         print()
+        print(per_case_table(report))
+        print()
         print(report.summary())
         failures = [e for e in report.evaluations if e.error]
         if failures:
             print(f"\n{len(failures)} case(s) errored:")
             for e in failures:
                 print(f"  {e.case_id}: {e.error}")
+        if args.save:
+            args.save.write_text(
+                json.dumps(_serialisable(report), indent=2), encoding="utf-8"
+            )
+            print(f"\nwrote {args.save}")
 
     return 0
 
