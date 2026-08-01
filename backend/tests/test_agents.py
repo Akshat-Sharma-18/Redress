@@ -358,6 +358,68 @@ class TestPipeline:
         assert "policy#secondary" in sub_result.traces
         assert len(llm.calls) == 4
 
+    def test_graph_evidence_reaches_the_agent(self, policy_chunks):
+        """Derived pattern evidence must arrive as a citable chunk.
+
+        The agent can only cite chunk ids, so a graph finding that doesn't
+        become a chunk is a finding the system computed and then ignored.
+        """
+        from app.graph.evidence import GraphEnricher
+        from app.graph.models import (
+            ComplaintOutcome,
+            EdgeKind,
+            GraphEdge,
+            GraphNode,
+            NodeKind,
+        )
+        from app.graph.store import InMemoryGraphStore
+
+        store = InMemoryGraphStore()
+        store.upsert_nodes([
+            GraphNode(id="ins-acme", kind=NodeKind.INSURER, label="Acme Health"),
+            GraphNode(
+                id="rc", kind=NodeKind.DENIAL_REASON,
+                label="Not medically necessary", properties={"code": "CO-50"},
+            ),
+            GraphNode(
+                id="c1", kind=NodeKind.COMPLAINT, label="C1",
+                properties={"outcome": ComplaintOutcome.OVERTURNED},
+            ),
+        ])
+        store.upsert_edges([
+            GraphEdge(source_id="ins-acme", kind=EdgeKind.USED_REASON, target_id="rc"),
+            GraphEdge(source_id="c1", kind=EdgeKind.FILED_AGAINST, target_id="ins-acme"),
+            GraphEdge(source_id="c1", kind=EdgeKind.CONCERNS_REASON, target_id="rc"),
+        ])
+
+        llm = FakeLLM([
+            Decomposition(
+                denial=ExtractedDenial(denial_reason="Denied", reason_code="CO-50"),
+                sub_claims=[DecomposedClaim(text="Exclusion applies.", kind="legal")],
+            ),
+            DraftVerdict(finding="insufficient", rationale="Unsettled.", citations=[]),
+        ])
+        pipeline = AuditPipeline(
+            decomposition=DecompositionAgent(llm),
+            adjudicator=GatedAdjudicator(
+                ReconciliationAgent(llm), CritiqueAgent(llm)
+            ),
+            retrievers={
+                "policy": HybridRetriever(
+                    dense=DenseIndex(policy_chunks, FakeEmbedder()),
+                    lexical=BM25Index(policy_chunks),
+                )
+            },
+            enricher=GraphEnricher(store=store),
+        )
+        result = pipeline.run("...", insurer_id="ins-acme")
+
+        prompt = llm.calls[1]["prompt"]
+        assert 'id="pattern:ins-acme:CO-50"' in prompt
+        assert "1 overturned" in prompt
+        # And the caveat travels with it
+        assert "does not establish that the present denial is improper" in prompt
+
     def test_all_insufficient_yields_insufficient_overall(self, policy_chunks):
         llm = FakeLLM([
             Decomposition(

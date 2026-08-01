@@ -23,6 +23,7 @@ from datetime import date
 from app.agents.decomposition import DecompositionAgent, DecomposedDenial
 from app.agents.gate import GatedAdjudicator
 from app.core.models import ScoredChunk, SourceKind, Verdict
+from app.graph.evidence import GraphEnricher
 from app.retrieval.hybrid import HybridRetriever, RetrievalTrace
 
 _KIND_ORDER = {
@@ -69,12 +70,14 @@ class AuditPipeline:
         adjudicator: GatedAdjudicator,
         retrievers: dict[str, HybridRetriever],
         secondary_retrievers: dict[str, HybridRetriever] | None = None,
+        enricher: GraphEnricher | None = None,
         per_corpus_k: int = 6,
     ):
         self.decomposition = decomposition
         self.adjudicator = adjudicator
         self.retrievers = retrievers
         self.secondary_retrievers = secondary_retrievers
+        self.enricher = enricher
         self.per_corpus_k = per_corpus_k
 
     def _gather(
@@ -96,8 +99,49 @@ class AuditPipeline:
         evidence.sort(key=lambda sc: (_KIND_ORDER[sc.chunk.source_kind], -sc.score))
         return evidence
 
-    def run(self, denial_letter_text: str) -> AuditResult:
+    @staticmethod
+    def _merge_derived(
+        retrieved: list[ScoredChunk], derived: list[ScoredChunk]
+    ) -> list[ScoredChunk]:
+        """Append derived evidence after retrieved evidence of each kind.
+
+        Derived chunks are appended rather than merged into the ranking:
+        they were not scored by relevance, so sorting them against retrieved
+        chunks would compare incomparable numbers.
+        """
+        if not derived:
+            return retrieved
+        seen = {sc.chunk.id for sc in retrieved}
+        merged = retrieved + [sc for sc in derived if sc.chunk.id not in seen]
+        merged.sort(key=lambda sc: _KIND_ORDER[sc.chunk.source_kind])
+        return merged
+
+    def run(
+        self,
+        denial_letter_text: str,
+        *,
+        insurer_id: str | None = None,
+        statute_ids: list[str] | None = None,
+    ) -> AuditResult:
+        """Audit one denial letter.
+
+        `insurer_id` and `statute_ids` are case metadata the letter itself
+        does not reliably carry: the insurer's graph identity comes from the
+        caller (letterhead is not an identifier), and the statutes to check
+        for amendments come from the ingestion step that indexed them.
+        """
         denial = self.decomposition.decompose(denial_letter_text)
+
+        # Graph and version evidence depends on the case, not the sub-claim,
+        # so it is computed once and shared across every sub-claim.
+        derived: list[ScoredChunk] = []
+        if self.enricher is not None:
+            derived = self.enricher.enrich(
+                insurer_id=insurer_id,
+                reason_code=denial.reason_code,
+                denial_date=denial.denial_date,
+                statute_ids=statute_ids,
+            )
 
         results: list[SubClaimResult] = []
         for sub_claim in denial.sub_claims:
@@ -105,6 +149,7 @@ class AuditPipeline:
             evidence = self._gather(
                 self.retrievers, sub_claim.text, denial.denial_date, traces
             )
+            evidence = self._merge_derived(evidence, derived)
 
             secondary = None
             if self.secondary_retrievers is not None:
@@ -115,6 +160,10 @@ class AuditPipeline:
                     denial.denial_date,
                     secondary_traces,
                 )
+                # The ensemble check compares retrieval, not enrichment: the
+                # derived chunks are identical either way, so both passes see
+                # them and any disagreement is attributable to the embedders.
+                secondary = self._merge_derived(secondary, derived)
                 traces.update(
                     {f"{k}#secondary": v for k, v in secondary_traces.items()}
                 )
@@ -124,8 +173,8 @@ class AuditPipeline:
                 evidence,
                 # Narrowed re-retrieval goes against the primary corpora with
                 # the critique agent's query, same denial-date filter.
-                retrieve_fn=lambda q: self._gather(
-                    self.retrievers, q, denial.denial_date
+                retrieve_fn=lambda q: self._merge_derived(
+                    self._gather(self.retrievers, q, denial.denial_date), derived
                 ),
                 secondary_evidence=secondary,
             )

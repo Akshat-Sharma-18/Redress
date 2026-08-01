@@ -25,13 +25,53 @@ The design constraint that shapes everything: **a wrong answer here costs someon
 | 1 | Core hybrid retrieval + reranking + temporal filtering | **Done** — full state corpus ingestion pending |
 | 2 | Reconciliation agent v1 (single-pass verdict with citations) | **Done** — decomposition + mechanically verified citations |
 | 3 | Adversarial critique pass + three-way confidence gate | **Done** — critique loop with bounded re-retrieval, ensemble cross-check |
-| 4 | GraphRAG layer (Neo4j) + regulation versioning | Not started |
+| 4 | GraphRAG layer (Neo4j) + regulation versioning | **Done** — in-memory + Cypher backends, version registry |
 | 5 | Eval harness — golden dataset, RAGAS, precision/recall | Not started |
 | 6 | Frontend — the Forensic Ledger UI | Not started |
 
 Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain model (`backend/app/core/models.py`), and the agent layer (`backend/app/agents/`) — claim decomposition, reconciliation with mechanical citation verification, the adversarial critique loop with bounded re-retrieval, the ensemble cross-check, and the three-way confidence gate. 41 tests, none of which need an API key: the LLM sits behind a `StructuredLLM` protocol, and the suite covers exactly what the model is *not* trusted to do — verbatim-quote enforcement, fabricated-citation detection, critique rejection paths, ensemble disagreement routing to `Contested`, and temporal filtering by denial date.
 
 The gate's invariant, held on every path: **it only ever lowers confidence.** The critique agent cannot upgrade a finding, ensemble disagreement is surfaced as `Contested` rather than resolved by picking a side, and a rejected draft lands on `Insufficient Evidence` — never on the draft's original claim.
+
+Also built: the graph layer (`backend/app/graph/`) with the insurer-pattern traversal, and the regulation version registry (`backend/app/retrieval/temporal.py`). Both run without external services — the in-memory graph store is the reference implementation, and Neo4j is a swap-in.
+
+---
+
+## The graph layer
+
+The four retrieval pipelines answer "is *this* denial justified." The graph answers a question they structurally cannot: **does this insurer have a pattern?**
+
+```
+insurer ──USED_REASON──▶ denial reason code ──CITES_CLAUSE──▶ policy clause
+                                ▲                                   │
+                        CONCERNS_REASON                        GOVERNED_BY
+                                │                                   ▼
+                          complaint ──APPLIED_STATUTE──────────▶ statute
+                                │
+                          FILED_AGAINST
+                                ▼
+                            insurer
+```
+
+The load-bearing edge is the one that closes the loop. Walking `insurer → reason code → complaints` finds every complaint about that *reason code* industry-wide; the pattern query re-anchors on `complaint ──FILED_AGAINST──▶ insurer` so the result is that company's record and not the industry's. [`test_does_not_absorb_another_insurers_complaints`](backend/tests/test_graph.py) pins it — without the re-anchor the fixture reports three overturned complaints instead of two, which is an inflated public claim about a named company.
+
+Two deliberate constraints on what the graph reports:
+
+**Settlements and withdrawals never count as rulings.** Neither tells you what a regulator thought, and counting them would let a litigious insurer's settlement history read as vindication.
+
+**Pattern evidence is labeled contextual, in the chunk itself.** A regulator overturning a similar denial is not a ruling about *this* claim. The caveat is generated into the chunk text rather than left to the system prompt, so it travels with the evidence into every prompt that cites it.
+
+## Regulation versioning
+
+Chunk-level date filtering keeps the wrong statute version out of the evidence. The registry answers what filtering alone can't: *how* the law changed since the denial. That's the difference between "your denial conflicts with §1371.4" — which an insurer can rebut by noting the section was amended — and "as of your denial date §1371.4 required prior authorization; the 2023 amendment removing that requirement postdates your claim."
+
+Three cases the registry refuses to guess on, because each wrong answer cites law that doesn't govern:
+
+| Case | Behavior |
+|---|---|
+| Date precedes the earliest version | `None` — the statute didn't exist yet, which is not the same as "unchanged" |
+| Gap in the published record (repealed, later reenacted) | `None` — returning the prior version would cite repealed law as governing |
+| Two versions claim the same date | Raises `OverlappingVersions` at registration — an overlap is an ingestion bug, and silently picking one is how a system ends up citing law it can't justify |
 
 ---
 
@@ -88,6 +128,12 @@ To install the real embedding and reranking models:
 
 ```bash
 cd backend && .venv/Scripts/python -m pip install -e ".[ml]"
+```
+
+The graph layer runs on the in-memory store by default. The Neo4j backend needs the driver, and is a constructor swap — no calling code changes:
+
+```bash
+cd backend && .venv/Scripts/python -m pip install -e ".[graph]"
 ```
 
 ---

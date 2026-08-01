@@ -8,6 +8,7 @@ dependencies = [
     "pydantic>=2.7",
     "fastapi>=0.111",
     "uvicorn[standard]>=0.30",
+    "anthropic>=0.69",
 ]
 
 [project.optional-dependencies]
@@ -16,6 +17,11 @@ dependencies = [
 ml = [
     "sentence-transformers>=3.0",
     "torch>=2.2",
+]
+# The graph layer runs on the in-memory store without this; the driver is
+# only needed for the Neo4j backend.
+graph = [
+    "neo4j>=5.20",
 ]
 dev = [
     "pytest>=8.2",
