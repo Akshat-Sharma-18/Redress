@@ -27,47 +27,80 @@ from app.agents.reconciliation import _format_evidence
 from app.core.models import ScoredChunk, SubClaim, Verdict
 
 CRITIQUE_SYSTEM = """\
-You are the critique stage of an insurance claim denial audit system. A \
-draft verdict has been produced for one sub-claim. Your job is to try to \
-REJECT it. You are not a collaborator; you are the reviewer whose signature \
-means a policyholder can rely on this verdict.
+You are the verification stage of an insurance claim denial audit system. A \
+draft verdict has been produced for one sub-claim. You decide whether it is \
+supported by its own citations.
 
-You are given the sub-claim, the draft verdict (finding, rationale, and \
-citations), and the full evidence chunks the citations point into.
+You are an impartial checker, not an opponent. Both errors cost a real \
+person: approving an unsupported verdict misinforms them about their money, \
+and rejecting a well-supported one denies them an answer they were entitled \
+to. Do not look for reasons to reject; read what the evidence says and \
+report what you find.
 
-Reject the draft if ANY of the following hold:
+Work through the citations one at a time and record, for each, whether the \
+quoted text supports the specific claim it is offered for. Read each quote \
+in the context of its full chunk, attending to negation, carve-backs \
+("notwithstanding..."), conditions, and defined terms whose meaning may \
+differ from plain English. Then decide whether the finding follows from the \
+citations you accepted.
 
-1. A cited passage, read in its surrounding chunk context, does not support \
-what the rationale claims it supports. Pay particular attention to negation, \
-carve-backs ("notwithstanding..."), conditions precedent, and defined terms \
-whose definition may differ from plain English.
-2. The rationale makes any load-bearing claim that no citation covers.
-3. The finding does not follow from the citations even if each is accurate \
-— e.g. citations establish an exclusion exists but not that it applies to \
-this claim.
-4. The evidence suggests a chunk that would settle the question was NOT \
-retrieved (e.g. a citation references a definition or section that is absent \
-from the evidence). In this case, also provide a narrowed retrieval query \
-targeting the missing material.
+Approve when the citations you accepted are sufficient to support the \
+finding. A verdict does not need to cite every relevant clause, address \
+arguments nobody made, or match the verdict you would personally have \
+written. It needs to be supported by what it cites.
 
-Approve only when every check passes. If you reject, list each issue \
-concretely — name the citation and the exact mismatch. A vague rejection is \
-as useless as a wrong approval.
+Reject only when you can name a specific defect: a quote that does not say \
+what it is offered for, a load-bearing claim that no citation covers, or a \
+finding that does not follow even though each citation is accurate. "The \
+evidence could be more complete" is not a defect. If, and only if, a \
+citation references material that is genuinely absent from the evidence (a \
+definition or section referred to but not present), supply a narrowed \
+retrieval query for it.
 
-Do not judge whether YOU would have reached a different finding on balance; \
-judge whether THIS finding is supported by THESE citations."""
+Judge whether THIS finding is supported by THESE citations."""
+
+
+class CitationCheck(BaseModel):
+    """One citation, adjudicated on its own before any overall conclusion."""
+
+    chunk_id: str = Field(description="The citation being checked")
+    supports_claim: bool = Field(
+        description="Does the quoted text, read in its chunk context, support "
+        "the specific claim it is offered for?"
+    )
+    note: str = Field(
+        description="One sentence: what the quote actually establishes"
+    )
 
 
 class CritiqueResult(BaseModel):
-    """Structured output of the critique pass."""
+    """Structured output of the critique pass.
 
+    Field order is load-bearing. Constrained decoding emits fields in schema
+    order, so putting the per-citation checks before `approved` forces the
+    model to examine each quote before committing to a verdict on the whole.
+    Asking for the conclusion first invites a snap judgement that the rest of
+    the response then rationalises — which is how the previous version of
+    this agent came to reject every draft it was shown, including provably
+    correct ones.
+    """
+
+    citation_checks: list[CitationCheck] = Field(
+        default_factory=list,
+        description="One entry per citation in the draft, in order",
+    )
+    finding_follows: bool = Field(
+        default=True,
+        description="Given the citations marked supports_claim=true, does the "
+        "draft's finding follow?",
+    )
     approved: bool = Field(
-        description="True only if every citation supports its claim and the "
-        "finding follows from the citations"
+        description="True when the accepted citations are sufficient to "
+        "support the finding"
     )
     issues: list[str] = Field(
         default_factory=list,
-        description="Concrete problems found; empty when approved",
+        description="Specific named defects; empty when approved",
     )
     narrowed_query: str | None = Field(
         default=None,
