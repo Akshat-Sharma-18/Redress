@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { SubClaim } from "../types";
 import { TONE_VAR } from "../types";
 
@@ -89,41 +89,43 @@ export function CitationBeam({ claim, resolve, revision }: Props) {
         </filter>
       </defs>
 
-      <AnimatePresence>
-        {paths.map((path, i) => (
-          <motion.g key={path.key}>
-            <motion.path
-              d={path.d}
-              className="beam"
-              stroke="url(#beam-fade)"
-              filter="url(#beam-glow)"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.18 } }}
-              transition={{
-                pathLength: {
-                  duration: 0.62,
-                  // Staggered so multiple citations read as separate
-                  // connections being made, not one thick cable.
-                  delay: i * 0.09,
-                  ease: [0.22, 1, 0.36, 1],
-                },
-                opacity: { duration: 0.2, delay: i * 0.09 },
-              }}
-            />
-            <motion.circle
-              r="3.5"
-              cx={path.target.x}
-              cy={path.target.y}
-              fill={tone}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: i * 0.09 + 0.55, duration: 0.24 }}
-            />
-          </motion.g>
-        ))}
-      </AnimatePresence>
+      {/* Rendered directly rather than through AnimatePresence. Exit
+       *  animations on SVG children left beams painted on screen after the
+       *  sub-claim was deselected — a beam still pointing at a clause the
+       *  system is no longer citing is worse than one that simply stops.
+       *  Clearing `paths` removes them immediately; the entrance animation,
+       *  which is the part that carries meaning, is unaffected. */}
+      {paths.map((path, i) => (
+        <g key={path.key}>
+          <motion.path
+            d={path.d}
+            className="beam"
+            stroke="url(#beam-fade)"
+            filter="url(#beam-glow)"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{
+              pathLength: {
+                duration: 0.62,
+                // Staggered so multiple citations read as separate
+                // connections being made, not one thick cable.
+                delay: i * 0.09,
+                ease: [0.22, 1, 0.36, 1],
+              },
+              opacity: { duration: 0.2, delay: i * 0.09 },
+            }}
+          />
+          <motion.circle
+            r="3.5"
+            cx={path.target.x}
+            cy={path.target.y}
+            fill={tone}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: i * 0.09 + 0.55, duration: 0.24 }}
+          />
+        </g>
+      ))}
     </svg>
   );
 }

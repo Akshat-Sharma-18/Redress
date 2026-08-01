@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import type { Audit, SubClaim } from "../types";
 import { TONE_VAR } from "../types";
 
@@ -24,7 +25,18 @@ const FINDING_LABEL: Record<SubClaim["finding"], string> = {
 
 export function SubClaimList({ audit, active, onSelect }: Props) {
   return (
-    <div className="claims">
+    <motion.div
+      className="claims"
+      // Keyed per case so the cascade replays on switch. The sub-claims are
+      // the control surface, so they arrive last — after the letter has
+      // settled and the stamp has landed — rather than competing with them.
+      key={audit.case_id}
+      initial="hidden"
+      animate="shown"
+      variants={{
+        shown: { transition: { staggerChildren: 0.06, delayChildren: 0.45 } },
+      }}
+    >
       <div className="claims__head">
         <span className="paper__kicker">
           {audit.sub_claims.length} sub-claim
@@ -36,9 +48,14 @@ export function SubClaimList({ audit, active, onSelect }: Props) {
       {audit.sub_claims.map((claim) => {
         const isActive = active?.id === claim.id;
         return (
-          <button
+          <motion.button
             key={claim.id}
             type="button"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              shown: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
             className={`claim claim--${claim.tone}${isActive ? " is-active" : ""}`}
             style={{ ["--tone" as string]: TONE_VAR[claim.tone] }}
             onClick={() => onSelect(isActive ? null : claim)}
@@ -75,9 +92,9 @@ export function SubClaimList({ audit, active, onSelect }: Props) {
                 )}
               </span>
             )}
-          </button>
+          </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

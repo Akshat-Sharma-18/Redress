@@ -35,7 +35,13 @@ export function VerdictStamp({ audit }: Props) {
       <motion.div
         className="stamp"
         style={{ ["--tone" as string]: tone }}
-        initial={{ scale: 1.9, opacity: 0, rotate: -11 }}
+        // The press comes from rotation and opacity, with only a slight
+        // scale. The original 1.9 made the stamp wider than its column at
+        // the first frame, which is what raised the horizontal scrollbar;
+        // even 1.35 overshot on narrower viewports with the longest label.
+        // An entrance animation has to fit its container at every frame,
+        // not just the last one.
+        initial={{ scale: 1.08, opacity: 0, rotate: -11 }}
         animate={{ scale: 1, opacity: 1, rotate: -4.5 }}
         transition={{
           // Fast in, hard stop: the press lands rather than easing into

@@ -221,7 +221,12 @@
   flex-direction: column;
   gap: 16px;
   min-height: 0;
+  min-width: 0;
   overflow-y: auto;
+  /* A flex child will not shrink below its content width without this, and
+   * one over-wide descendant then forces the whole column to scroll
+   * sideways. */
+  overflow-x: hidden;
   padding-bottom: 8px;
 }
 
@@ -232,6 +237,12 @@
   gap: 12px;
   padding: 18px 0 4px;
   flex: none;
+  max-width: 100%;
+  min-width: 0;
+  /* The stamp is rotated, so its painted box is wider than its layout box.
+   * Padding gives that rotation room instead of letting it overflow the
+   * column and raise a scrollbar. */
+  padding-inline: 18px;
 }
 
 .stamp {
@@ -239,7 +250,11 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 13px 26px 11px;
+  padding: 13px 22px 11px;
+  /* The stamp must fit its LONGEST label, not its shortest. Sized for
+   * "CONTRADICTED" it overflowed the column on "INSUFFICIENT EVIDENCE",
+   * which is nearly twice as wide. */
+  max-width: 100%;
   border: 2.5px solid var(--tone);
   border-radius: 4px;
   color: var(--tone);
@@ -255,10 +270,16 @@
 
 .stamp__label {
   font-family: var(--font-display);
-  font-size: 25px;
+  /* Capped at 21px, not 25: at 25 the longest label ("INSUFFICIENT
+   * EVIDENCE") needed 451px in a 452px column — it fit by one pixel, which
+   * is luck rather than a layout. It wraps to two lines below that, which
+   * reads fine on a stamp. */
+  font-size: clamp(14px, 1.7vw, 21px);
   font-weight: 700;
-  letter-spacing: 0.11em;
-  line-height: 1;
+  letter-spacing: 0.1em;
+  line-height: 1.12;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .stamp__rule {
@@ -276,7 +297,9 @@
 
 .stamp__detail {
   margin: 0;
-  max-width: 46ch;
+  /* min() so the measure never exceeds the column: a bare ch value is
+   * computed from the font, not the container, and overflowed it. */
+  max-width: min(46ch, 100%);
   text-align: center;
   font-size: 13px;
   line-height: 1.62;
@@ -514,6 +537,8 @@
  * the model, not a malfunction of the interface. */
 .truth {
   display: inline-flex;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   font-size: 11px;
@@ -542,4 +567,52 @@
   opacity: 0.7;
   padding-left: 8px;
   border-left: 1px solid var(--ink-line);
+}
+
+/* Collapsed evidence: the panel reads as an index of references until a
+ * sub-claim opens the clauses it relies on. Full clause text in every card
+ * at once made three columns of dense legal prose compete for attention and
+ * left nothing to change on interaction. */
+.evidence-card {
+  cursor: default;
+}
+
+.evidence-card__flag {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tone);
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent);
+  border-radius: 2px;
+}
+
+.evidence-card__top {
+  margin-bottom: 0;
+}
+
+.evidence-card.is-cited .evidence-card__top {
+  margin-bottom: 8px;
+}
+
+.evidence-card.is-dim {
+  /* Recede, never disappear: a clause the system retrieved and did not rely
+   * on is part of the audit trail. */
+  border-color: #182338;
+}
+
+.evidence__hint {
+  margin: 10px 2px 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  font-style: italic;
+  flex: none;
+}
+
+/* The expanded clause body. Sized by the card's `layout` animation rather
+ * than an explicit height transition, which is what allows it to collapse
+ * again reliably. */
+.evidence-card__body {
+  overflow: hidden;
 }
