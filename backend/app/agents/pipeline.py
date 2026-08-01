@@ -1,24 +1,36 @@
-"""End-to-end audit pipeline, Phase 2 shape.
+"""End-to-end audit pipeline.
 
 Wires the stages together: decompose the denial letter, retrieve evidence for
-each sub-claim from every available corpus, adjudicate. The fan-out across
-pipelines A-D is represented as a dict of named retrievers so Phase 4 can add
-the DOI-precedent corpus and the graph layer without changing this module's
-shape.
+each sub-claim from every available corpus, adjudicate through the confidence
+gate. The fan-out across pipelines A-D is a dict of named retrievers so Phase
+4 can add the DOI-precedent corpus and the graph layer without changing this
+module's shape.
 
-Deliberately synchronous for now. The async fan-out belongs in the FastAPI
-layer once there is an API; doing it here first would just make the tests
-worse.
+Ensemble cross-check: when `secondary_retrievers` is provided (same corpora,
+indexed under a different embedding model), every sub-claim is retrieved
+twice and only surfaced as SUPPORTED when independent adjudications over the
+two evidence sets agree.
+
+Deliberately synchronous. The async fan-out belongs in the FastAPI layer once
+there is an API; doing it here first would just make the tests worse.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 
 from app.agents.decomposition import DecompositionAgent, DecomposedDenial
-from app.agents.reconciliation import ReconciliationAgent
+from app.agents.gate import GatedAdjudicator
 from app.core.models import ScoredChunk, SourceKind, Verdict
 from app.retrieval.hybrid import HybridRetriever, RetrievalTrace
+
+_KIND_ORDER = {
+    SourceKind.POLICY: 0,
+    SourceKind.DENIAL: 1,
+    SourceKind.STATUTE: 2,
+    SourceKind.PRECEDENT: 3,
+}
 
 
 @dataclass
@@ -54,47 +66,69 @@ class AuditPipeline:
     def __init__(
         self,
         decomposition: DecompositionAgent,
-        reconciliation: ReconciliationAgent,
+        adjudicator: GatedAdjudicator,
         retrievers: dict[str, HybridRetriever],
+        secondary_retrievers: dict[str, HybridRetriever] | None = None,
         per_corpus_k: int = 6,
     ):
         self.decomposition = decomposition
-        self.reconciliation = reconciliation
+        self.adjudicator = adjudicator
         self.retrievers = retrievers
+        self.secondary_retrievers = secondary_retrievers
         self.per_corpus_k = per_corpus_k
+
+    def _gather(
+        self,
+        retrievers: dict[str, HybridRetriever],
+        query: str,
+        as_of: date | None,
+        traces: dict[str, RetrievalTrace] | None = None,
+    ) -> list[ScoredChunk]:
+        """Fan out one query across a retriever set; stable evidence order."""
+        evidence: list[ScoredChunk] = []
+        for name, retriever in retrievers.items():
+            hits, trace = retriever.retrieve(
+                query, top_k=self.per_corpus_k, as_of=as_of
+            )
+            evidence.extend(hits)
+            if traces is not None:
+                traces[name] = trace
+        evidence.sort(key=lambda sc: (_KIND_ORDER[sc.chunk.source_kind], -sc.score))
+        return evidence
 
     def run(self, denial_letter_text: str) -> AuditResult:
         denial = self.decomposition.decompose(denial_letter_text)
 
         results: list[SubClaimResult] = []
         for sub_claim in denial.sub_claims:
-            evidence: list[ScoredChunk] = []
             traces: dict[str, RetrievalTrace] = {}
-
-            for name, retriever in self.retrievers.items():
-                hits, trace = retriever.retrieve(
-                    sub_claim.text,
-                    top_k=self.per_corpus_k,
-                    # Statutes are checked against the law as it stood on the
-                    # denial date; chunks without temporal bounds pass through.
-                    as_of=denial.denial_date,
-                )
-                evidence.extend(hits)
-                traces[name] = trace
-
-            # Stable ordering for the prompt: strongest evidence first within
-            # each source kind, policy text before statutes before precedent.
-            kind_order = {
-                SourceKind.POLICY: 0,
-                SourceKind.DENIAL: 1,
-                SourceKind.STATUTE: 2,
-                SourceKind.PRECEDENT: 3,
-            }
-            evidence.sort(
-                key=lambda sc: (kind_order[sc.chunk.source_kind], -sc.score)
+            evidence = self._gather(
+                self.retrievers, sub_claim.text, denial.denial_date, traces
             )
 
-            verdict = self.reconciliation.adjudicate(sub_claim, evidence)
+            secondary = None
+            if self.secondary_retrievers is not None:
+                secondary_traces: dict[str, RetrievalTrace] = {}
+                secondary = self._gather(
+                    self.secondary_retrievers,
+                    sub_claim.text,
+                    denial.denial_date,
+                    secondary_traces,
+                )
+                traces.update(
+                    {f"{k}#secondary": v for k, v in secondary_traces.items()}
+                )
+
+            verdict = self.adjudicator.adjudicate(
+                sub_claim,
+                evidence,
+                # Narrowed re-retrieval goes against the primary corpora with
+                # the critique agent's query, same denial-date filter.
+                retrieve_fn=lambda q: self._gather(
+                    self.retrievers, q, denial.denial_date
+                ),
+                secondary_evidence=secondary,
+            )
             results.append(SubClaimResult(verdict=verdict, traces=traces))
 
         return AuditResult(denial=denial, results=results)

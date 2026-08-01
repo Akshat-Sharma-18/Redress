@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from datetime import date
 
-from pydantic import BaseModel
-
+from app.agents.critique import CritiqueAgent, CritiqueResult
 from app.agents.decomposition import DecompositionAgent
+from app.agents.gate import GatedAdjudicator
 from app.agents.pipeline import AuditPipeline
 from app.agents.reconciliation import ReconciliationAgent
 from app.agents.schemas import (
@@ -26,21 +26,7 @@ from app.retrieval.bm25 import BM25Index
 from app.retrieval.dense import DenseIndex
 from app.retrieval.hybrid import HybridRetriever
 
-from .conftest import FakeEmbedder
-
-
-class FakeLLM:
-    """Returns queued responses in order; records every call it saw."""
-
-    def __init__(self, responses: list[BaseModel]):
-        self._responses = list(responses)
-        self.calls: list[dict] = []
-
-    def generate(self, *, system, prompt, schema, max_tokens=16000):
-        self.calls.append({"system": system, "prompt": prompt, "schema": schema})
-        response = self._responses.pop(0)
-        assert isinstance(response, schema)
-        return response
+from .conftest import FakeEmbedder, FakeLLM
 
 
 def _chunk(cid: str, text: str, kind=SourceKind.POLICY) -> ScoredChunk:
@@ -279,7 +265,11 @@ class TestPipeline:
                 )
             ],
         )
-        llm = FakeLLM([decomposition_response, verdict_response])
+        llm = FakeLLM([
+            decomposition_response,
+            verdict_response,
+            CritiqueResult(approved=True),
+        ])
 
         def build(chunks):
             return HybridRetriever(
@@ -289,7 +279,9 @@ class TestPipeline:
 
         pipeline = AuditPipeline(
             decomposition=DecompositionAgent(llm),
-            reconciliation=ReconciliationAgent(llm),
+            adjudicator=GatedAdjudicator(
+                ReconciliationAgent(llm), CritiqueAgent(llm)
+            ),
             retrievers={
                 "policy": build(policy_chunks),
                 "statutes": build(statute_chunks),
@@ -312,6 +304,60 @@ class TestPipeline:
         assert "<evidence>" in reconciliation_prompt
         assert 'source="policy"' in reconciliation_prompt
 
+    def test_secondary_retrievers_drive_ensemble(self, policy_chunks):
+        """With secondary retrievers, a second adjudication runs and its
+        trace is recorded under a '#secondary' key."""
+        llm = FakeLLM([
+            Decomposition(
+                denial=ExtractedDenial(denial_reason="Denied"),
+                sub_claims=[DecomposedClaim(text="Exclusion applies.", kind="legal")],
+            ),
+            DraftVerdict(
+                finding="justified",
+                rationale="Excluded.",
+                citations=[
+                    DraftCitation(
+                        chunk_id="p2",
+                        quote="does not provide benefits",
+                        supports="The exclusion.",
+                    )
+                ],
+            ),
+            CritiqueResult(approved=True),
+            DraftVerdict(  # secondary pass agrees
+                finding="justified",
+                rationale="Excluded.",
+                citations=[
+                    DraftCitation(
+                        chunk_id="p2",
+                        quote="does not provide benefits",
+                        supports="The exclusion.",
+                    )
+                ],
+            ),
+        ])
+
+        def build(salt=""):
+            return HybridRetriever(
+                dense=DenseIndex(policy_chunks, FakeEmbedder(salt=salt)),
+                lexical=BM25Index(policy_chunks),
+            )
+
+        pipeline = AuditPipeline(
+            decomposition=DecompositionAgent(llm),
+            adjudicator=GatedAdjudicator(
+                ReconciliationAgent(llm), CritiqueAgent(llm)
+            ),
+            retrievers={"policy": build()},
+            secondary_retrievers={"policy": build(salt="b")},
+        )
+        result = pipeline.run("...")
+
+        [sub_result] = result.results
+        assert sub_result.verdict.confidence == Confidence.SUPPORTED
+        assert "policy#secondary" in sub_result.traces
+        assert len(llm.calls) == 4
+
     def test_all_insufficient_yields_insufficient_overall(self, policy_chunks):
         llm = FakeLLM([
             Decomposition(
@@ -322,7 +368,9 @@ class TestPipeline:
         ])
         pipeline = AuditPipeline(
             decomposition=DecompositionAgent(llm),
-            reconciliation=ReconciliationAgent(llm),
+            adjudicator=GatedAdjudicator(
+                ReconciliationAgent(llm), CritiqueAgent(llm)
+            ),
             retrievers={
                 "policy": HybridRetriever(
                     dense=DenseIndex(policy_chunks, FakeEmbedder()),

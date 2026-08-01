@@ -24,12 +24,14 @@ The design constraint that shapes everything: **a wrong answer here costs someon
 |---|---|---|
 | 1 | Core hybrid retrieval + reranking + temporal filtering | **Done** — full state corpus ingestion pending |
 | 2 | Reconciliation agent v1 (single-pass verdict with citations) | **Done** — decomposition + mechanically verified citations |
-| 3 | Adversarial critique pass + three-way confidence gate | Not started |
+| 3 | Adversarial critique pass + three-way confidence gate | **Done** — critique loop with bounded re-retrieval, ensemble cross-check |
 | 4 | GraphRAG layer (Neo4j) + regulation versioning | Not started |
 | 5 | Eval harness — golden dataset, RAGAS, precision/recall | Not started |
 | 6 | Frontend — the Forensic Ledger UI | Not started |
 
-Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain model (`backend/app/core/models.py`), and the agent layer (`backend/app/agents/`) — claim decomposition, reconciliation with mechanical citation verification, and the end-to-end audit pipeline. 30 tests, none of which need an API key: the LLM sits behind a `StructuredLLM` protocol, and the suite covers exactly what the model is *not* trusted to do — verbatim-quote enforcement, fabricated-citation detection, downgrade-to-insufficient behavior, and temporal filtering by denial date.
+Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain model (`backend/app/core/models.py`), and the agent layer (`backend/app/agents/`) — claim decomposition, reconciliation with mechanical citation verification, the adversarial critique loop with bounded re-retrieval, the ensemble cross-check, and the three-way confidence gate. 41 tests, none of which need an API key: the LLM sits behind a `StructuredLLM` protocol, and the suite covers exactly what the model is *not* trusted to do — verbatim-quote enforcement, fabricated-citation detection, critique rejection paths, ensemble disagreement routing to `Contested`, and temporal filtering by denial date.
+
+The gate's invariant, held on every path: **it only ever lowers confidence.** The critique agent cannot upgrade a finding, ensemble disagreement is surfaced as `Contested` rather than resolved by picking a side, and a rejected draft lands on `Insufficient Evidence` — never on the draft's original claim.
 
 ---
 

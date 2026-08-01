@@ -18,6 +18,23 @@ from app.core.models import Chunk, SourceKind
 from app.retrieval.bm25 import tokenize
 
 
+class FakeLLM:
+    """Returns queued responses in order; records every call it saw."""
+
+    def __init__(self, responses: list):
+        self._responses = list(responses)
+        self.calls: list[dict] = []
+
+    def generate(self, *, system, prompt, schema, max_tokens=16000):
+        self.calls.append({"system": system, "prompt": prompt, "schema": schema})
+        response = self._responses.pop(0)
+        assert isinstance(response, schema), (
+            f"test sequencing error: expected {schema.__name__}, "
+            f"got {type(response).__name__}"
+        )
+        return response
+
+
 class FakeEmbedder:
     def __init__(self, name: str = "fake-a", dims: int = 64, salt: str = ""):
         self.name = name
