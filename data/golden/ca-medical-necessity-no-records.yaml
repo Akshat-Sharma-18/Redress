@@ -1,0 +1,72 @@
+id: ca-medical-necessity-no-records
+name: Medical necessity denial with no clinical evidence in the record
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: 2022-09-12
+notes: |
+  REVIEWER NOTE — why abstention is the correct outcome here.
+
+  The policy's medical-necessity standard is retrievable and unambiguous
+  (Section 2.2). What is absent is the clinical record needed to apply it:
+  nothing in the evidence establishes whether this member's course of
+  treatment met the standard, and nothing establishes that it did not.
+
+  This is the most common shape of real denial, and it is the case where a
+  RAG system is most tempted to perform. Every ingredient of a confident
+  answer is present — a clear legal standard, a specific claim, relevant
+  policy text — except the facts. A system that rules here is not reasoning
+  from evidence, it is filling a gap from priors about how insurers behave.
+
+  Note what abstention does NOT mean: it does not mean the denial was
+  proper. The correct output tells the member the record is incomplete and
+  routes them to review, which is materially useful and honest.
+
+  A reasonable reviewer could argue for "contradicted" on the theory that
+  the insurer bears the burden of substantiating its own determination.
+  That is a legal argument about burden allocation, not a finding the
+  retrieved evidence supports, and this system is not positioned to make it.
+
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: September 12, 2022
+  Claim: Inpatient rehabilitation admission, August 2022
+  Reason Code: CO-50
+
+  Benefits are not available for the above admission. Following review by
+  our medical director, we have determined that the requested level of care
+  was not medically necessary as that term is defined in your Certificate
+  of Coverage at Section 2.2. A lower level of care was available and
+  appropriate.
+
+  You may request an internal appeal within 180 days.
+
+chunks:
+  - id: p-2-2
+    locator: Section 2.2
+    source_kind: policy
+    text: |
+      Medically Necessary means health care services that a prudent
+      physician would provide for the purpose of preventing, diagnosing, or
+      treating an illness or injury, that are consistent with generally
+      accepted standards of medical practice, clinically appropriate in
+      terms of type, frequency, extent, site, and duration, and not
+      primarily for the convenience of the patient or provider.
+  - id: p-2-3
+    locator: Section 2.3
+    source_kind: policy
+    text: |
+      Determinations of Medical Necessity are made by the plan's medical
+      director or a physician designee. A member may submit additional
+      clinical documentation in support of an appeal.
+  - id: p-5-4
+    locator: Section 5.4
+    source_kind: policy
+    text: |
+      Inpatient rehabilitation services are a covered benefit when
+      Medically Necessary and furnished at a participating facility.
+
+expected:
+  overall: insufficient

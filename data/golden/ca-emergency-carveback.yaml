@@ -1,0 +1,62 @@
+id: ca-emergency-carveback
+name: ER visit denied under exclusion that an adjacent clause carves back
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: 2021-06-14
+notes: |
+  The archetypal case this system exists to catch. The denial cites 7.2(a)
+  accurately; the very next subsection removes emergency stabilization from
+  that exclusion's scope. A retriever that returns only the cited clause
+  confirms the denial. Correct behaviour requires surfacing 7.2(b).
+
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: June 14, 2021
+  Member: [REDACTED]
+  Claim: Emergency department visit, date of service May 30, 2021
+  Reason Code: CO-A1
+
+  We have completed our review of the above claim. Benefits are not
+  available for this service. Section 7.2(a) of your Certificate of
+  Coverage provides that the plan does not cover services rendered in a
+  hospital emergency department. The charges submitted are therefore the
+  member's responsibility.
+
+  You may request an internal appeal within 180 days of this notice.
+
+chunks:
+  - id: p-7-2-a
+    locator: Section 7.2(a)
+    source_kind: policy
+    text: |
+      Exclusions. This plan does not provide benefits for services rendered
+      in a hospital emergency department.
+  - id: p-7-2-b
+    locator: Section 7.2(b)
+    source_kind: policy
+    text: |
+      Notwithstanding the foregoing, the exclusion in Section 7.2(a) does not
+      apply to emergency services required to evaluate or stabilize an
+      emergency medical condition, as that term is defined in Section 1.9.
+  - id: p-1-9
+    locator: Section 1.9
+    source_kind: policy
+    text: |
+      Emergency Medical Condition means a medical condition manifesting
+      itself by acute symptoms of sufficient severity that a prudent
+      layperson would reasonably expect the absence of immediate medical
+      attention to result in serious jeopardy to health.
+  - id: p-9-1
+    locator: Section 9.1
+    source_kind: policy
+    text: |
+      Appeals. You may request an internal appeal of an adverse benefit
+      determination within one hundred eighty days of receiving notice.
+
+expected:
+  overall: contradicted
+  must_cite:
+    - p-7-2-b

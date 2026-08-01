@@ -9,6 +9,9 @@ dependencies = [
     "fastapi>=0.111",
     "uvicorn[standard]>=0.30",
     "anthropic>=0.69",
+    # Golden-set fixtures are YAML because a human has to review them;
+    # multi-line policy text in JSON is not reviewable.
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -22,6 +25,12 @@ ml = [
 # only needed for the Neo4j backend.
 graph = [
     "neo4j>=5.20",
+]
+# RAGAS pulls a large dependency tree and its default metrics make their own
+# LLM calls. The golden-set harness and its metrics work without it.
+eval = [
+    "ragas>=0.2",
+    "datasets>=2.19",
 ]
 dev = [
     "pytest>=8.2",

@@ -26,14 +26,14 @@ The design constraint that shapes everything: **a wrong answer here costs someon
 | 2 | Reconciliation agent v1 (single-pass verdict with citations) | **Done** — decomposition + mechanically verified citations |
 | 3 | Adversarial critique pass + three-way confidence gate | **Done** — critique loop with bounded re-retrieval, ensemble cross-check |
 | 4 | GraphRAG layer (Neo4j) + regulation versioning | **Done** — in-memory + Cypher backends, version registry |
-| 5 | Eval harness — golden dataset, RAGAS, precision/recall | Not started |
+| 5 | Eval harness — golden dataset, RAGAS, precision/recall | **Harness done** — 5 seed cases; set needs expanding to 30–50 |
 | 6 | Frontend — the Forensic Ledger UI | Not started |
 
 Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain model (`backend/app/core/models.py`), and the agent layer (`backend/app/agents/`) — claim decomposition, reconciliation with mechanical citation verification, the adversarial critique loop with bounded re-retrieval, the ensemble cross-check, and the three-way confidence gate. 41 tests, none of which need an API key: the LLM sits behind a `StructuredLLM` protocol, and the suite covers exactly what the model is *not* trusted to do — verbatim-quote enforcement, fabricated-citation detection, critique rejection paths, ensemble disagreement routing to `Contested`, and temporal filtering by denial date.
 
 The gate's invariant, held on every path: **it only ever lowers confidence.** The critique agent cannot upgrade a finding, ensemble disagreement is surfaced as `Contested` rather than resolved by picking a side, and a rejected draft lands on `Insufficient Evidence` — never on the draft's original claim.
 
-Also built: the graph layer (`backend/app/graph/`) with the insurer-pattern traversal, and the regulation version registry (`backend/app/retrieval/temporal.py`). Both run without external services — the in-memory graph store is the reference implementation, and Neo4j is a swap-in.
+Also built: the graph layer (`backend/app/graph/`) with the insurer-pattern traversal, the regulation version registry (`backend/app/retrieval/temporal.py`), and the eval harness (`backend/app/eval/`). All run without external services — the in-memory graph store is the reference implementation, Neo4j is a swap-in, and 89 tests pass offline.
 
 ---
 
@@ -72,6 +72,86 @@ Three cases the registry refuses to guess on, because each wrong answer cites la
 | Date precedes the earliest version | `None` — the statute didn't exist yet, which is not the same as "unchanged" |
 | Gap in the published record (repealed, later reenacted) | `None` — returning the prior version would cite repealed law as governing |
 | Two versions claim the same date | Raises `OverlappingVersions` at registration — an overlap is an ingestion bug, and silently picking one is how a system ends up citing law it can't justify |
+
+---
+
+## Evaluation
+
+**No numbers are published yet.** The harness is built and the metrics are
+defined; the golden set currently holds 5 seed cases against a 30–50 target,
+which is enough to validate the format and far too few to quote. Every claim
+in this README is about design, not measured performance — that distinction
+holds until the set is expanded and reviewed.
+
+### Not all errors cost the same
+
+Standard multiclass accuracy treats every mistake identically. That is the
+wrong instrument here, because the ways to be wrong have very different costs
+to the person holding the denial letter:
+
+| Outcome | What it does to the user | Cost |
+|---|---|---|
+| **False assurance** — said `justified`, truth `contradicted` | They don't appeal a claim they'd have won | **Money they were owed** |
+| **Under-abstention** — ruled confidently on a genuinely ambiguous case | Unearned confidence, whichever way it landed | Trust |
+| **False alarm** — said `contradicted`, truth `justified` | They spend effort on a losing appeal | Time |
+| **Over-abstention** — abstained where evidence was clear | Told to seek professional review | **Cheapest failure** |
+
+The architecture exists to convert would-be false assurances into
+over-abstentions. A single accuracy number would hide exactly the trade being
+made, so [`metrics.py`](backend/app/eval/metrics.py) reports the classes
+separately and leads with false-assurance rate. No composite "risk score" is
+computed — weighting these against each other is a judgement about someone
+else's finances, so the counts are reported and the reader applies their own.
+
+### The metrics that matter
+
+- **Correct abstention rate** — of genuinely ambiguous cases, how often the
+  system declined to rule. Denominator is the ambiguous subset *only*;
+  computed over the whole set, a system that abstains on everything would
+  score 100%.
+- **Over-abstention rate** — the cost side of that trade. The pair is what
+  shows calibration; either one alone can be maxed at the other's expense.
+- **Grounding accuracy** — of the verdicts that were *right*, how many cited
+  the evidence they should have. A correct finding that never cites the clause
+  it turns on reached the answer some other way, which in a system whose
+  product is the citation chain is close to a miss.
+
+Rates with an empty denominator report `None`, not `0.0` — "not measured yet"
+and "measured, scored zero" are different claims.
+
+### The discriminating pair
+
+Two golden cases are deliberately near-identical in shape and opposite in
+correct answer:
+
+- [`ca-emergency-carveback`](data/golden/ca-emergency-carveback.yaml) — two
+  clauses conflict, but one explicitly limits the other
+  ("notwithstanding the foregoing"). Retrievable. **Decisive.**
+- [`ca-competing-clauses`](data/golden/ca-competing-clauses.yaml) — two
+  clauses conflict with nothing subordinating either. Resolving it needs an
+  interpretive canon, which is a legal judgement rather than a retrieval
+  result. **Ambiguous.**
+
+A system that treats these the same is either over-cautious or overconfident.
+Telling them apart is the capability being measured, and it's why the loader
+refuses to accept an `ambiguous` case without written reasoning — an
+unexamined label underneath the headline metric is worse than no metric.
+
+### Running it
+
+```bash
+cd backend && .venv/Scripts/python -m app.eval --dataset ../data/golden
+```
+
+This is the only entry point that makes real API calls. It prints a projected
+call count and waits for confirmation first. Add `--ablate` to run each arm
+(no reranker / no critique / no ensemble) and print the comparison table —
+which is what turns "reranking matters" into a number.
+
+RAGAS lives behind the `eval` extra and measures a different thing:
+retrieval-context quality, not verdict correctness. A system can score well on
+faithfulness while being confidently wrong about the law, so it's reported as a
+diagnostic for the retrieval stack rather than as a headline.
 
 ---
 

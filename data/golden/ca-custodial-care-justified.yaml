@@ -1,0 +1,59 @@
+id: ca-custodial-care-justified
+name: Custodial care denial that the policy's own definition supports
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: 2022-02-03
+notes: |
+  A correctly denied claim. Included because a golden set of only wrongful
+  denials would reward a system that always answers "contradicted" — the
+  false-alarm rate is only measurable against cases like this one.
+
+  The defined term does the work: "custodial care" in the policy turns on
+  whether skilled personnel are required, and the described service is
+  assistance with bathing and dressing. Dense retrieval alone tends to
+  return the skilled-nursing benefit section here; the definition is the
+  clause that governs.
+
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: February 3, 2022
+  Claim: Home health aide services, 20 visits, January 2022
+  Reason Code: CO-B7
+
+  Benefits are not available for the submitted services. The services
+  described in the submitted documentation consist of assistance with
+  bathing, dressing, and meal preparation. Section 4.1 of your Certificate
+  excludes Custodial Care. Custodial Care is defined at Section 1.4.
+
+  You may request an internal appeal within 180 days.
+
+chunks:
+  - id: p-1-4
+    locator: Section 1.4
+    source_kind: policy
+    text: |
+      Custodial Care means assistance with activities of daily living,
+      including bathing, dressing, eating, and meal preparation, that does
+      not require the skills of qualified technical or professional
+      personnel.
+  - id: p-4-1
+    locator: Section 4.1
+    source_kind: policy
+    text: |
+      This plan does not provide benefits for Custodial Care, regardless of
+      where the care is furnished or who furnishes it.
+  - id: p-4-2
+    locator: Section 4.2
+    source_kind: policy
+    text: |
+      Skilled Nursing Care furnished in the home is covered when ordered by
+      a physician and when the services require the skills of a licensed
+      nurse.
+
+expected:
+  overall: justified
+  must_cite:
+    - p-1-4

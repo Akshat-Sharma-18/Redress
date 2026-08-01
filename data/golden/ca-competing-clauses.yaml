@@ -1,0 +1,79 @@
+id: ca-competing-clauses
+name: Two clauses plausibly govern and nothing in the policy resolves them
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: 2023-04-20
+notes: |
+  REVIEWER NOTE — why abstention is the correct outcome here.
+
+  Section 6.1 excludes services that are "experimental or investigational."
+  Section 6.3 covers FDA-approved therapies used within their labeled
+  indication. The therapy at issue is FDA-approved but is being used for a
+  condition the label does not name — so 6.1 and 6.3 point in opposite
+  directions and neither contains language subordinating it to the other.
+
+  This is deliberately NOT the emergency-carveback shape. There, one clause
+  explicitly limited the other ("notwithstanding the foregoing"), and the
+  right answer was retrievable. Here the conflict is real: resolving it
+  requires a canon of contract interpretation — contra proferentem, or
+  California's specific-governs-general rule — and applying an
+  interpretive canon is a legal judgement, not a retrieval result.
+
+  The two cases together are the discriminating pair for this metric. A
+  system that abstains on both is over-cautious; one that rules on both is
+  overconfident; the useful system tells them apart.
+
+  A reviewer who believes contra proferentem makes this clearly
+  "contradicted" should change this label — but should then also expect the
+  system to be able to justify that from retrieved text, which currently it
+  cannot.
+
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: April 20, 2023
+  Claim: Infusion therapy, March 2023
+  Reason Code: CO-D9
+
+  Benefits are not available for the above service. The therapy submitted
+  is considered experimental or investigational for the diagnosis reported
+  on the claim, and is excluded under Section 6.1 of your Certificate of
+  Coverage.
+
+  You may request an internal appeal within 180 days.
+
+chunks:
+  - id: p-6-1
+    locator: Section 6.1
+    source_kind: policy
+    text: |
+      This plan does not provide benefits for services, drugs, or devices
+      that are Experimental or Investigational for the condition being
+      treated.
+  - id: p-6-2
+    locator: Section 6.2
+    source_kind: policy
+    text: |
+      Experimental or Investigational means a drug, device, or treatment
+      that is not recognized as safe and effective for the condition being
+      treated in accordance with generally accepted standards of medical
+      practice.
+  - id: p-6-3
+    locator: Section 6.3
+    source_kind: policy
+    text: |
+      Benefits are provided for drugs and biologicals that have received
+      approval from the United States Food and Drug Administration and are
+      administered consistent with their labeled indications.
+  - id: p-6-4
+    locator: Section 6.4
+    source_kind: policy
+    text: |
+      The plan maintains a formulary of covered drugs and biologicals. The
+      formulary is reviewed quarterly by the pharmacy and therapeutics
+      committee.
+
+expected:
+  overall: insufficient
