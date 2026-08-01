@@ -9,7 +9,7 @@ score whose origin is recorded.
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from enum import Enum
 from typing import Any
 
@@ -139,4 +139,4 @@ class Verdict(BaseModel):
     retrieval_trace: list[ScoredChunk] = Field(default_factory=list)
     draft_rationale: str | None = None
     critique_notes: str | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
