@@ -14,6 +14,8 @@ the audit trail. Fail safe, then explain.
 
 from __future__ import annotations
 
+import re
+
 from app.agents.llm import StructuredLLM
 from app.agents.schemas import DraftVerdict
 from app.core.models import (
@@ -54,6 +56,32 @@ confident. When torn between 'insufficient' and any other finding, choose \
 'insufficient'."""
 
 _VALID_FINDINGS = {"justified", "contradicted", "mixed", "insufficient"}
+
+
+def find_verbatim_span(quote: str, source: str) -> str | None:
+    """Locate `quote` in `source`, tolerating only whitespace differences.
+
+    Returns the *source's* exact text for the match, or None if the quote
+    does not appear. Returning the source span rather than the model's
+    string means the stored citation is byte-identical to the document, so
+    the frontend can highlight it and a reader can find it on the page.
+
+    Whitespace is the only difference forgiven, because it is the only one
+    that is never semantic. Documents wrap lines; a model asked to quote a
+    wrapped sentence returns it unwrapped, and rejecting that would abstain
+    on a faithful citation for a typesetting reason. Everything else stays
+    strict: case, punctuation, and word choice must match, so a paraphrase
+    like "benefits are not provided for ER services" still fails.
+    """
+    words = quote.split()
+    if not words:
+        # An empty quote is a substring of every string. Without this guard
+        # a citation with no content passes verification and licenses an
+        # arbitrary claim.
+        return None
+    pattern = re.compile(r"\s+".join(map(re.escape, words)))
+    match = pattern.search(source)
+    return match.group(0) if match else None
 
 
 def _format_evidence(chunks: list[ScoredChunk]) -> str:
@@ -136,7 +164,8 @@ class ReconciliationAgent:
                     f"citation references unknown chunk {cit.chunk_id!r}"
                 )
                 continue
-            if cit.quote not in chunk.text:
+            exact = find_verbatim_span(cit.quote, chunk.text)
+            if exact is None:
                 failures.append(
                     f"quote is not a verbatim substring of chunk {cit.chunk_id!r}: "
                     f"{cit.quote[:80]!r}"
@@ -146,7 +175,8 @@ class ReconciliationAgent:
                 Citation(
                     chunk_id=chunk.id,
                     locator=chunk.locator,
-                    quote=cit.quote,
+                    # The source's span, not the model's rendering of it.
+                    quote=exact,
                     supports=cit.supports,
                 )
             )

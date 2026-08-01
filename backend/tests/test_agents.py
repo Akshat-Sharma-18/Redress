@@ -13,7 +13,7 @@ from app.agents.critique import CritiqueAgent, CritiqueResult
 from app.agents.decomposition import DecompositionAgent, DecomposedDenial
 from app.agents.gate import GatedAdjudicator
 from app.agents.pipeline import AuditPipeline
-from app.agents.reconciliation import ReconciliationAgent
+from app.agents.reconciliation import ReconciliationAgent, find_verbatim_span
 from app.agents.schemas import (
     DecomposedClaim,
     Decomposition,
@@ -44,6 +44,55 @@ EXCLUSION_TEXT = (
     "This plan does not provide benefits for services rendered in a "
     "hospital emergency department."
 )
+
+
+class TestVerbatimSpanMatching:
+    """Whitespace is the only difference a citation check may forgive."""
+
+    def test_line_wrapped_source_still_matches(self):
+        """Documents wrap lines; a model quoting a wrapped sentence returns
+        it unwrapped. Rejecting that abstains on a faithful citation for a
+        typesetting reason — observed with a real local model."""
+        source = "the exclusion in Section 7.2(a) does not\napply to emergency services"
+        span = find_verbatim_span(
+            "the exclusion in Section 7.2(a) does not apply to emergency services",
+            source,
+        )
+        assert span == source  # the SOURCE's text, not the model's rendering
+
+    def test_returns_source_span_so_stored_quote_is_byte_exact(self):
+        """The frontend highlights the quote in the document; storing the
+        model's whitespace would make it unfindable on the page."""
+        source = "benefits for\n  services rendered"
+        assert find_verbatim_span("benefits for services rendered", source) == source
+
+    def test_paraphrase_still_rejected(self):
+        source = "This plan does not provide benefits for emergency services."
+        assert find_verbatim_span("benefits are not provided for ER services", source) is None
+
+    def test_case_and_punctuation_still_strict(self):
+        source = "Custodial Care means assistance with daily living."
+        assert find_verbatim_span("custodial care means assistance", source) is None
+        assert find_verbatim_span("Custodial Care means assistance", source) is not None
+
+    def test_empty_quote_rejected(self):
+        """An empty string is a substring of everything, so without a guard
+        a contentless citation verifies and licenses an arbitrary claim."""
+        for empty in ("", "   ", "\n\t"):
+            assert find_verbatim_span(empty, "any text at all") is None
+
+    def test_empty_quote_downgrades_a_verdict(self):
+        llm = FakeLLM([
+            DraftVerdict(
+                finding="justified",
+                rationale="Excluded.",
+                citations=[DraftCitation(chunk_id="p2", quote="  ", supports="...")],
+            )
+        ])
+        verdict = ReconciliationAgent(llm).adjudicate(
+            _claim(), [_chunk("p2", EXCLUSION_TEXT)]
+        )
+        assert verdict.finding == "insufficient"
 
 
 class TestReconciliationVerification:

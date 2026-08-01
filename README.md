@@ -220,6 +220,30 @@ cd backend && python -m venv .venv && .venv/Scripts/python -m pip install -e ".[
 cd backend && .venv/Scripts/python -m pytest
 ```
 
+### No API key required
+
+Redress runs end to end on local models via [Ollama](https://ollama.com) —
+no key, no cost. Two models, ~5 GB total:
+
+```bash
+ollama pull qwen2.5:7b && ollama pull nomic-embed-text
+```
+
+```bash
+cd backend && .venv/Scripts/python -m app.eval
+```
+
+`OllamaStructuredLLM` and `OllamaEmbedder` implement the same
+`StructuredLLM` / `Embedder` protocols as the hosted backends, so nothing in
+the pipeline, gate, or eval changes — the backend is a constructor argument.
+Ollama constrains decoding to the JSON Schema, so a small model *cannot*
+emit unparseable output; only the substance is in question, not the format.
+The local embedder also removes the torch dependency entirely
+(`nomic-embed-text` is 274 MB and runs on CPU, versus a multi-gigabyte
+PyTorch install).
+
+Hosted inference is opt-in: `--backend anthropic` (needs `ANTHROPIC_API_KEY`).
+
 The retrieval logic and its full test suite run **without torch** — heavy ML backends are lazily imported and live behind the `ml` extra. Tests use a deterministic hashed-bag-of-words embedder, so retrieval behaviour is reproducible across machines and CI needs no GPU.
 
 To install the real embedding and reranking models:
