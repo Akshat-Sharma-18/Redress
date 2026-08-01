@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 
 from app.agents.llm import StructuredLLM
 from app.agents.schemas import Decomposition
@@ -38,10 +38,50 @@ status). Mark it 'legal' when it turns on what a policy clause or statute \
 means or requires.
 - Record exactly what the insurer cited for each sub-claim, if anything. Do \
 not supply citations the letter does not contain.
-- Extract dates in ISO format. If the denial date is not stated, leave it \
-null — do not infer it from context.
+- Copy the denial date exactly as the letter writes it. Do not reformat or \
+convert it. If the letter states no date, leave it null — never infer one \
+from context.
 - Quote the denial reason verbatim where possible. You are extracting, not \
 summarizing."""
+
+
+#: Formats seen on real denial notices, most-specific first. Parsed in code
+#: rather than asked of the model: converting "June 14, 2021" to an ISO string
+#: is a mechanical transformation, and a model that gets it wrong disables
+#: temporal filtering silently. `strptime` either parses or it doesn't.
+_DATE_FORMATS = (
+    "%Y-%m-%d",
+    "%B %d, %Y",     # June 14, 2021
+    "%b %d, %Y",     # Jun 14, 2021
+    "%B %d %Y",
+    "%d %B %Y",      # 14 June 2021
+    "%m/%d/%Y",
+    "%m-%d-%Y",
+    "%d.%m.%Y",
+)
+
+
+def parse_denial_date(raw: str | None) -> date | None:
+    """Normalise a denial date the model copied out of the letter.
+
+    Returns None for anything unparseable. That is the safe failure: an
+    absent date disables temporal filtering, whereas a wrongly-guessed one
+    silently filters against law that did not govern the claim.
+
+    Ambiguity is not resolved by preference. "03/04/2021" is March 4th in the
+    US and April 3rd elsewhere, and there is no basis in the letter for
+    choosing; `%m/%d/%Y` is listed because these are US insurance documents,
+    which is an assumption worth stating rather than hiding.
+    """
+    if not raw:
+        return None
+    text = raw.strip().rstrip(".")
+    for fmt in _DATE_FORMATS:
+        try:
+            return datetime.strptime(text, fmt).date()
+        except ValueError:
+            continue
+    return None
 
 
 @dataclass
@@ -72,15 +112,7 @@ class DecompositionAgent:
             schema=Decomposition,
         )
 
-        denial_date: date | None = None
-        if result.denial.denial_date:
-            try:
-                denial_date = date.fromisoformat(result.denial.denial_date)
-            except ValueError:
-                # A malformed date is treated as absent rather than guessed
-                # at: an absent date disables temporal filtering (safe),
-                # a wrong date silently filters against the wrong law (not).
-                denial_date = None
+        denial_date = parse_denial_date(result.denial.denial_date)
 
         sub_claims = [
             SubClaim(

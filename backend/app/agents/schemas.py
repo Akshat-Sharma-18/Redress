@@ -31,7 +31,11 @@ class ExtractedDenial(BaseModel):
     )
     denial_date: str | None = Field(
         default=None,
-        description="Date of the denial decision in ISO format YYYY-MM-DD, if stated",
+        description=(
+            "The date of the denial decision, copied EXACTLY as it appears in "
+            "the letter (e.g. 'June 14, 2021'). Do not reformat or convert it. "
+            "Null only if the letter states no date."
+        ),
     )
     cited_policy_sections: list[str] = Field(
         default_factory=list,

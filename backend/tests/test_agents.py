@@ -266,6 +266,31 @@ class TestDecomposition:
         assert result.sub_claims[1].cited_by_insurer == "Section 7.2(a)"
         assert {c.kind for c in result.sub_claims} == {"factual", "legal"}
 
+    def test_parses_dates_as_written_in_letters(self):
+        """Letters say 'June 14, 2021', not '2021-06-14'.
+
+        Asking the model to convert is a mechanical transformation it can get
+        wrong, and a wrong date silently filters against the wrong law. Code
+        does the conversion; the model only copies.
+        """
+        from app.agents.decomposition import parse_denial_date
+
+        for raw, expected in [
+            ("June 14, 2021", date(2021, 6, 14)),
+            ("Jun 14, 2021", date(2021, 6, 14)),
+            ("14 June 2021", date(2021, 6, 14)),
+            ("2021-06-14", date(2021, 6, 14)),
+            ("06/14/2021", date(2021, 6, 14)),
+            ("  June 14, 2021.  ", date(2021, 6, 14)),
+        ]:
+            assert parse_denial_date(raw) == expected, raw
+
+    def test_unparseable_date_is_none_not_a_guess(self):
+        from app.agents.decomposition import parse_denial_date
+
+        for raw in (None, "", "   ", "sometime last spring", "13/45/2021"):
+            assert parse_denial_date(raw) is None
+
     def test_malformed_date_becomes_none_not_a_guess(self):
         """A wrong denial date silently filters against the wrong law.
 
