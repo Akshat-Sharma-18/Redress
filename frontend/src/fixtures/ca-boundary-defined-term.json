@@ -1,0 +1,90 @@
+{
+  "case_id": "ca-boundary-defined-term",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: March 16, 2023\nClaim: Home health services, February 2023\nReason Code: CO-B7\n\nBenefits are not available for the submitted services. The documentation describes wound care\nand medication management furnished in the home. We have determined these constitute Custodial\nCare, excluded under Section 4.1.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for the submitted services. The documentation describes wound care and medication management furnished in the home. We have determined these constitute Custodial Care, excluded under Section 4.1.",
+  "reason_code": null,
+  "denial_date": "2023-03-16",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-ed4ae894",
+      "text": "The service was not medically necessary and falls under the custodial care exclusion.",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The draft verdict did not survive adversarial review, and no ruling is made. Professional review is recommended.",
+      "citations": [
+        {
+          "chunk_id": "p-4-1",
+          "locator": "Section 4.1",
+          "quote": "This plan does not provide benefits for Custodial Care, regardless of where the care is furnished\nor who furnishes it.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 118,
+            "text": "This plan does not provide benefits for Custodial Care, regardless of where the care is furnished\nor who furnishes it."
+          }
+        },
+        {
+          "chunk_id": "p-1-4",
+          "locator": "Section 1.4",
+          "quote": "Custodial Care means assistance with activities of daily living that does not require the skills\nof qualified technical or professional personnel.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 146,
+            "text": "Custodial Care means assistance with activities of daily living that does not require the skills\nof qualified technical or professional personnel."
+          }
+        },
+        {
+          "chunk_id": "p-4-2",
+          "locator": "Section 4.2",
+          "quote": "Skilled Nursing Care furnished in the home is covered when ordered by a physician and when the\nservices require the skills of a licensed nurse.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 143,
+            "text": "Skilled Nursing Care furnished in the home is covered when ordered by a physician and when the\nservices require the skills of a licensed nurse."
+          }
+        }
+      ],
+      "source_span": null,
+      "critique_notes": "critique rejected: The citation from Section 4.1 (chunk_id='p-4-1') states that this plan does not provide benefits for Custodial Care regardless of where it is furnished or who furnishes it. This directly supports the finding that the service was not medically necessary and falls under the custodial care exclusion.",
+      "draft_rationale": "The policy explicitly defines Custodial Care as assistance with activities of daily living that does not require the skills of qualified technical or professional personnel (Section 1.4). However, Section 4.2 indicates that Skilled Nursing Care, which is a form of custodial care provided in the home and ordered by a physician, is covered when it requires the skills of a licensed nurse. This carve-back suggests that not all forms of custodial care are excluded, as some may be covered under specific conditions."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-4-1",
+      "text": "This plan does not provide benefits for Custodial Care, regardless of where the care is furnished\nor who furnishes it.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.1",
+      "score": 0.03252247488101534,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-1-4",
+      "text": "Custodial Care means assistance with activities of daily living that does not require the skills\nof qualified technical or professional personnel.\n",
+      "source_kind": "policy",
+      "locator": "Section 1.4",
+      "score": 0.032266458495966696,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-4-2",
+      "text": "Skilled Nursing Care furnished in the home is covered when ordered by a physician and when the\nservices require the skills of a licensed nurse.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.2",
+      "score": 0.03200204813108039,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "insufficient",
+  "category": "ambiguous"
+}

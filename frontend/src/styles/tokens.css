@@ -1,0 +1,97 @@
+/* Design tokens — the "Forensic Ledger".
+ *
+ * The palette is drawn from the subject rather than bolted on: a claims
+ * investigator's desk at night. Navy is the room, parchment is the document
+ * under the lamp, and gold is the light connecting one page to another.
+ *
+ * Semantic names, not colour names. `--contradicted` rather than `--rose`,
+ * because the one thing that must never drift is which colour means "this
+ * denial is wrong". A component that reaches for a colour has to say what it
+ * means by it.
+ */
+
+:root {
+  /* Surfaces */
+  --ink-navy: #0b1220;
+  --ink-raised: #121b2c;
+  --ink-line: #1e2a3f;
+  --parchment: #f4efe3;
+  --parchment-shade: #e6dfcd;
+  --parchment-ink: #2a2620;
+
+  /* Verdict semantics */
+  --verified: #2bb3a3;
+  --contradicted: #c4485e;
+  --pending: #e3a23a;
+  --citation-gold: #c9a24b;
+
+  /* Text on navy */
+  --text-primary: #e8eaf0;
+  --text-secondary: #9aa5b8;
+  --text-muted: #64708a;
+
+  /* Type. Serif for rulings, sans for reading, mono for anything that must
+   * look exact — case ids, statute numbers, scores. The mono is doing real
+   * work: a citation that looks typeset looks arguable, a citation that
+   * looks like a reference looks checkable. */
+  --font-display: "Fraunces", "Freight Display", Georgia, "Times New Roman", serif;
+  --font-body: "Source Sans 3", Inter, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+
+  --radius: 3px;
+  --shadow-raised: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-page: 0 18px 46px rgba(0, 0, 0, 0.55);
+
+  /* One shared easing so beam, stamp, and panel motion feel like one system
+   * rather than three animations that happen to run together. */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--ink-navy);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The desk surface: a faint vignette so the parchment reads as lit from
+ * above rather than floating on flat colour. */
+#root {
+  background:
+    radial-gradient(
+      120% 90% at 50% -10%,
+      rgba(201, 162, 75, 0.07) 0%,
+      transparent 60%
+    ),
+    var(--ink-navy);
+}
+
+::selection {
+  background: rgba(201, 162, 75, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The citation beam and stamp are the signature moment, but a signature
+   * moment that triggers vestibular symptoms is a bug. Everything still
+   * happens — states change, the stamp appears — it just stops moving. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

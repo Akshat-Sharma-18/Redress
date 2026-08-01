@@ -1,0 +1,141 @@
+{
+  "case_id": "ca-preventive-costshare",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: March 11, 2022\nClaim: Screening colonoscopy, February 2022\nReason Code: CO-E2\n\nYour claim has been processed with member cost-sharing applied. The deductible had not been\nmet at the time of service, and the amount shown is the member's responsibility under\nSection 3.1 of your Certificate of Coverage.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Your claim has been processed with member cost-sharing applied. The deductible had not been met at the time of service, and the amount shown is the member's responsibility under Section 3.1 of your Certificate of Coverage.",
+  "reason_code": null,
+  "denial_date": "2022-03-11",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-03eebe62",
+      "text": "The deductible had not been met at the time of service",
+      "kind": "factual",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The evidence provided does not specify whether the service in question was a preventive service covered under Section 3.6 or if the deductible had been met at the time of service. Sections 3.1 and 3.7 discuss the general deductible requirement but do not address the specific sub-claim regarding the status of the deductible at the time of a particular service.",
+      "citations": [
+        {
+          "chunk_id": "p-3-6",
+          "locator": "Section 3.6",
+          "quote": "Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices.",
+          "supports": "no",
+          "span": {
+            "start": 21,
+            "end": 273,
+            "text": "Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices."
+          }
+        },
+        {
+          "chunk_id": "p-3-1",
+          "locator": "Section 3.1",
+          "quote": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.",
+          "supports": "no",
+          "span": {
+            "start": 0,
+            "end": 173,
+            "text": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits."
+          }
+        },
+        {
+          "chunk_id": "p-3-7",
+          "locator": "Section 3.7",
+          "quote": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening.",
+          "supports": "no",
+          "span": {
+            "start": 0,
+            "end": 168,
+            "text": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening."
+          }
+        }
+      ],
+      "source_span": null,
+      "critique_notes": null,
+      "draft_rationale": "The evidence provided does not specify whether the service in question was a preventive service covered under Section 3.6 or if the deductible had been met at the time of service. Sections 3.1 and 3.7 discuss the general deductible requirement but do not address the specific sub-claim regarding the status of the deductible at the time of a particular service."
+    },
+    {
+      "id": "sc-ba47fcb4",
+      "text": "The amount shown is the member's responsibility under Section 3.1 of your Certificate of Coverage",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The evidence provided does not contain any information regarding the specific sub-claim that the amount shown is the member's responsibility under Section 3.1 of the Certificate of Coverage. While Sections 3.6 and 3.7 provide details about preventive services, they do not address the member's financial responsibility for a screening colonoscopy as per Section 3.1.",
+      "citations": [
+        {
+          "chunk_id": "p-3-1",
+          "locator": "Section 3.1",
+          "quote": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.",
+          "supports": "The chunk indicates that there is a deductible, but it does not specify the exact sub-claim about the amount being the member's responsibility.",
+          "span": {
+            "start": 0,
+            "end": 173,
+            "text": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits."
+          }
+        },
+        {
+          "chunk_id": "p-3-6",
+          "locator": "Section 3.6",
+          "quote": "Preventive Services. Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices.",
+          "supports": "This chunk supports that preventive services are generally covered without any member's financial responsibility.",
+          "span": {
+            "start": 0,
+            "end": 273,
+            "text": "Preventive Services. Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices."
+          }
+        },
+        {
+          "chunk_id": "p-3-7",
+          "locator": "Section 3.7",
+          "quote": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening.",
+          "supports": "This chunk indicates that a screening colonoscopy is a covered preventive service.",
+          "span": {
+            "start": 0,
+            "end": 168,
+            "text": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 256,
+        "end": 358,
+        "text": "and the amount shown is the member's responsibility under\nSection 3.1 of your Certificate of Coverage."
+      },
+      "critique_notes": null,
+      "draft_rationale": "The evidence provided does not contain any information regarding the specific sub-claim that the amount shown is the member's responsibility under Section 3.1 of the Certificate of Coverage. While Sections 3.6 and 3.7 provide details about preventive services, they do not address the member's financial responsibility for a screening colonoscopy as per Section 3.1."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-3-6",
+      "text": "Preventive Services. Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.6",
+      "score": 0.03252247488101534,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-3-1",
+      "text": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.1",
+      "score": 0.032266458495966696,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-3-7",
+      "text": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.7",
+      "score": 0.03200204813108039,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "clear_contradiction"
+}

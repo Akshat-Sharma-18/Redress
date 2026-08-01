@@ -1,0 +1,114 @@
+{
+  "case_id": "ca-oop-max-reached",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: November 9, 2023\nClaim: Specialist visit, November 2023\nReason Code: CO-R6\n\nYour claim has been processed with the applicable specialist copayment. Copayments apply to each\nspecialist visit under Section 3.2. Plan records show the member satisfied the annual\nout-of-pocket maximum on October 14, 2023.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Your claim has been processed with the applicable specialist copayment. Copayments apply to each specialist visit under Section 3.2. Plan records show the member satisfied the annual out-of-pocket maximum on October 14, 2023.",
+  "reason_code": null,
+  "denial_date": "2023-11-09",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-d8299c82",
+      "text": "Copayments apply to each specialist visit under Section 3.2.",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The evidence provided does not contain any information about whether the copayments apply in cases where the annual out-of-pocket maximum has been met. Section 3.2 mentions that copayments apply to each specialist office visit, but Section 3.9 discusses what happens after the out-of-pocket maximum is satisfied. Without additional evidence addressing this specific scenario, the finding cannot be made with certainty.",
+      "citations": [
+        {
+          "chunk_id": "p-3-2",
+          "locator": "Section 3.2",
+          "quote": "Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office\nvisit.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 100,
+            "text": "Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office\nvisit."
+          }
+        },
+        {
+          "chunk_id": "p-3-9",
+          "locator": "Section 3.9",
+          "quote": "Once a member satisfies the annual out-of-pocket maximum, covered services\nfor the remainder of the calendar year are paid at one hundred percent of the allowed amount. No\ndeductible, copayment, or coinsurance applies thereafter.",
+          "supports": "contradicted",
+          "span": {
+            "start": 23,
+            "end": 252,
+            "text": "Once a member satisfies the annual out-of-pocket maximum, covered services\nfor the remainder of the calendar year are paid at one hundred percent of the allowed amount. No\ndeductible, copayment, or coinsurance applies thereafter."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 205,
+        "end": 265,
+        "text": "Copayments apply to each\nspecialist visit under Section 3.2."
+      },
+      "critique_notes": null,
+      "draft_rationale": "The evidence provided does not contain any information about whether the copayments apply in cases where the annual out-of-pocket maximum has been met. Section 3.2 mentions that copayments apply to each specialist office visit, but Section 3.9 discusses what happens after the out-of-pocket maximum is satisfied. Without additional evidence addressing this specific scenario, the finding cannot be made with certainty."
+    },
+    {
+      "id": "sc-1737fe00",
+      "text": "Plan records show the member satisfied the annual out-of-pocket maximum on October 14, 2023.",
+      "kind": "factual",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The evidence provided does not contain any information about when the member satisfied the annual out-of-pocket maximum or whether they did so on October 14, 2023. Chunk p-3-9 describes what happens after the out-of-pocket maximum is met but does not confirm that it was met on the specified date. Chunk p-3-2 discusses copayments and is unrelated to the specific claim about the out-of-pocket maximum.",
+      "citations": [
+        {
+          "chunk_id": "p-3-9",
+          "locator": "Section 3.9",
+          "quote": "Out-of-Pocket Maximum. Once a member satisfies the annual out-of-pocket maximum, covered services\nfor the remainder of the calendar year are paid at one hundred percent of the allowed amount. No\ndeductible, copayment, or coinsurance applies thereafter.",
+          "supports": "describes what happens after the out-of-pocket maximum is met but does not confirm that it was met on October 14, 2023",
+          "span": {
+            "start": 0,
+            "end": 252,
+            "text": "Out-of-Pocket Maximum. Once a member satisfies the annual out-of-pocket maximum, covered services\nfor the remainder of the calendar year are paid at one hundred percent of the allowed amount. No\ndeductible, copayment, or coinsurance applies thereafter."
+          }
+        },
+        {
+          "chunk_id": "p-3-2",
+          "locator": "Section 3.2",
+          "quote": "Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office\nvisit.",
+          "supports": "unrelated to the specific claim about the out-of-pocket maximum",
+          "span": {
+            "start": 0,
+            "end": 100,
+            "text": "Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office\nvisit."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 266,
+        "end": 358,
+        "text": "Plan records show the member satisfied the annual\nout-of-pocket maximum on October 14, 2023."
+      },
+      "critique_notes": null,
+      "draft_rationale": "The evidence provided does not contain any information about when the member satisfied the annual out-of-pocket maximum or whether they did so on October 14, 2023. Chunk p-3-9 describes what happens after the out-of-pocket maximum is met but does not confirm that it was met on the specified date. Chunk p-3-2 discusses copayments and is unrelated to the specific claim about the out-of-pocket maximum."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-3-2",
+      "text": "Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office\nvisit.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.2",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-3-9",
+      "text": "Out-of-Pocket Maximum. Once a member satisfies the annual out-of-pocket maximum, covered services\nfor the remainder of the calendar year are paid at one hundred percent of the allowed amount. No\ndeductible, copayment, or coinsurance applies thereafter.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.9",
+      "score": 0.016129032258064516,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "mixed"
+}

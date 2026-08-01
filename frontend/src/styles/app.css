@@ -1,0 +1,545 @@
+/* Layout and surfaces.
+ *
+ * Three columns: the insurer's document, the system's reasoning, the
+ * evidence. Reading left to right follows the argument — what they claimed,
+ * what we concluded, what it rests on.
+ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* ---------------- top bar ---------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--ink-line);
+  flex: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand__mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, var(--citation-gold), #6d5423);
+  box-shadow: 0 0 18px rgba(201, 162, 75, 0.4);
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.brand__tag {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.case-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.case-picker__label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.case-picker select {
+  background: var(--ink-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+}
+
+/* ---------------- stage ---------------- */
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(300px, 0.85fr) minmax(320px, 1fr);
+  gap: 20px;
+  padding: 20px 22px 8px;
+}
+
+/* The beam overlay spans the whole stage and must never intercept clicks —
+ * it sits above both panels, and a stray pointer target here would make the
+ * document unselectable. */
+.beams {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.beam {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------- parchment ---------------- */
+
+.paper__header,
+.evidence__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+  flex: none;
+}
+
+.paper__kicker {
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.paper__meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.paper__sheet {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--parchment);
+  color: var(--parchment-ink);
+  border-radius: 2px;
+  box-shadow: var(--shadow-page);
+  padding: 26px 24px 30px;
+  /* Paper grain: two offset gradients at very low alpha. Enough to break the
+   * flat fill under a bright screen without becoming a visible texture. */
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(0, 0, 0, 0.028) 0 1px, transparent 1px),
+    radial-gradient(circle at 72% 62%, rgba(0, 0, 0, 0.022) 0 1px, transparent 1px);
+  background-size: 13px 13px, 19px 19px;
+}
+
+/* Torn top edge, drawn rather than imaged so it scales and costs nothing. */
+.paper__torn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7px;
+  background: var(--ink-navy);
+  -webkit-mask-image: repeating-linear-gradient(
+    95deg,
+    #000 0 6px,
+    transparent 6px 11px
+  );
+  mask-image: repeating-linear-gradient(95deg, #000 0 6px, transparent 6px 11px);
+  opacity: 0.5;
+}
+
+.paper__body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13.4px;
+  line-height: 1.78;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* A marked sentence is a button, so it is reachable by keyboard and
+ * announced with its finding. Styled to look like ink on the page rather
+ * than a control pasted over it. */
+.mark {
+  font: inherit;
+  color: inherit;
+  background: color-mix(in srgb, var(--mark) 15%, transparent);
+  border: none;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--mark) 60%, transparent);
+  padding: 1px 2px;
+  margin: 0 -1px;
+  cursor: pointer;
+  text-align: left;
+  white-space: pre-wrap;
+  transition: background 0.2s var(--ease-settle);
+}
+
+.mark:hover {
+  background: color-mix(in srgb, var(--mark) 26%, transparent);
+}
+
+.mark.is-active {
+  background: color-mix(in srgb, var(--mark) 34%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mark) 45%, transparent);
+}
+
+.mark:focus-visible,
+.claim:focus-visible,
+.case-picker select:focus-visible {
+  outline: 2px solid var(--citation-gold);
+  outline-offset: 2px;
+}
+
+/* ---------------- centre column ---------------- */
+
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+
+.stamp-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0 4px;
+  flex: none;
+}
+
+.stamp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 13px 26px 11px;
+  border: 2.5px solid var(--tone);
+  border-radius: 4px;
+  color: var(--tone);
+  /* Ink-impression feel: slightly transparent, softly blurred edge, and a
+   * faint inner wash so it reads as pigment soaked into paper rather than a
+   * crisp vector badge. */
+  opacity: 0.93;
+  background: color-mix(in srgb, var(--tone) 9%, transparent);
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--tone) 18%, transparent),
+    0 3px 16px rgba(0, 0, 0, 0.35);
+}
+
+.stamp__label {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+}
+
+.stamp__rule {
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.stamp__case {
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  opacity: 0.85;
+}
+
+.stamp__detail {
+  margin: 0;
+  max-width: 46ch;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+}
+
+/* ---------------- sub-claims ---------------- */
+
+.claims {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.claims__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.claim {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+  background: var(--ink-raised);
+  border: 1px solid var(--ink-line);
+  border-left: 3px solid var(--tone);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 11px 13px;
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.2s var(--ease-settle), transform 0.2s var(--ease-settle);
+}
+
+.claim:hover {
+  background: #16203442;
+  transform: translateX(1px);
+}
+
+.claim.is-active {
+  background: color-mix(in srgb, var(--tone) 11%, var(--ink-raised));
+  border-color: color-mix(in srgb, var(--tone) 40%, var(--ink-line));
+}
+
+.claim__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.claim__finding {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--tone);
+  letter-spacing: 0.02em;
+}
+
+.claim__kind {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.claim__text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.claim__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ink-line);
+}
+
+.claim__rationale {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.claim__cites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.cite {
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid color-mix(in srgb, var(--citation-gold) 40%, transparent);
+  color: var(--citation-gold);
+  background: rgba(201, 162, 75, 0.08);
+}
+
+.claim__critique {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  background: #0d1526;
+  border-radius: 2px;
+  padding: 6px 8px;
+}
+
+/* ---------------- evidence ---------------- */
+
+.evidence__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-right: 4px;
+}
+
+.evidence-card {
+  background: var(--ink-raised);
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius);
+  padding: 11px 13px;
+  box-shadow: var(--shadow-raised);
+}
+
+.evidence-card.is-cited {
+  border-color: color-mix(in srgb, var(--tone) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tone) 22%, transparent),
+    var(--shadow-raised);
+}
+
+.evidence-card__top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid var(--ink-line);
+  color: var(--text-secondary);
+}
+
+.chip--policy { color: #8fb6d9; border-color: #2b3f57; }
+.chip--statute { color: #b39ede; border-color: #3c3357; }
+.chip--precedent { color: var(--pending); border-color: #4a3a1c; }
+.chip--denial { color: var(--contradicted); border-color: #4d2430; }
+.chip--derived {
+  color: var(--text-muted);
+  border-style: dashed;
+}
+
+.evidence-card__locator {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+.evidence-card__text {
+  margin: 0;
+  font-size: 12.4px;
+  line-height: 1.62;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+/* The cited span, lit in gold — the same colour as the beam that arrives
+ * here, so the eye connects the two without being told to. */
+.quote {
+  background: rgba(201, 162, 75, 0.2);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--citation-gold);
+  padding: 1px 0;
+}
+
+.evidence-card__supports {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ---------------- footer ---------------- */
+
+.disclaimer {
+  flex: none;
+  padding: 9px 22px 13px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  border-top: 1px solid var(--ink-line);
+  text-align: center;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Narrow screens: stack, and drop the beam. Three columns folded into one
+ * makes every beam a near-vertical line between adjacent blocks, which
+ * communicates nothing and obscures the text it crosses. */
+@media (max-width: 1080px) {
+  .stage {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .beams {
+    display: none;
+  }
+  .paper__sheet,
+  .evidence__list {
+    max-height: 62vh;
+  }
+}
+
+/* Ground-truth indicator: the answer key beside the verdict. Styled as a
+ * quiet annotation, not an error state — a wrong run is information about
+ * the model, not a malfunction of the interface. */
+.truth {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 2px;
+  border: 1px dashed var(--ink-line);
+  color: var(--text-muted);
+  background: #0d152680;
+}
+
+.truth__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.truth--match { color: var(--verified); }
+.truth--miss { color: var(--pending); }
+
+.truth__cat {
+  font-size: 9.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  padding-left: 8px;
+  border-left: 1px solid var(--ink-line);
+}

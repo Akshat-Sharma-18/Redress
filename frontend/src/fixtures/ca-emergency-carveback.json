@@ -1,0 +1,103 @@
+{
+  "case_id": "ca-emergency-carveback",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: June 14, 2021\nMember: [REDACTED]\nClaim: Emergency department visit, date of service May 30, 2021\nReason Code: CO-A1\n\nWe have completed our review of the above claim. Benefits are not\navailable for this service. Section 7.2(a) of your Certificate of\nCoverage provides that the plan does not cover services rendered in a\nhospital emergency department. The charges submitted are therefore the\nmember's responsibility.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for this service.",
+  "reason_code": null,
+  "denial_date": "2021-06-14",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-c92100c0",
+      "text": "Section 7.2(a) of your Certificate of Coverage provides that the plan does not cover services rendered in a hospital emergency department.",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The draft verdict did not survive adversarial review, and no ruling is made. Professional review is recommended.",
+      "citations": [
+        {
+          "chunk_id": "p-7-2-a",
+          "locator": "Section 7.2(a)",
+          "quote": "Exclusions. This plan does not provide benefits for services rendered\nin a hospital emergency department.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 105,
+            "text": "Exclusions. This plan does not provide benefits for services rendered\nin a hospital emergency department."
+          }
+        },
+        {
+          "chunk_id": "p-7-2-b",
+          "locator": "Section 7.2(b)",
+          "quote": "Notwithstanding the foregoing, the exclusion in Section 7.2(a) does not\napply to emergency services required to evaluate or stabilize an\nemergency medical condition, as that term is defined in Section 1.9.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 205,
+            "text": "Notwithstanding the foregoing, the exclusion in Section 7.2(a) does not\napply to emergency services required to evaluate or stabilize an\nemergency medical condition, as that term is defined in Section 1.9."
+          }
+        },
+        {
+          "chunk_id": "p-1-9",
+          "locator": "Section 1.9",
+          "quote": "Emergency Medical Condition means a medical condition manifesting\nitself by acute symptoms of sufficient severity that a prudent\nlayperson would reasonably expect the absence of immediate medical\nattention to result in serious jeopardy to health.",
+          "supports": "insufficient",
+          "span": {
+            "start": 0,
+            "end": 246,
+            "text": "Emergency Medical Condition means a medical condition manifesting\nitself by acute symptoms of sufficient severity that a prudent\nlayperson would reasonably expect the absence of immediate medical\nattention to result in serious jeopardy to health."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 268,
+        "end": 406,
+        "text": "Section 7.2(a) of your Certificate of\nCoverage provides that the plan does not cover services rendered in a\nhospital emergency department."
+      },
+      "critique_notes": "critique rejected: The finding states that the sub-claim is 'mixed,' but the evidence provided does not clearly support this conclusion. Specifically, Section 7.2(a) explicitly excludes coverage for services rendered in a hospital emergency department, and Section 7.2(b) provides an exception only under certain conditions (emergency medical condition as defined). Without clear evidence that the policyholder's situation meets the definition of 'Emergency Medical Condition,' the sub-claim should be denied.",
+      "draft_rationale": "The evidence shows that Section 7.2(a) of the policy excludes coverage for services rendered in a hospital emergency department (p-7-2-a). However, Section 7.2(b) provides an exception to this exclusion, stating that the exclusion does not apply to emergency services required to evaluate or stabilize an emergency medical condition as defined in Section 1.9 (p-7-2-b). Since the definition of 'Emergency Medical Condition' is provided in Section 1.9 (p-1-9), and there is no evidence indicating that the policyholder's situation does not meet this definition, the sub-claim is mixed."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-7-2-a",
+      "text": "Exclusions. This plan does not provide benefits for services rendered\nin a hospital emergency department.\n",
+      "source_kind": "policy",
+      "locator": "Section 7.2(a)",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-7-2-b",
+      "text": "Notwithstanding the foregoing, the exclusion in Section 7.2(a) does not\napply to emergency services required to evaluate or stabilize an\nemergency medical condition, as that term is defined in Section 1.9.\n",
+      "source_kind": "policy",
+      "locator": "Section 7.2(b)",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-1-9",
+      "text": "Emergency Medical Condition means a medical condition manifesting\nitself by acute symptoms of sufficient severity that a prudent\nlayperson would reasonably expect the absence of immediate medical\nattention to result in serious jeopardy to health.\n",
+      "source_kind": "policy",
+      "locator": "Section 1.9",
+      "score": 0.031746031746031744,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-9-1",
+      "text": "Appeals. You may request an internal appeal of an adverse benefit\ndetermination within one hundred eighty days of receiving notice.\n",
+      "source_kind": "policy",
+      "locator": "Section 9.1",
+      "score": 0.03125,
+      "derived": false,
+      "cited": false
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "clear_contradiction"
+}

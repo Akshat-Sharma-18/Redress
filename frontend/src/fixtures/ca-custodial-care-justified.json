@@ -1,0 +1,137 @@
+{
+  "case_id": "ca-custodial-care-justified",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: February 3, 2022\nClaim: Home health aide services, 20 visits, January 2022\nReason Code: CO-B7\n\nBenefits are not available for the submitted services. The services\ndescribed in the submitted documentation consist of assistance with\nbathing, dressing, and meal preparation. Section 4.1 of your Certificate\nexcludes Custodial Care. Custodial Care is defined at Section 1.4.\n\nYou may request an internal appeal within 180 days.\n",
+  "denial_reason": "Benefits are not available for the submitted services.",
+  "reason_code": null,
+  "denial_date": "2022-02-03",
+  "disposition": "contradicted",
+  "confidence": "supported",
+  "tone": "contradicted",
+  "sub_claims": [
+    {
+      "id": "sc-f32eba92",
+      "text": "The services described in the submitted documentation consist of assistance with bathing, dressing, and meal preparation.",
+      "kind": "factual",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The policy explicitly states in Section 4.1 that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This directly contradicts the sub-claim that the services described consist of assistance with bathing, dressing, and meal preparation, which are defined as Custodial Care under Section 1.4.",
+      "citations": [
+        {
+          "chunk_id": "p-4-1",
+          "locator": "Section 4.1",
+          "quote": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it.",
+          "supports": "contradicts",
+          "span": {
+            "start": 0,
+            "end": 118,
+            "text": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it."
+          }
+        }
+      ],
+      "source_span": null,
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The policy explicitly states in Section 4.1 that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This directly contradicts the sub-claim that the services described consist of assistance with bathing, dressing, and meal preparation, which are defined as Custodial Care under Section 1.4."
+    },
+    {
+      "id": "sc-c4db4e4b",
+      "text": "Section 4.1 of your Certificate excludes Custodial Care.",
+      "kind": "legal",
+      "finding": "justified",
+      "confidence": "supported",
+      "tone": "verified",
+      "rationale": "Section 4.1 of the Certificate explicitly states that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This exclusion is further defined in Section 1.4, which provides a specific meaning to Custodial Care. There are no carve-backs or exceptions provided in the evidence that would contradict this sub-claim.",
+      "citations": [
+        {
+          "chunk_id": "p-4-1",
+          "locator": "Section 4.1",
+          "quote": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 118,
+            "text": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it."
+          }
+        },
+        {
+          "chunk_id": "p-1-4",
+          "locator": "Section 1.4",
+          "quote": "Custodial Care means assistance with activities of daily living,\nincluding bathing, dressing, eating, and meal preparation, that does\nnot require the skills of qualified technical or professional\npersonnel.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 206,
+            "text": "Custodial Care means assistance with activities of daily living,\nincluding bathing, dressing, eating, and meal preparation, that does\nnot require the skills of qualified technical or professional\npersonnel."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 329,
+        "end": 385,
+        "text": "Section 4.1 of your Certificate\nexcludes Custodial Care."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "Section 4.1 of the Certificate explicitly states that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This exclusion is further defined in Section 1.4, which provides a specific meaning to Custodial Care. There are no carve-backs or exceptions provided in the evidence that would contradict this sub-claim."
+    },
+    {
+      "id": "sc-085d710f",
+      "text": "Custodial Care is defined at Section 1.4.",
+      "kind": "legal",
+      "finding": "justified",
+      "confidence": "supported",
+      "tone": "verified",
+      "rationale": "The policy explicitly states in Section 4.1 that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This exclusion is clear and unambiguous.",
+      "citations": [
+        {
+          "chunk_id": "p-4-1",
+          "locator": "Section 4.1",
+          "quote": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 118,
+            "text": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 386,
+        "end": 427,
+        "text": "Custodial Care is defined at Section 1.4."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The policy explicitly states in Section 4.1 that this plan does not provide benefits for Custodial Care, regardless of where the care is furnished or who furnishes it. This exclusion is clear and unambiguous."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-1-4",
+      "text": "Custodial Care means assistance with activities of daily living,\nincluding bathing, dressing, eating, and meal preparation, that does\nnot require the skills of qualified technical or professional\npersonnel.\n",
+      "source_kind": "policy",
+      "locator": "Section 1.4",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-4-2",
+      "text": "Skilled Nursing Care furnished in the home is covered when ordered by\na physician and when the services require the skills of a licensed\nnurse.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.2",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": false
+    },
+    {
+      "id": "p-4-1",
+      "text": "This plan does not provide benefits for Custodial Care, regardless of\nwhere the care is furnished or who furnishes it.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.1",
+      "score": 0.031746031746031744,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "justified",
+  "category": "clear_justification"
+}

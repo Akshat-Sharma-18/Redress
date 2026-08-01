@@ -1,0 +1,94 @@
+{
+  "case_id": "ca-mh-parity-visit-limit",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: June 27, 2023\nClaim: Outpatient psychotherapy, sessions 21-24, June 2023\nReason Code: CO-G8\n\nBenefits are not available for the above sessions. Your plan provides twenty outpatient\nbehavioral health visits per calendar year under Section 6.9, and that limit has been reached.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for the above sessions. Your plan provides twenty outpatient behavioral health visits per calendar year under Section 6.9, and that limit has been reached.",
+  "reason_code": null,
+  "denial_date": "2023-06-27",
+  "disposition": "contradicted",
+  "confidence": "supported",
+  "tone": "contradicted",
+  "sub_claims": [
+    {
+      "id": "sc-ba9ee996",
+      "text": "Your plan provides twenty outpatient behavioral health visits per calendar year under Section 6.9, and that limit has been reached.",
+      "kind": "legal",
+      "finding": "mixed",
+      "confidence": "supported",
+      "tone": "contested",
+      "rationale": "The policy states that outpatient behavioral health visits are covered up to twenty visits per calendar year (p-6-9). However, Section 6.10 provides a carve-back stating that treatment limitations for mental health and substance use disorder benefits cannot be more restrictive than those applied to medical and surgical benefits. Since the visit limit does not apply to outpatient medical or surgical office visits (p-6-11), it is unclear if this carve-back applies specifically to behavioral health visits, but it suggests that such a limit might not stand in comparison with other types of covered services.",
+      "citations": [
+        {
+          "chunk_id": "p-6-9",
+          "locator": "Section 6.9",
+          "quote": "Outpatient behavioral health visits are covered up to twenty visits per calendar year.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 86,
+            "text": "Outpatient behavioral health visits are covered up to twenty visits per calendar year."
+          }
+        },
+        {
+          "chunk_id": "p-6-10",
+          "locator": "Section 6.10",
+          "quote": "Notwithstanding any visit limit stated in this Certificate, treatment limitations applied\nto mental health and substance use disorder benefits shall be no more restrictive than the\npredominant treatment limitations applied to substantially all medical and surgical benefits.\nWhere a stated behavioral health limit is more restrictive, the limit does not apply.",
+          "supports": "contradicted",
+          "span": {
+            "start": 8,
+            "end": 368,
+            "text": "Notwithstanding any visit limit stated in this Certificate, treatment limitations applied\nto mental health and substance use disorder benefits shall be no more restrictive than the\npredominant treatment limitations applied to substantially all medical and surgical benefits.\nWhere a stated behavioral health limit is more restrictive, the limit does not apply."
+          }
+        },
+        {
+          "chunk_id": "p-6-11",
+          "locator": "Section 6.11",
+          "quote": "No visit limit applies to outpatient medical or surgical office visits under this Certificate.",
+          "supports": "insufficient",
+          "span": {
+            "start": 0,
+            "end": 94,
+            "text": "No visit limit applies to outpatient medical or surgical office visits under this Certificate."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 201,
+        "end": 332,
+        "text": "Your plan provides twenty outpatient\nbehavioral health visits per calendar year under Section 6.9, and that limit has been reached."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The policy states that outpatient behavioral health visits are covered up to twenty visits per calendar year (p-6-9). However, Section 6.10 provides a carve-back stating that treatment limitations for mental health and substance use disorder benefits cannot be more restrictive than those applied to medical and surgical benefits. Since the visit limit does not apply to outpatient medical or surgical office visits (p-6-11), it is unclear if this carve-back applies specifically to behavioral health visits, but it suggests that such a limit might not stand in comparison with other types of covered services."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-6-9",
+      "text": "Outpatient behavioral health visits are covered up to twenty visits per calendar year.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.9",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-10",
+      "text": "Parity. Notwithstanding any visit limit stated in this Certificate, treatment limitations applied\nto mental health and substance use disorder benefits shall be no more restrictive than the\npredominant treatment limitations applied to substantially all medical and surgical benefits.\nWhere a stated behavioral health limit is more restrictive, the limit does not apply.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.10",
+      "score": 0.03200204813108039,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-11",
+      "text": "No visit limit applies to outpatient medical or surgical office visits under this Certificate.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.11",
+      "score": 0.03200204813108039,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "clear_contradiction"
+}

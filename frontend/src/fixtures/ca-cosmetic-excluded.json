@@ -1,0 +1,174 @@
+{
+  "case_id": "ca-cosmetic-excluded",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: April 19, 2022\nClaim: Rhinoplasty, April 2022\nReason Code: CO-K5\n\nBenefits are not available for the above procedure. The submitted documentation describes the\nprocedure as performed to improve appearance. There is no indication of functional impairment or\nof reconstruction following injury or surgery. Cosmetic procedures are excluded under\nSection 4.3.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for the above procedure. The submitted documentation describes the procedure as performed to improve appearance. There is no indication of functional impairment or of reconstruction following injury or surgery. Cosmetic procedures are excluded under Section 4.3.",
+  "reason_code": null,
+  "denial_date": "2022-04-19",
+  "disposition": "contradicted",
+  "confidence": "supported",
+  "tone": "contradicted",
+  "sub_claims": [
+    {
+      "id": "sc-ea68573c",
+      "text": "The submitted documentation describes the procedure as performed to improve appearance.",
+      "kind": "factual",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The policy explicitly states in Section 4.3 that the plan does not provide benefits for cosmetic surgery, defining it as a procedure performed principally to improve appearance and not to restore bodily function (p-4-3). Additionally, Section 4.4 clarifies that reconstructive surgery to restore function is not considered cosmetic surgery (p-4-4). The sub-claim that the submitted documentation describes the procedure as performed to improve appearance directly contradicts these policy provisions.",
+      "citations": [
+        {
+          "chunk_id": "p-4-3",
+          "locator": "Section 4.3",
+          "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 172,
+            "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function."
+          }
+        },
+        {
+          "chunk_id": "p-4-4",
+          "locator": "Section 4.4",
+          "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 160,
+            "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 175,
+        "end": 262,
+        "text": "The submitted documentation describes the\nprocedure as performed to improve appearance."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The policy explicitly states in Section 4.3 that the plan does not provide benefits for cosmetic surgery, defining it as a procedure performed principally to improve appearance and not to restore bodily function (p-4-3). Additionally, Section 4.4 clarifies that reconstructive surgery to restore function is not considered cosmetic surgery (p-4-4). The sub-claim that the submitted documentation describes the procedure as performed to improve appearance directly contradicts these policy provisions."
+    },
+    {
+      "id": "sc-ffc40ca4",
+      "text": "There is no indication of functional impairment or of reconstruction following injury or surgery.",
+      "kind": "factual",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The provided evidence does not explicitly address whether there was functional impairment or reconstruction following injury or surgery. While Sections 4.3 and 4.4 discuss the distinction between cosmetic and reconstructive surgery, they do not provide information on the presence of functional impairment or reconstruction in this specific case.",
+      "citations": [
+        {
+          "chunk_id": "p-4-4",
+          "locator": "Section 4.4",
+          "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
+          "supports": "No",
+          "span": {
+            "start": 0,
+            "end": 160,
+            "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3."
+          }
+        },
+        {
+          "chunk_id": "p-4-3",
+          "locator": "Section 4.3",
+          "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
+          "supports": "No",
+          "span": {
+            "start": 0,
+            "end": 172,
+            "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function."
+          }
+        },
+        {
+          "chunk_id": "p-6-2",
+          "locator": "Section 6.2",
+          "quote": "Surgical services are covered when Medically Necessary and furnished by a participating\nprovider.",
+          "supports": "No",
+          "span": {
+            "start": 0,
+            "end": 97,
+            "text": "Surgical services are covered when Medically Necessary and furnished by a participating\nprovider."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 263,
+        "end": 360,
+        "text": "There is no indication of functional impairment or\nof reconstruction following injury or surgery."
+      },
+      "critique_notes": null,
+      "draft_rationale": "The provided evidence does not explicitly address whether there was functional impairment or reconstruction following injury or surgery. While Sections 4.3 and 4.4 discuss the distinction between cosmetic and reconstructive surgery, they do not provide information on the presence of functional impairment or reconstruction in this specific case."
+    },
+    {
+      "id": "sc-857180c8",
+      "text": "Cosmetic procedures are excluded under Section 4.3.",
+      "kind": "legal",
+      "finding": "mixed",
+      "confidence": "supported",
+      "tone": "contested",
+      "rationale": "The policy explicitly excludes benefits for cosmetic surgery under Section 4.3 (p-4-3). However, Section 4.4 (p-4-4) clarifies that reconstructive surgery to restore function is not considered cosmetic surgery and would be covered. Therefore, the evidence cuts both ways on whether a specific cosmetic procedure in question would be excluded or not.",
+      "citations": [
+        {
+          "chunk_id": "p-4-3",
+          "locator": "Section 4.3",
+          "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 172,
+            "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function."
+          }
+        },
+        {
+          "chunk_id": "p-4-4",
+          "locator": "Section 4.4",
+          "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 160,
+            "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 361,
+        "end": 412,
+        "text": "Cosmetic procedures are excluded under\nSection 4.3."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The policy explicitly excludes benefits for cosmetic surgery under Section 4.3 (p-4-3). However, Section 4.4 (p-4-4) clarifies that reconstructive surgery to restore function is not considered cosmetic surgery and would be covered. Therefore, the evidence cuts both ways on whether a specific cosmetic procedure in question would be excluded or not."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-4-3",
+      "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.3",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-4-4",
+      "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.\n",
+      "source_kind": "policy",
+      "locator": "Section 4.4",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-2",
+      "text": "Surgical services are covered when Medically Necessary and furnished by a participating\nprovider.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.2",
+      "score": 0.015873015873015872,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "justified",
+  "category": "clear_justification"
+}

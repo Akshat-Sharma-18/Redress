@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 
 from app.agents.llm import StructuredLLM
+from app.agents.reconciliation import find_verbatim_span
 from app.agents.schemas import Decomposition
 from app.core.models import SubClaim
 
@@ -41,6 +42,10 @@ not supply citations the letter does not contain.
 - Copy the denial date exactly as the letter writes it. Do not reformat or \
 convert it. If the letter states no date, leave it null — never infer one \
 from context.
+- For each sub-claim, copy the sentence from the letter it came from into \
+source_quote, character for character. This is used to point back at the \
+insurer's own words on the page, so an approximate quote is worse than none \
+— leave it empty if you cannot copy one exactly.
 - Quote the denial reason verbatim where possible. You are extracting, not \
 summarizing."""
 
@@ -100,6 +105,35 @@ class DecompositionAgent:
     def __init__(self, llm: StructuredLLM):
         self.llm = llm
 
+    @staticmethod
+    def _anchor(claim, letter: str) -> SubClaim:
+        """Resolve the sub-claim's source quote to a span in the letter.
+
+        Reuses the citation matcher, so the same whitespace-tolerant,
+        otherwise-strict rule applies: a model that re-wraps a sentence still
+        anchors, a model that paraphrases does not. A failed match yields a
+        sub-claim with no span rather than a wrong one, since a highlight
+        over the wrong sentence is worse than no highlight.
+        """
+        start = end = None
+        quote = None
+        if claim.source_quote:
+            span = find_verbatim_span(claim.source_quote, letter)
+            if span:
+                idx = letter.find(span)
+                if idx >= 0:
+                    quote, start, end = span, idx, idx + len(span)
+
+        return SubClaim(
+            id=f"sc-{uuid.uuid4().hex[:8]}",
+            text=claim.text,
+            kind=claim.kind if claim.kind in ("factual", "legal") else "legal",
+            cited_by_insurer=claim.cited_by_insurer,
+            source_quote=quote,
+            source_start=start,
+            source_end=end,
+        )
+
     def decompose(self, denial_letter_text: str) -> DecomposedDenial:
         result = self.llm.generate(
             system=DECOMPOSITION_SYSTEM,
@@ -115,12 +149,7 @@ class DecompositionAgent:
         denial_date = parse_denial_date(result.denial.denial_date)
 
         sub_claims = [
-            SubClaim(
-                id=f"sc-{uuid.uuid4().hex[:8]}",
-                text=claim.text,
-                kind=claim.kind if claim.kind in ("factual", "legal") else "legal",
-                cited_by_insurer=claim.cited_by_insurer,
-            )
+            self._anchor(claim, denial_letter_text)
             for claim in result.sub_claims
         ]
 

@@ -1,0 +1,74 @@
+{
+  "case_id": "ca-experimental-on-label",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: September 14, 2023\nClaim: Infusion therapy, August 2023\nReason Code: CO-D9\n\nBenefits are not available for the above service. The therapy is considered experimental or\ninvestigational and is excluded under Section 6.1 of your Certificate of Coverage. The submitted\ndocumentation shows the drug is FDA-approved and was administered for the indication stated on\nits labeling.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for the above service. The therapy is considered experimental or investigational and is excluded under Section 6.1 of your Certificate of Coverage.",
+  "reason_code": null,
+  "denial_date": "2023-09-14",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-712db22c",
+      "text": "The therapy is considered experimental or investigational and is excluded under Section 6.1 of your Certificate of Coverage.",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The draft verdict did not survive adversarial review, and no ruling is made. Professional review is recommended.",
+      "citations": [
+        {
+          "chunk_id": "p-6-1",
+          "locator": "Section 6.1",
+          "quote": "This plan does not provide benefits for services, drugs, or devices that are Experimental or\nInvestigational for the condition being treated.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 141,
+            "text": "This plan does not provide benefits for services, drugs, or devices that are Experimental or\nInvestigational for the condition being treated."
+          }
+        },
+        {
+          "chunk_id": "p-6-3",
+          "locator": "Section 6.3",
+          "quote": "A drug or biological that has received approval from the United States Food and Drug\nAdministration and is administered consistent with its labeled indications is not Experimental\nor Investigational for purposes of Section 6.1.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 227,
+            "text": "A drug or biological that has received approval from the United States Food and Drug\nAdministration and is administered consistent with its labeled indications is not Experimental\nor Investigational for purposes of Section 6.1."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 183,
+        "end": 307,
+        "text": "The therapy is considered experimental or\ninvestigational and is excluded under Section 6.1 of your Certificate of Coverage."
+      },
+      "critique_notes": "critique rejected: ",
+      "draft_rationale": "The policy explicitly excludes benefits for experimental or investigational services (Section 6.1). However, Section 6.3 provides an exception to this exclusion by stating that a drug or biological approved by the United States Food and Drug Administration and administered consistent with its labeled indications is not considered Experimental or Investigational. Therefore, the evidence cuts both ways."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-6-3",
+      "text": "A drug or biological that has received approval from the United States Food and Drug\nAdministration and is administered consistent with its labeled indications is not Experimental\nor Investigational for purposes of Section 6.1.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.3",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-1",
+      "text": "This plan does not provide benefits for services, drugs, or devices that are Experimental or\nInvestigational for the condition being treated.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.1",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "clear_contradiction"
+}

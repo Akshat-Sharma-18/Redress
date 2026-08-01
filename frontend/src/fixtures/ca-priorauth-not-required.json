@@ -1,0 +1,74 @@
+{
+  "case_id": "ca-priorauth-not-required",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: May 30, 2022\nClaim: Diagnostic mammogram, May 2022\nReason Code: CO-197\n\nBenefits are not available for the above service. Prior authorization was required and was not\nobtained. Please refer to Section 3.3 of your Certificate of Coverage.\n\nYou may request an internal appeal within 180 days of this notice.\n",
+  "denial_reason": "Benefits are not available for the above service. Prior authorization was required and was not obtained.",
+  "reason_code": null,
+  "denial_date": "2022-05-30",
+  "disposition": "insufficient",
+  "confidence": "insufficient_evidence",
+  "tone": "pending",
+  "sub_claims": [
+    {
+      "id": "sc-3d7e3465",
+      "text": "Prior authorization was required and was not obtained.",
+      "kind": "factual",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "While Section 3.3 of your Certificate of Coverage states that certain services require prior authorization before they are rendered, it does not specify which services fall under this requirement. Additionally, Section 3.4 lists several services that do not require prior authorization. Without more specific information about the service in question, it is insufficient to determine whether prior authorization was required and if it was obtained.",
+      "citations": [
+        {
+          "chunk_id": "p-3-3",
+          "locator": "Section 3.3",
+          "quote": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 166,
+            "text": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained."
+          }
+        },
+        {
+          "chunk_id": "p-3-4",
+          "locator": "Section 3.4",
+          "quote": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 198,
+            "text": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 179,
+        "end": 233,
+        "text": "Prior authorization was required and was not\nobtained."
+      },
+      "critique_notes": null,
+      "draft_rationale": "While Section 3.3 of your Certificate of Coverage states that certain services require prior authorization before they are rendered, it does not specify which services fall under this requirement. Additionally, Section 3.4 lists several services that do not require prior authorization. Without more specific information about the service in question, it is insufficient to determine whether prior authorization was required and if it was obtained."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-3-3",
+      "text": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.3",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-3-4",
+      "text": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.4",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": true
+    }
+  ],
+  "expected_disposition": "contradicted",
+  "category": "clear_contradiction"
+}

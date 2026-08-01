@@ -59,6 +59,14 @@ class DecomposedClaim(BaseModel):
             "of evidence. Never combine two checkable statements."
         )
     )
+    source_quote: str = Field(
+        default="",
+        description=(
+            "The sentence from the denial letter this sub-claim was drawn "
+            "from, copied VERBATIM. Used to point back at the exact text the "
+            "insurer wrote, so leave it empty rather than paraphrasing."
+        ),
+    )
     kind: str = Field(
         description=(
             "'factual' if verifiable against documents/records (dates, codes, "

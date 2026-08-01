@@ -1,0 +1,121 @@
+{
+  "case_id": "ca-competing-clauses",
+  "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: April 20, 2023\nClaim: Infusion therapy, March 2023\nReason Code: CO-D9\n\nBenefits are not available for the above service. The therapy submitted\nis considered experimental or investigational for the diagnosis reported\non the claim, and is excluded under Section 6.1 of your Certificate of\nCoverage.\n\nYou may request an internal appeal within 180 days.\n",
+  "denial_reason": "Benefits are not available for the above service. The therapy submitted is considered experimental or investigational for the diagnosis reported on the claim, and is excluded under Section 6.1 of your Certificate of Coverage.",
+  "reason_code": null,
+  "denial_date": "2023-04-20",
+  "disposition": "justified",
+  "confidence": "supported",
+  "tone": "verified",
+  "sub_claims": [
+    {
+      "id": "sc-d7a8f773",
+      "text": "The therapy submitted is considered experimental or investigational for the diagnosis reported on the claim",
+      "kind": "factual",
+      "finding": "justified",
+      "confidence": "supported",
+      "tone": "verified",
+      "rationale": "According to Section 6.1 of the policy, 'This plan does not provide benefits for services, drugs, or devices that are Experimental or Investigational for the condition being treated.' This directly supports the insurer's sub-claim that the therapy submitted is considered experimental or investigational for the diagnosis reported on the claim.",
+      "citations": [
+        {
+          "chunk_id": "p-6-1",
+          "locator": "Section 6.1",
+          "quote": "This plan does not provide benefits for services, drugs, or devices\nthat are Experimental or Investigational for the condition being\ntreated.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 141,
+            "text": "This plan does not provide benefits for services, drugs, or devices\nthat are Experimental or Investigational for the condition being\ntreated."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 178,
+        "end": 353,
+        "text": "The therapy submitted\nis considered experimental or investigational for the diagnosis reported\non the claim, and is excluded under Section 6.1 of your Certificate of\nCoverage."
+      },
+      "critique_notes": "critique: approved",
+      "draft_rationale": "According to Section 6.1 of the policy, 'This plan does not provide benefits for services, drugs, or devices that are Experimental or Investigational for the condition being treated.' This directly supports the insurer's sub-claim that the therapy submitted is considered experimental or investigational for the diagnosis reported on the claim."
+    },
+    {
+      "id": "sc-beeddfde",
+      "text": "The service is excluded under Section 6.1 of your Certificate of Coverage",
+      "kind": "legal",
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The draft verdict did not survive adversarial review, and no ruling is made. Professional review is recommended.",
+      "citations": [
+        {
+          "chunk_id": "p-6-1",
+          "locator": "Section 6.1",
+          "quote": "This plan does not provide benefits for services, drugs, or devices\nthat are Experimental or Investigational for the condition being\ntreated.",
+          "supports": "justified",
+          "span": {
+            "start": 0,
+            "end": 141,
+            "text": "This plan does not provide benefits for services, drugs, or devices\nthat are Experimental or Investigational for the condition being\ntreated."
+          }
+        },
+        {
+          "chunk_id": "p-6-3",
+          "locator": "Section 6.3",
+          "quote": "Benefits are provided for drugs and biologicals that have received\napproval from the United States Food and Drug Administration and are\nadministered consistent with their labeled indications.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 191,
+            "text": "Benefits are provided for drugs and biologicals that have received\napproval from the United States Food and Drug Administration and are\nadministered consistent with their labeled indications."
+          }
+        }
+      ],
+      "source_span": {
+        "start": 178,
+        "end": 353,
+        "text": "The therapy submitted\nis considered experimental or investigational for the diagnosis reported\non the claim, and is excluded under Section 6.1 of your Certificate of\nCoverage."
+      },
+      "critique_notes": "critique rejected: ",
+      "draft_rationale": "Section 6.1 of the policy excludes benefits for services, drugs, or devices that are Experimental or Investigational for the condition being treated. However, Section 6.3 indicates that benefits are provided for drugs and biologicals that have received approval from the United States Food and Drug Administration (FDA) and are administered consistent with their labeled indications. This suggests that if a drug is FDA-approved, it would not be considered Experimental or Investigational under this policy."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "p-6-2",
+      "text": "Experimental or Investigational means a drug, device, or treatment\nthat is not recognized as safe and effective for the condition being\ntreated in accordance with generally accepted standards of medical\npractice.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.2",
+      "score": 0.03278688524590164,
+      "derived": false,
+      "cited": false
+    },
+    {
+      "id": "p-6-1",
+      "text": "This plan does not provide benefits for services, drugs, or devices\nthat are Experimental or Investigational for the condition being\ntreated.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.1",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-3",
+      "text": "Benefits are provided for drugs and biologicals that have received\napproval from the United States Food and Drug Administration and are\nadministered consistent with their labeled indications.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.3",
+      "score": 0.03149801587301587,
+      "derived": false,
+      "cited": true
+    },
+    {
+      "id": "p-6-4",
+      "text": "The plan maintains a formulary of covered drugs and biologicals. The\nformulary is reviewed quarterly by the pharmacy and therapeutics\ncommittee.\n",
+      "source_kind": "policy",
+      "locator": "Section 6.4",
+      "score": 0.03149801587301587,
+      "derived": false,
+      "cited": false
+    }
+  ],
+  "expected_disposition": "insufficient",
+  "category": "ambiguous"
+}

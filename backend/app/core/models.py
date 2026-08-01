@@ -93,12 +93,22 @@ class SubClaim(BaseModel):
     The decomposition agent splits "denied as not medically necessary given
     the pre-existing condition exclusion" into separate factual and legal
     sub-claims, because they are verified against different evidence.
+
+    `source_start`/`source_end` locate the sentence the sub-claim came from
+    in the original letter. The sub-claim's own `text` is the model's
+    paraphrase and exists nowhere on the page, so it cannot be highlighted;
+    the resolved span can. Both are None when the model did not return a
+    quote that appears in the letter — an unanchored sub-claim is still a
+    valid sub-claim, it just cannot be pointed at.
     """
 
     id: str
     text: str
     kind: str  # "factual" | "legal"
     cited_by_insurer: str | None = None
+    source_quote: str | None = None
+    source_start: int | None = None
+    source_end: int | None = None
 
 
 class Confidence(str, Enum):
