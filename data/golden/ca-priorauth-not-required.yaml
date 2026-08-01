@@ -1,0 +1,36 @@
+id: ca-priorauth-not-required
+name: Prior authorization denial for a service the policy lists as exempt
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-05-30'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: May 30, 2022
+  Claim: Diagnostic mammogram, May 2022
+  Reason Code: CO-197
+
+  Benefits are not available for the above service. Prior authorization was required and was not
+  obtained. Please refer to Section 3.3 of your Certificate of Coverage.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-3
+  locator: Section 3.3
+  source_kind: policy
+  text: |
+    Prior Authorization. Certain services require prior authorization before they are rendered.
+    Benefits may be denied where required prior authorization is not obtained.
+- id: p-3-4
+  locator: Section 3.4
+  source_kind: policy
+  text: |
+    The following services do not require prior authorization: emergency services, urgent care,
+    diagnostic imaging of the breast, routine prenatal care, and preventive services described in
+    Section 3.6.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-3-4

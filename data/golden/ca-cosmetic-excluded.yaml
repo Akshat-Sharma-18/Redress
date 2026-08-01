@@ -1,0 +1,43 @@
+id: ca-cosmetic-excluded
+name: Cosmetic procedure correctly excluded
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-04-19'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: April 19, 2022
+  Claim: Rhinoplasty, April 2022
+  Reason Code: CO-K5
+
+  Benefits are not available for the above procedure. The submitted documentation describes the
+  procedure as performed to improve appearance. There is no indication of functional impairment or
+  of reconstruction following injury or surgery. Cosmetic procedures are excluded under
+  Section 4.3.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-4-3
+  locator: Section 4.3
+  source_kind: policy
+  text: |
+    This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure
+    performed principally to improve appearance and not to restore bodily function.
+- id: p-4-4
+  locator: Section 4.4
+  source_kind: policy
+  text: |
+    Reconstructive surgery to restore function following injury, infection, disease, or a prior
+    covered surgery is not cosmetic surgery for purposes of Section 4.3.
+- id: p-6-2
+  locator: Section 6.2
+  source_kind: policy
+  text: |
+    Surgical services are covered when Medically Necessary and furnished by a participating
+    provider.
+expected:
+  overall: justified
+  must_cite:
+  - p-4-3

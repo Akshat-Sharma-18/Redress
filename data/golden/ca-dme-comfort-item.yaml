@@ -1,0 +1,38 @@
+id: ca-dme-comfort-item
+name: Comfort/convenience item correctly excluded from DME
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-10-03'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: October 3, 2023
+  Claim: Air conditioning unit, prescribed September 2023
+  Reason Code: CO-N1
+
+  Benefits are not available for the above item. Although prescribed by a physician, the item is
+  not primarily medical in nature and is usable by a person without an illness or injury. It is
+  excluded under Section 6.7.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-6-6
+  locator: Section 6.6
+  source_kind: policy
+  text: |
+    Durable Medical Equipment. Equipment that can withstand repeated use, is primarily and
+    customarily used to serve a medical purpose, and is not generally useful to a person in the
+    absence of illness or injury is covered when prescribed.
+- id: p-6-7
+  locator: Section 6.7
+  source_kind: policy
+  text: |
+    This plan does not provide benefits for comfort or convenience items, including air conditioners,
+    air purifiers, humidifiers, exercise equipment, and whirlpool baths, whether or not prescribed by
+    a physician.
+expected:
+  overall: justified
+  must_cite:
+  - p-6-7

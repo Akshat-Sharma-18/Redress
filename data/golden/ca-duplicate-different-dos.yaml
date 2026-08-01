@@ -1,0 +1,35 @@
+id: ca-duplicate-different-dos
+name: Denied as duplicate where the two claims have different dates of service
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-08-15'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: August 15, 2022
+  Claim: Physical therapy, date of service July 19, 2022
+  Reason Code: CO-18
+
+  This claim has been denied as a duplicate of a claim previously processed for date of service
+  July 12, 2022. Duplicate claims are not eligible for separate payment under Section 8.6.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-8-6
+  locator: Section 8.6
+  source_kind: policy
+  text: |
+    Duplicate Claims. A claim for the same service furnished to the same member on the same date
+    of service by the same provider will be treated as a duplicate and denied.
+- id: p-6-4
+  locator: Section 6.4
+  source_kind: policy
+  text: |
+    Outpatient physical therapy is covered when furnished pursuant to a written treatment plan.
+    Each visit is a separately payable service.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-8-6

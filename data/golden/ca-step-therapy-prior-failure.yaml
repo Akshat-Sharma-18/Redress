@@ -1,0 +1,38 @@
+id: ca-step-therapy-prior-failure
+name: Step therapy enforced although the policy exempts documented prior failure
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-02-08'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: February 8, 2023
+  Claim: Prescription, brand-name biologic, February 2023
+  Reason Code: CO-H1
+
+  Benefits are not available for the requested medication. Our records show that you have not
+  tried the preferred formulary alternative. Section 10.3 requires a trial of the preferred agent
+  before the requested agent is covered. Submitted documentation indicates a prior trial of the
+  preferred agent in 2021 that was discontinued for lack of response.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-10-3
+  locator: Section 10.3
+  source_kind: policy
+  text: |
+    Step Therapy. Certain medications require a documented trial of a preferred formulary
+    alternative before the requested medication is covered.
+- id: p-10-4
+  locator: Section 10.4
+  source_kind: policy
+  text: |
+    Step therapy under Section 10.3 does not apply where the member has previously tried the
+    preferred alternative and that trial was discontinued for lack of therapeutic response or
+    adverse effect, whether or not the trial occurred under this plan.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-10-4

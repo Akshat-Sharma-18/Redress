@@ -1,0 +1,43 @@
+id: ca-priorauth-genuinely-required
+name: Prior authorization denial for a service that is on the required list
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-10-11'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: October 11, 2022
+  Claim: Elective spinal fusion, September 2022
+  Reason Code: CO-197
+
+  Benefits are not available for the above service. Prior authorization was required and was not
+  requested before the procedure. Section 3.5 lists elective inpatient surgery among the services
+  requiring authorization.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-3
+  locator: Section 3.3
+  source_kind: policy
+  text: |
+    Prior Authorization. Certain services require prior authorization before they are rendered.
+    Benefits may be denied where required prior authorization is not obtained.
+- id: p-3-4
+  locator: Section 3.4
+  source_kind: policy
+  text: |
+    The following services do not require prior authorization: emergency services, urgent care,
+    diagnostic imaging of the breast, routine prenatal care, and preventive services.
+- id: p-3-5
+  locator: Section 3.5
+  source_kind: policy
+  text: |
+    The following services require prior authorization: elective inpatient surgery, non-emergency
+    inpatient admission, durable medical equipment over one thousand dollars, and outpatient
+    advanced imaging.
+expected:
+  overall: justified
+  must_cite:
+  - p-3-5

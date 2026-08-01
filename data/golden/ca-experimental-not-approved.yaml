@@ -1,0 +1,43 @@
+id: ca-experimental-not-approved
+name: Experimental exclusion applied to a drug with no FDA approval
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-07-25'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: July 25, 2023
+  Claim: Investigational compound, administered July 2023
+  Reason Code: CO-D9
+
+  Benefits are not available for the above service. The compound administered has not received
+  approval from the United States Food and Drug Administration for any indication and is available
+  only through an ongoing clinical trial. It is excluded under Section 6.1.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-6-1
+  locator: Section 6.1
+  source_kind: policy
+  text: |
+    This plan does not provide benefits for services, drugs, or devices that are Experimental or
+    Investigational for the condition being treated.
+- id: p-6-3
+  locator: Section 6.3
+  source_kind: policy
+  text: |
+    A drug or biological that has received approval from the United States Food and Drug
+    Administration and is administered consistent with its labeled indications is not Experimental
+    or Investigational for purposes of Section 6.1.
+- id: p-6-5
+  locator: Section 6.5
+  source_kind: policy
+  text: |
+    Routine patient costs associated with participation in an approved clinical trial are covered.
+    The investigational item or service being studied is not covered.
+expected:
+  overall: justified
+  must_cite:
+  - p-6-1

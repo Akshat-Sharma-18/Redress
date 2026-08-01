@@ -1,0 +1,37 @@
+id: ca-cob-no-other-coverage
+name: Denied as secondary payer although the member has no other coverage
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-04-05'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: April 5, 2023
+  Claim: Inpatient admission, March 2023
+  Reason Code: CO-22
+
+  This claim has been denied pending payment by your primary carrier. Our records indicate you may
+  have other coverage. Under Section 9.5, this plan pays as secondary where other coverage exists.
+  The member's completed coordination of benefits questionnaire, received March 30, 2023, states
+  that no other health coverage is in force.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-9-5
+  locator: Section 9.5
+  source_kind: policy
+  text: |
+    Coordination of Benefits. Where a member is covered by more than one plan, this plan coordinates
+    benefits and may pay as the secondary payer.
+- id: p-9-6
+  locator: Section 9.6
+  source_kind: policy
+  text: |
+    Where the member has no other health coverage, this plan is the primary payer and benefits are
+    determined without regard to Section 9.5.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-9-6

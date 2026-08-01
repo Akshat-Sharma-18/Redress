@@ -1,0 +1,37 @@
+id: ca-bundling-plus-modifier
+name: Bundling denial correct in principle but a modifier exception applies
+category: mixed
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-02-21'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: February 21, 2023
+  Claim: Two surgical procedures, same session, February 2023
+  Reason Code: CO-97
+
+  The secondary procedure has been denied as incidental to the primary procedure and is not
+  separately payable under Section 8.9. The submitted claim reports the secondary procedure at a
+  distinct anatomic site.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-8-9
+  locator: Section 8.9
+  source_kind: policy
+  text: |
+    Bundled Services. A procedure that is incidental to, or a component of, a primary procedure
+    performed in the same operative session is not separately payable.
+- id: p-8-10
+  locator: Section 8.10
+  source_kind: policy
+  text: |
+    Section 8.9 does not apply where the secondary procedure is performed at a distinct anatomic site
+    or during a separate operative session. Such procedures are separately payable subject to
+    multiple procedure reduction.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-8-10

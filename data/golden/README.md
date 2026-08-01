@@ -35,20 +35,57 @@ If yes → the decisive label is right. If the answer needs an interpretive
 canon, an absent clinical record, or an argument about burden of proof →
 `ambiguous` is right.
 
-Two cases here are a deliberate discriminating pair:
+## Discriminating pairs
 
-- `ca-emergency-carveback` — clauses conflict, but one explicitly limits the
-  other. Retrievable. Decisive.
-- `ca-competing-clauses` — clauses conflict with nothing subordinating
-  either. Resolving it needs a legal canon. Ambiguous.
+The set is built around **near-miss pairs**: cases that look alike and have
+opposite correct answers. A system can score well on a set of easy cases by
+pattern-matching surface features; these pairs are what force it to actually
+read the governing clause.
 
-A system that treats these the same is either over-cautious or overconfident.
-Telling them apart is the capability being measured.
+| Decisive case | Ambiguous twin | What separates them |
+|---|---|---|
+| `ca-emergency-carveback` | `ca-competing-clauses` | One clause explicitly limits the other ("notwithstanding") vs. two clauses conflicting with nothing subordinating either |
+| `ca-custodial-care-justified` | `ca-boundary-defined-term` | Same definition, same exclusion — but facts squarely inside the definition vs. facts on its boundary |
+| `ca-timely-filing-genuinely-late` | `ca-timeline-unresolved` | Seven months past a 12-month window vs. a one-day margin turning on an unrecorded receipt date |
+| `ca-experimental-on-label` | *(none — see notes)* | FDA-approved on-label vs. no approval at all; both decisive |
 
-## Coverage status
+Also paired within the decisive set: `ca-timely-filing` (inside the window)
+against `ca-timely-filing-genuinely-late`, and `ca-priorauth-not-required`
+against `ca-priorauth-genuinely-required` — same reason code, same clause,
+opposite answers.
 
-5 cases. The spec targets 30–50, so this is a seed set that establishes the
-format and the discriminating pair, not a complete evaluation set. Expanding
-it is straightforward — one YAML file per case — but the ambiguous cases in
-particular should be reviewed by someone who can push back on the labels
-before any published number rests on them.
+## Coverage
+
+**35 cases.** Distribution chosen so each metric has a usable denominator:
+
+| Category | Count | What it measures |
+|---|---:|---|
+| `clear_contradiction` | 12 | Whether the system finds the defeating clause |
+| `clear_justification` | 10 | False-alarm rate — without these, "always answer contradicted" scores perfectly |
+| `mixed` | 5 | Multi-ground denials where some grounds are sound and some are not |
+| `ambiguous` | 8 | Correct-abstention rate — the headline metric |
+
+Grounds covered include carve-back exceptions, defined-term disputes, timely
+filing, prior authorization, network status, medical necessity,
+experimental/investigational, pre-existing conditions, mental health parity,
+preventive cost-sharing, step therapy, coordination of benefits, bundling,
+out-of-pocket maximums, and discretionary-authority clauses.
+
+## Please review the ambiguous labels
+
+The 8 ambiguous cases are judgment calls, and each carries a `notes` field
+arguing for its label. **Two I am least confident in, flagged deliberately:**
+
+- **`ca-policy-statute-conflict`** — a statute sets a 24-hour minimum
+  notification window; the policy demands 72. There's a respectable argument
+  that a consumer-protection floor implicitly caps what a policy may demand,
+  which would make this `contradicted`. I labelled it ambiguous because that
+  reasoning isn't in the retrieved text — but a lawyer would reach for it
+  immediately.
+- **`ca-medical-necessity-no-records`** — arguably `contradicted` on the
+  theory that the insurer bears the burden of substantiating its own
+  determination. That's a legal argument about burden allocation rather than
+  a finding the evidence supports.
+
+If you disagree with either, change the label — but note that a decisive
+label commits the system to justifying that answer from retrieved text alone.

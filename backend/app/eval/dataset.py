@@ -57,16 +57,24 @@ class GoldenChunk(BaseModel):
 
 
 class Expectation(BaseModel):
-    #: Constrained to the vocabulary the pipeline can actually produce.
+    #: Constrained to the vocabulary the pipeline can actually produce at the
+    #: CASE level, which is narrower than the per-sub-claim finding vocabulary.
     #: A typo here ("contradicated") would otherwise be accepted silently and
     #: never match any prediction, so the case would score as a failure
     #: forever and quietly drag down every reported rate.
     #:
-    #: 'contested' is a legal expectation: it is what the system returns when
-    #: it has a leaning it cannot substantiate, which for some cases is the
-    #: correct outcome.
+    #: 'mixed' is deliberately absent. A sub-claim can be mixed, but the case
+    #: rollup resolves any contradiction to 'contradicted' — a denial with one
+    #: bad ground is worth appealing regardless of how many grounds are sound.
+    #: Accepting 'mixed' here would let someone write an unsatisfiable case:
+    #: the same failure as a typo, but far harder to spot. Use
+    #: `category: mixed` to mark multi-ground cases; the expectation stays
+    #: 'contradicted'.
+    #:
+    #: 'contested' is legal: it is what the system returns when it has a
+    #: leaning it cannot substantiate, which for some cases is correct.
     overall: Literal[
-        "justified", "contradicted", "mixed", "contested", "insufficient"
+        "justified", "contradicted", "contested", "insufficient"
     ] = Field(description="Expected case-level disposition")
     must_cite: list[str] = Field(
         default_factory=list,

@@ -1,0 +1,37 @@
+id: ca-visit-limit-partial
+name: Visit cap applied to the whole claim although some visits fell inside it
+category: mixed
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-12-06'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: December 6, 2022
+  Claim: Chiropractic care, visits 18-22, November 2022
+  Reason Code: CO-Q4
+
+  Benefits are not available for the above visits. Your plan provides twenty chiropractic visits
+  per calendar year under Section 6.12 and that limit has been reached. All five submitted visits
+  are denied.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-6-12
+  locator: Section 6.12
+  source_kind: policy
+  text: |
+    Chiropractic care is covered up to twenty visits per calendar year. Visits in excess of twenty
+    are the member's responsibility.
+- id: p-8-8
+  locator: Section 8.8
+  source_kind: policy
+  text: |
+    Where a claim includes both covered and non-covered services, benefits are determined separately
+    for each service. A claim is not denied in its entirety because one service on it is not
+    covered.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-8-8

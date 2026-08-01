@@ -1,0 +1,44 @@
+id: ca-preventive-costshare
+name: Cost-share applied to preventive screening the policy covers in full
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-03-11'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: March 11, 2022
+  Claim: Screening colonoscopy, February 2022
+  Reason Code: CO-E2
+
+  Your claim has been processed with member cost-sharing applied. The deductible had not been
+  met at the time of service, and the amount shown is the member's responsibility under
+  Section 3.1 of your Certificate of Coverage.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-1
+  locator: Section 3.1
+  source_kind: policy
+  text: |
+    Deductible. Except as otherwise provided in this Certificate, no benefits are payable until
+    the member has satisfied the annual deductible shown in the Schedule of Benefits.
+- id: p-3-6
+  locator: Section 3.6
+  source_kind: policy
+  text: |
+    Preventive Services. Preventive services rated A or B by the United States Preventive
+    Services Task Force are covered at one hundred percent of the allowed amount when furnished
+    by a participating provider. No deductible, copayment, or coinsurance applies to such
+    services.
+- id: p-3-7
+  locator: Section 3.7
+  source_kind: policy
+  text: |
+    Screening colonoscopy for members aged forty-five and older is a preventive service for
+    purposes of Section 3.6, including when a polyp is removed during the screening.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-3-6

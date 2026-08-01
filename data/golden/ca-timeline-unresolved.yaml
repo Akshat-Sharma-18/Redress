@@ -1,0 +1,61 @@
+id: ca-timeline-unresolved
+name: Dates in evidence do not resolve whether the deadline was met
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-07-11'
+notes: |
+  REVIEWER NOTE - why abstention is correct.
+
+  The appeal window runs one hundred eighty days from when the member
+  "receives" notice. The evidence gives the date the notice was issued
+  (January 8) and the date the appeal was received (July 6) - one hundred
+  seventy nine days apart. Whether the appeal was timely turns on the receipt
+  date, which is not in evidence and which the policy does not presume from
+  the mailing date.
+
+  Deliberately constructed so the arithmetic is close. A system that assumes
+  receipt equals issuance concludes the appeal was timely by one day; one that
+  assumes a few days of mail transit concludes it was late. Both are guesses
+  about a fact nobody put in the record, and the one-day margin makes the
+  guess decisive rather than academic.
+
+  Contrast with ca-timely-filing-genuinely-late, where the claim was seven
+  months past a twelve-month window and no assumption about transit could
+  change the answer. Margin is what separates a decidable timeline from an
+  undecidable one.
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: July 11, 2023
+  Claim: Appeal of adverse determination dated January 8, 2023; appeal received July 6, 2023
+  Reason Code: CO-V2
+
+  Your appeal has not been accepted for review. Appeals must be submitted within one hundred
+  eighty days of receipt of the notice of adverse benefit determination. The underlying notice was
+  issued January 8, 2023 and your appeal was received July 6, 2023.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-9-1
+  locator: Section 9.1
+  source_kind: policy
+  text: |
+    Appeals. You may request an internal appeal of an adverse benefit determination within one
+    hundred eighty days of receiving notice of the determination.
+- id: p-9-2
+  locator: Section 9.2
+  source_kind: policy
+  text: |
+    An appeal is considered submitted on the date it is received by the plan at the address shown in
+    this Certificate.
+- id: p-9-4
+  locator: Section 9.4
+  source_kind: policy
+  text: |
+    The plan will acknowledge receipt of an appeal in writing within five business days and will
+    issue a determination within thirty days for pre-service appeals and sixty days for post-service
+    appeals.
+expected:
+  overall: insufficient

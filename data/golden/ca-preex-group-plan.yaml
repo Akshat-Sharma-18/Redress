@@ -1,0 +1,42 @@
+id: ca-preex-group-plan
+name: Pre-existing condition exclusion applied to a group plan that forbids it
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-01-24'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: January 24, 2022
+  Claim: Cardiology consultation, January 2022
+  Reason Code: CO-51
+
+  Benefits are not available for the above service. The condition treated is a pre-existing
+  condition as defined in Section 4.7, and the exclusion period has not been satisfied.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-4-7
+  locator: Section 4.7
+  source_kind: policy
+  text: |
+    Pre-existing Condition means a condition for which medical advice, diagnosis, care, or treatment
+    was recommended or received within the six months preceding the effective date of coverage.
+- id: p-4-8
+  locator: Section 4.8
+  source_kind: policy
+  text: |
+    No pre-existing condition exclusion applies to coverage issued under a group health plan. The
+    exclusion described in Section 4.7 applies only to individual coverage issued before January 1,
+    2014.
+- id: p-1-2
+  locator: Section 1.2
+  source_kind: policy
+  text: |
+    This Certificate describes coverage issued to the group policyholder named in the Schedule of
+    Benefits and made available to eligible employees and their dependents.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-4-8

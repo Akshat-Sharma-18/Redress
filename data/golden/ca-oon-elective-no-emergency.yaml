@@ -1,0 +1,44 @@
+id: ca-oon-elective-no-emergency
+name: Non-participating provider used electively, no emergency
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-06-14'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: June 14, 2022
+  Claim: Elective orthopedic consultation, June 2022, non-participating provider
+  Reason Code: CO-M7
+
+  This claim has been processed at the non-participating benefit level. The consultation was
+  scheduled in advance with a provider outside the plan network. No emergency or urgent condition
+  is documented.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-5-2
+  locator: Section 5.2
+  source_kind: policy
+  text: |
+    Non-participating providers are reimbursed at the non-participating benefit level shown in the
+    Schedule of Benefits, except as otherwise provided in this Certificate.
+- id: p-7-5
+  locator: Section 7.5
+  source_kind: policy
+  text: |
+    Emergency Services. Emergency services furnished by a non-participating provider are covered at
+    the participating benefit level. Whether an emergency medical condition existed is determined by
+    the presenting symptoms, not by the final diagnosis.
+- id: p-5-4
+  locator: Section 5.4
+  source_kind: policy
+  text: |
+    Continuity of Care. Where a participating provider's contract terminates during an active course
+    of treatment, the member may request continued care at the participating level for up to ninety
+    days.
+expected:
+  overall: justified
+  must_cite:
+  - p-5-2

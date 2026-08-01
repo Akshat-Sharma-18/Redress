@@ -1,0 +1,65 @@
+id: ca-policy-statute-conflict
+name: Policy term conflicts with a statute and precedence is not in evidence
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-02-17'
+statute_ids:
+- demo-1367-24
+notes: |
+  REVIEWER NOTE - why abstention is correct.
+
+  The policy imposes a seventy-two hour notification requirement for emergency
+  admissions; the statute chunk requires insurers to allow at least
+  twenty-four hours and is silent on whether a longer contractual window is
+  permitted or preempted. The member notified at ninety-six hours, so the
+  policy bars the claim and the statute neither clearly saves it nor clearly
+  does not.
+
+  The missing piece is a rule of precedence. Whether a statutory floor
+  displaces a stricter contractual term, or merely sets a minimum the contract
+  may exceed, is not answered by either chunk. It is a question of statutory
+  interpretation.
+
+  I want to flag this as the ambiguous label I am least sure of. There is a
+  respectable argument that a consumer-protection statute setting a minimum
+  notification period implicitly caps what a policy may demand, which would
+  make this contradicted. I labelled it ambiguous because that argument is not
+  in the retrieved text - but it is the kind of reasoning a lawyer would apply
+  immediately, and if you disagree this is the case to change.
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: February 17, 2022
+  Claim: Emergency inpatient admission, January 2022
+  Reason Code: CO-W9
+
+  Benefits are not available for the above admission. Section 3.8 requires notification of an
+  emergency admission within seventy-two hours. Plan records show notification was received
+  ninety-six hours after admission.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-8
+  locator: Section 3.8
+  source_kind: policy
+  text: |
+    Notification. The plan must be notified of an emergency inpatient admission within seventy-two
+    hours of the admission. Benefits may be reduced or denied where timely notification is not
+    provided.
+- id: s-1367-24
+  locator: Demo Ins. Code s 1367.24
+  source_kind: statute
+  effective_from: '2018-01-01'
+  text: |
+    An insurer shall not require notification of an emergency admission sooner than twenty-four
+    hours following the admission, or by the end of the next business day, whichever is later.
+- id: p-7-5
+  locator: Section 7.5
+  source_kind: policy
+  text: |
+    Emergency Services. Emergency services furnished by a non-participating provider are covered at
+    the participating benefit level.
+expected:
+  overall: insufficient

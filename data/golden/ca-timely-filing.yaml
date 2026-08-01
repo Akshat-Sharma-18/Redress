@@ -1,0 +1,36 @@
+id: ca-timely-filing
+name: Timely filing denial where the claim fell inside the policy window
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-01-19'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: January 19, 2023
+  Claim: Office visit, date of service April 4, 2022; claim received December 12, 2022
+  Reason Code: CO-29
+
+  Benefits are not available for this claim. The claim was not submitted within the filing
+  period required by your plan and is therefore denied as untimely.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-8-2
+  locator: Section 8.2
+  source_kind: policy
+  text: |
+    Claim Filing. Written proof of loss must be furnished to the plan within twelve months of
+    the date of service. Claims received after that period will not be considered.
+- id: p-8-3
+  locator: Section 8.3
+  source_kind: policy
+  text: |
+    Late Claims. Failure to furnish proof within the time required does not invalidate a claim if
+    it was not reasonably possible to furnish proof within that time, provided proof is furnished
+    as soon as reasonably possible.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-8-2

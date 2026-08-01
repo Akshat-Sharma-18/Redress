@@ -1,0 +1,35 @@
+id: ca-coverage-terminated
+name: Service after coverage terminated
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-05-17'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: May 17, 2023
+  Claim: Office visit, date of service April 28, 2023
+  Reason Code: CO-27
+
+  Benefits are not available for the above service. Coverage under this Certificate terminated on
+  March 31, 2023 following the end of employment. The date of service falls after termination.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-2-6
+  locator: Section 2.6
+  source_kind: policy
+  text: |
+    Termination. Coverage terminates on the last day of the month in which employment ends. No
+    benefits are payable for services furnished after the date coverage terminates.
+- id: p-2-7
+  locator: Section 2.7
+  source_kind: policy
+  text: |
+    Continuation. A member whose coverage terminates may elect continuation coverage within sixty
+    days. Continuation coverage is effective only upon election and payment of the required premium.
+expected:
+  overall: justified
+  must_cite:
+  - p-2-6

@@ -1,0 +1,37 @@
+id: ca-two-grounds-one-bad
+name: Two denial grounds, one sound and one contradicted
+category: mixed
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-01-30'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: January 30, 2023
+  Claim: Outpatient advanced imaging, January 2023
+  Reason Code: CO-P2
+
+  Benefits are not available for the above service for two reasons. First, prior authorization was
+  required under Section 3.5 and was not obtained. Second, the service was rendered by a
+  non-participating provider and is excluded entirely under Section 5.2.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-5
+  locator: Section 3.5
+  source_kind: policy
+  text: |
+    The following services require prior authorization: elective inpatient surgery, non-emergency
+    inpatient admission, durable medical equipment over one thousand dollars, and outpatient
+    advanced imaging.
+- id: p-5-2
+  locator: Section 5.2
+  source_kind: policy
+  text: |
+    Non-participating providers are reimbursed at the non-participating benefit level shown in the
+    Schedule of Benefits. Services furnished by non-participating providers remain covered services.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-5-2

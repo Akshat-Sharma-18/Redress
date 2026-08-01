@@ -1,0 +1,44 @@
+id: ca-prudent-layperson
+name: Out-of-network ER denied on final diagnosis despite prudent layperson standard
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-11-02'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: November 2, 2022
+  Claim: Emergency department visit, October 2022, non-participating hospital
+  Reason Code: CO-F4
+
+  Benefits are not available at the in-network level for this visit. The final diagnosis recorded
+  was gastritis, which is not an emergency medical condition. The visit has been processed at the
+  non-participating benefit level.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-7-5
+  locator: Section 7.5
+  source_kind: policy
+  text: |
+    Emergency Services. Emergency services furnished by a non-participating provider are covered
+    at the participating benefit level. Whether an emergency medical condition existed is determined
+    by the presenting symptoms, not by the final diagnosis.
+- id: p-1-9
+  locator: Section 1.9
+  source_kind: policy
+  text: |
+    Emergency Medical Condition means a condition manifesting itself by acute symptoms of
+    sufficient severity that a prudent layperson possessing an average knowledge of medicine could
+    reasonably expect the absence of immediate attention to result in serious jeopardy to health.
+- id: p-5-2
+  locator: Section 5.2
+  source_kind: policy
+  text: |
+    Non-participating providers are reimbursed at the non-participating benefit level shown in the
+    Schedule of Benefits, except as otherwise provided in this Certificate.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-7-5

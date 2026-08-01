@@ -1,0 +1,57 @@
+id: ca-cited-section-absent
+name: The denial cites a section that is not in the evidence
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-11-21'
+notes: |
+  REVIEWER NOTE - why abstention is correct.
+
+  The insurer relies on Section 12.4, and Section 12.4 is not among the
+  retrieved chunks. The evidence contains adjacent provisions but not the one
+  the denial actually rests on.
+
+  The system cannot confirm the denial, because the clause it depends on is
+  unavailable. It equally cannot contradict it: absence of a clause from a
+  retrieval result is not evidence the clause says something different, or
+  that it does not exist. Treating "I could not find it" as "it does not
+  support them" would manufacture contradictions out of retrieval gaps, which
+  is a failure mode worth testing for explicitly.
+
+  The right behaviour is to decline and say which clause is missing. This is
+  also the one ambiguous case where a narrowed re-retrieval is the correct
+  response, so it doubles as a test of that path.
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: November 21, 2022
+  Claim: Genetic testing panel, October 2022
+  Reason Code: CO-T8
+
+  Benefits are not available for the above service. Coverage for genetic testing is governed by
+  Section 12.4 of your Certificate of Coverage, and the submitted testing does not meet the
+  criteria stated there.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-12-2
+  locator: Section 12.2
+  source_kind: policy
+  text: |
+    Laboratory Services. Diagnostic laboratory services are covered when ordered by a treating
+    provider and furnished by a participating laboratory.
+- id: p-12-3
+  locator: Section 12.3
+  source_kind: policy
+  text: |
+    Specimen collection and handling fees are included in the allowed amount for the associated
+    laboratory service and are not separately payable.
+- id: p-12-6
+  locator: Section 12.6
+  source_kind: policy
+  text: |
+    Laboratory services furnished by a non-participating laboratory are reimbursed at the
+    non-participating benefit level.
+expected:
+  overall: insufficient

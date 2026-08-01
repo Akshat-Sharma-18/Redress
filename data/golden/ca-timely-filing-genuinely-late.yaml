@@ -1,0 +1,37 @@
+id: ca-timely-filing-genuinely-late
+name: Timely filing denial where the claim was genuinely outside the window
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-08-21'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: August 21, 2023
+  Claim: Office visit, date of service January 6, 2022; claim received August 2, 2023
+  Reason Code: CO-29
+
+  Benefits are not available for this claim. The claim was received nineteen months after the date
+  of service. The filing period under Section 8.2 is twelve months. No explanation for the delay
+  was submitted.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-8-2
+  locator: Section 8.2
+  source_kind: policy
+  text: |
+    Claim Filing. Written proof of loss must be furnished to the plan within twelve months of the
+    date of service. Claims received after that period will not be considered.
+- id: p-8-3
+  locator: Section 8.3
+  source_kind: policy
+  text: |
+    Late Claims. Failure to furnish proof within the time required does not invalidate a claim if it
+    was not reasonably possible to furnish proof within that time, provided proof is furnished as
+    soon as reasonably possible.
+expected:
+  overall: justified
+  must_cite:
+  - p-8-2

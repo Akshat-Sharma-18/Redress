@@ -1,0 +1,38 @@
+id: ca-experimental-on-label
+name: Experimental exclusion applied to an FDA-approved drug used on-label
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-09-14'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: September 14, 2023
+  Claim: Infusion therapy, August 2023
+  Reason Code: CO-D9
+
+  Benefits are not available for the above service. The therapy is considered experimental or
+  investigational and is excluded under Section 6.1 of your Certificate of Coverage. The submitted
+  documentation shows the drug is FDA-approved and was administered for the indication stated on
+  its labeling.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-6-1
+  locator: Section 6.1
+  source_kind: policy
+  text: |
+    This plan does not provide benefits for services, drugs, or devices that are Experimental or
+    Investigational for the condition being treated.
+- id: p-6-3
+  locator: Section 6.3
+  source_kind: policy
+  text: |
+    A drug or biological that has received approval from the United States Food and Drug
+    Administration and is administered consistent with its labeled indications is not Experimental
+    or Investigational for purposes of Section 6.1.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-6-3

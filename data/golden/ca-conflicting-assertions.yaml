@@ -1,0 +1,61 @@
+id: ca-conflicting-assertions
+name: Letter and policy assert different facts with no tiebreaker
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-08-30'
+notes: |
+  REVIEWER NOTE - why abstention is correct.
+
+  The denial states the provider was non-participating on the date of service.
+  The evidence includes a network provision and a continuity-of-care clause,
+  but nothing establishing the provider's actual network status on that date -
+  no directory extract, no contract termination notice, no explanation of
+  benefits showing how the claim was priced.
+
+  The disputed fact is the insurer's own factual assertion, and there is no
+  independent record in evidence to check it against. A system that credits
+  the insurer's assertion by default is not auditing the denial, it is
+  restating it; a system that rejects the assertion by default is inventing a
+  finding. Neither is supportable, so it should decline.
+
+  This is the most common real-world shape of all: a denial that turns on a
+  fact only the insurer has documented. It is included because a tool that
+  folds under exactly the circumstances where users most need it would be
+  worse than no tool.
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: August 30, 2023
+  Claim: Surgical assistant services, August 2023
+  Reason Code: CO-X4
+
+  This claim has been processed at the non-participating benefit level. Our records indicate the
+  surgical assistant was not a participating provider on the date of service. The facility and
+  primary surgeon were participating.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-5-2
+  locator: Section 5.2
+  source_kind: policy
+  text: |
+    Non-participating providers are reimbursed at the non-participating benefit level shown in the
+    Schedule of Benefits.
+- id: p-5-4
+  locator: Section 5.4
+  source_kind: policy
+  text: |
+    Continuity of Care. Where a participating provider's contract terminates during an active course
+    of treatment, the member may request continued care at the participating level for up to ninety
+    days.
+- id: p-5-6
+  locator: Section 5.6
+  source_kind: policy
+  text: |
+    Ancillary Providers. Where a member receives covered services at a participating facility,
+    services furnished by an assistant surgeon, anaesthesiologist, radiologist, or pathologist are
+    covered at the participating benefit level regardless of that provider's network status.
+expected:
+  overall: insufficient

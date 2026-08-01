@@ -1,0 +1,37 @@
+id: ca-snf-days-plus-carveout
+name: Skilled nursing day limit applied where a carve-out extends it
+category: mixed
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-09-27'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: September 27, 2022
+  Claim: Skilled nursing facility, days 101-108, September 2022
+  Reason Code: CO-S3
+
+  Benefits are not available for the above days. Your plan covers one hundred days of skilled
+  nursing facility care per benefit period under Section 6.14. That limit has been exhausted. The
+  admission followed a qualifying hospital stay for a covered transplant.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-6-14
+  locator: Section 6.14
+  source_kind: policy
+  text: |
+    Skilled nursing facility care is covered up to one hundred days per benefit period following a
+    qualifying inpatient hospital stay.
+- id: p-6-15
+  locator: Section 6.15
+  source_kind: policy
+  text: |
+    The day limit in Section 6.14 does not apply to skilled nursing facility care furnished as part
+    of a covered transplant episode. Such care is covered for the duration of the transplant global
+    period.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-6-15

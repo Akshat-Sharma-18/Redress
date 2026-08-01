@@ -1,0 +1,36 @@
+id: ca-ambulance-nearest-facility
+name: Ambulance denied for facility choice the policy expressly permits
+category: clear_contradiction
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2022-07-08'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: July 8, 2022
+  Claim: Ground ambulance transport, June 2022
+  Reason Code: CO-J3
+
+  Benefits are not available for the above transport. The member was transported to a facility
+  other than the nearest facility able to provide care, contrary to Section 7.8.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-7-8
+  locator: Section 7.8
+  source_kind: policy
+  text: |
+    Ambulance. Ground ambulance transport is covered to the nearest facility able to provide the
+    required level of care.
+- id: p-7-9
+  locator: Section 7.9
+  source_kind: policy
+  text: |
+    Transport to a facility other than the nearest is covered where the receiving facility is the
+    member's designated hospital under a documented treatment plan, or where the nearest facility
+    lacked capacity at the time of transport.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-7-9

@@ -1,0 +1,63 @@
+id: ca-discretionary-standard
+name: Policy grants the insurer discretion the evidence cannot review
+category: ambiguous
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-05-09'
+notes: |
+  REVIEWER NOTE - why abstention is correct.
+
+  Section 11.2 commits the determination to the plan administrator's
+  discretion and states its judgement is conclusive absent abuse of that
+  discretion. Whether discretion was abused is not a question the policy text
+  answers; it depends on the administrator's process and reasoning, neither of
+  which is in evidence.
+
+  This is a different flavour of ambiguity from a missing clinical record.
+  Here the evidence is complete on its own terms - the governing clause is
+  present and says what it says - and what is unavailable is any basis for
+  reviewing the exercise of judgement the clause authorises.
+
+  Worth noting that discretionary clauses are unenforceable in a number of
+  states, which would flip this case. That is a legal conclusion about clause
+  validity, not a finding the retrieved text supports, and this system is not
+  positioned to make it. If a state-law chunk barring discretionary clauses
+  were added to the evidence, this case should be relabelled contradicted -
+  which makes it a useful case to revisit once Pipeline C carries real
+  statutes.
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: May 9, 2023
+  Claim: Residential treatment, April 2023
+  Reason Code: CO-U5
+
+  Benefits are not available for the above admission. Following review, the plan has determined
+  that the requested level of care was not appropriate for the member's presentation. This
+  determination is made under the authority granted by Section 11.2.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-11-2
+  locator: Section 11.2
+  source_kind: policy
+  text: |
+    Discretionary Authority. The plan administrator has full discretionary authority to interpret the
+    terms of this Certificate and to determine eligibility for benefits. The administrator's
+    determination is conclusive and binding absent an abuse of discretion.
+- id: p-6-16
+  locator: Section 6.16
+  source_kind: policy
+  text: |
+    Residential treatment for mental health or substance use disorders is covered when Medically
+    Necessary and furnished at a licensed facility.
+- id: p-2-2
+  locator: Section 2.2
+  source_kind: policy
+  text: |
+    Medically Necessary means health care services that a prudent physician would provide for the
+    purpose of preventing, diagnosing, or treating an illness, that are consistent with generally
+    accepted standards of medical practice, and that are not primarily for convenience.
+expected:
+  overall: insufficient

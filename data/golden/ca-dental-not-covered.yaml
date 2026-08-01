@@ -1,0 +1,35 @@
+id: ca-dental-not-covered
+name: Routine dental correctly excluded from a medical plan
+category: clear_justification
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-03-02'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: March 2, 2023
+  Claim: Dental crown, February 2023
+  Reason Code: CO-L2
+
+  Benefits are not available for the above service. Routine dental care is not a covered benefit
+  under this medical plan. Please refer to Section 4.9.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-4-9
+  locator: Section 4.9
+  source_kind: policy
+  text: |
+    This plan does not provide benefits for routine dental care, including examinations, cleanings,
+    fillings, crowns, bridges, and orthodontia.
+- id: p-4-10
+  locator: Section 4.10
+  source_kind: policy
+  text: |
+    Dental services required to treat an accidental injury to sound natural teeth are covered when
+    furnished within twelve months of the injury.
+expected:
+  overall: justified
+  must_cite:
+  - p-4-9

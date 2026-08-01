@@ -1,0 +1,37 @@
+id: ca-oop-max-reached
+name: Cost-share applied after the out-of-pocket maximum was satisfied
+category: mixed
+source: synthetic
+state: CA
+insurer_id: ins-demo-acme
+denial_date: '2023-11-09'
+denial_letter: |
+  NOTICE OF ADVERSE BENEFIT DETERMINATION
+
+  Date of Notice: November 9, 2023
+  Claim: Specialist visit, November 2023
+  Reason Code: CO-R6
+
+  Your claim has been processed with the applicable specialist copayment. Copayments apply to each
+  specialist visit under Section 3.2. Plan records show the member satisfied the annual
+  out-of-pocket maximum on October 14, 2023.
+
+  You may request an internal appeal within 180 days of this notice.
+chunks:
+- id: p-3-2
+  locator: Section 3.2
+  source_kind: policy
+  text: |
+    Copayments. The copayment shown in the Schedule of Benefits applies to each specialist office
+    visit.
+- id: p-3-9
+  locator: Section 3.9
+  source_kind: policy
+  text: |
+    Out-of-Pocket Maximum. Once a member satisfies the annual out-of-pocket maximum, covered services
+    for the remainder of the calendar year are paid at one hundred percent of the allowed amount. No
+    deductible, copayment, or coinsurance applies thereafter.
+expected:
+  overall: contradicted
+  must_cite:
+  - p-3-9
