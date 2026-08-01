@@ -106,14 +106,44 @@ class TestConsequenceTaxonomy:
             is Outcome.DIRECTION_ERROR
         )
 
-    def test_crash_is_scored_not_dropped(self):
-        """A harness that drops errored cases inflates every rate."""
-        outcome = classify(
-            expected="contradicted",
-            predicted="error",
-            category=Category.CLEAR_CONTRADICTION,
+    def test_crash_gets_its_own_class(self):
+        """A crash is a failure to answer, not a wrong answer.
+
+        Folding it into a direction class reported a broken run as
+        `false_alarm` and hid the bug behind a plausible metric.
+        """
+        for expected, category in [
+            ("justified", Category.CLEAR_JUSTIFICATION),
+            ("contradicted", Category.CLEAR_CONTRADICTION),
+            ("insufficient", Category.AMBIGUOUS),
+        ]:
+            assert (
+                classify(expected=expected, predicted="error", category=category)
+                is Outcome.ERROR
+            )
+
+    def test_contested_counts_as_declining_to_assert(self):
+        """'contested' and 'insufficient' are both non-assertions.
+
+        They differ in whether the system has a leaning it cannot
+        substantiate — worth telling the user, but neither is a claim.
+        """
+        assert (
+            classify(
+                expected="insufficient",
+                predicted="contested",
+                category=Category.AMBIGUOUS,
+            )
+            is Outcome.CORRECT_ABSTENTION
         )
-        assert outcome is not Outcome.CORRECT
+        assert (
+            classify(
+                expected="contradicted",
+                predicted="contested",
+                category=Category.CLEAR_CONTRADICTION,
+            )
+            is Outcome.OVER_ABSTENTION
+        )
 
 
 def _ev(expected, predicted, category, **kw) -> CaseEvaluation:
@@ -179,6 +209,70 @@ class TestReport:
         )
         assert not ev.grounded
 
+    def test_errors_excluded_from_abstention_denominators(self):
+        """A crash is not a decision to abstain.
+
+        Counting it as one would let a broken run read as well-calibrated.
+        """
+        report = Report([
+            _ev("insufficient", "insufficient", Category.AMBIGUOUS),
+            _ev("insufficient", "error", Category.AMBIGUOUS),
+        ])
+        assert report.error_count == 1
+        assert report.correct_abstention_rate == 1.0  # 1 of 1 *scored* case
+        assert "errored" in report.summary()
+
+    def test_denial_date_mismatch_is_surfaced(self):
+        """A wrong date means temporal filtering ran against the wrong law.
+
+        Tracked independently of the verdict: a case whose date extraction
+        failed can still reach the right answer by luck, and that is not the
+        same as the temporal layer working.
+        """
+        from datetime import date
+
+        ev = _ev(
+            "justified", "justified", Category.CLEAR_JUSTIFICATION,
+            expected_denial_date=date(2021, 8, 9),
+            extracted_denial_date=date(2023, 1, 1),
+        )
+        assert ev.outcome is Outcome.CORRECT  # verdict was right...
+        assert "2023-01-01" in ev.date_error  # ...but for the wrong reason
+        report = Report([ev])
+        assert len(report.date_errors) == 1
+        assert "wrong law" in report.summary()
+
+    def test_missing_denial_date_is_surfaced(self):
+        """No date silently disables filtering — every version becomes
+        eligible, including ones enacted after the denial."""
+        from datetime import date
+
+        ev = _ev(
+            "justified", "justified", Category.CLEAR_JUSTIFICATION,
+            expected_denial_date=date(2021, 8, 9),
+            extracted_denial_date=None,
+        )
+        assert "temporal filtering disabled" in ev.date_error
+
+    def test_no_date_error_when_extraction_matches(self):
+        from datetime import date
+
+        ev = _ev(
+            "justified", "justified", Category.CLEAR_JUSTIFICATION,
+            expected_denial_date=date(2021, 8, 9),
+            extracted_denial_date=date(2021, 8, 9),
+        )
+        assert ev.date_error is None
+
+    def test_contested_rate_is_tracked_separately(self):
+        """Shows the confidence gate is doing work rather than sitting inert."""
+        report = Report([
+            _ev("contradicted", "contested", Category.CLEAR_CONTRADICTION),
+            _ev("contradicted", "contradicted", Category.CLEAR_CONTRADICTION),
+        ])
+        assert report.contested_rate == 0.5
+        assert report.over_abstention_rate == 0.5  # contested declines to assert
+
     def test_empty_denominators_report_none_not_zero(self):
         """'Not measured' and 'measured, scored zero' are different claims."""
         report = Report([
@@ -206,6 +300,26 @@ class TestReport:
         text = report.summary()
         assert "false_assurance" in text
         assert "Correct abstention" in text
+
+    def test_summary_is_console_safe(self):
+        """The report prints after the API spend. A UnicodeEncodeError on a
+        legacy Windows codepage would destroy the run's output at the last
+        step, so every printable path stays ASCII.
+        """
+        from datetime import date
+
+        report = Report([
+            _ev("contradicted", "error", Category.CLEAR_CONTRADICTION),
+            _ev(
+                "justified", "justified", Category.CLEAR_JUSTIFICATION,
+                expected_denial_date=date(2021, 8, 9),
+                extracted_denial_date=None,
+            ),
+        ])
+        # Exercises the error and date-error branches too, not just the header.
+        summary = report.summary()
+        assert "errored" in summary and "wrong law" in summary
+        summary.encode("cp437")  # raises if a non-ASCII char slipped in
 
 
 class TestDatasetLoader:
@@ -249,6 +363,39 @@ class TestDatasetLoader:
             encoding="utf-8",
         )
         with pytest.raises(GoldenDatasetError, match="must explain"):
+            load_dataset(tmp_path)
+
+    def test_typo_in_expected_overall_is_rejected(self, tmp_path):
+        """An unrecognised finding would never match a prediction, so the
+        case would score as a failure forever and drag every rate down."""
+        (tmp_path / "typo.yaml").write_text(
+            yaml.safe_dump({
+                "id": "typo",
+                "name": "n",
+                "category": "clear_contradiction",
+                "denial_letter": "x",
+                "expected": {"overall": "contradicated"},
+            }),
+            encoding="utf-8",
+        )
+        with pytest.raises(Exception, match="overall"):
+            load_dataset(tmp_path)
+
+    def test_bad_source_kind_fails_at_load_not_mid_run(self, tmp_path):
+        """Otherwise the conversion raises inside the harness's broad except
+        and the fixture typo is recorded as a crashed case."""
+        (tmp_path / "bad.yaml").write_text(
+            yaml.safe_dump({
+                "id": "bad",
+                "name": "n",
+                "category": "clear_justification",
+                "denial_letter": "x",
+                "expected": {"overall": "justified"},
+                "chunks": [{"id": "c", "text": "t", "source_kind": "polcy"}],
+            }),
+            encoding="utf-8",
+        )
+        with pytest.raises(Exception, match="source_kind"):
             load_dataset(tmp_path)
 
     def test_duplicate_ids_rejected(self, tmp_path):

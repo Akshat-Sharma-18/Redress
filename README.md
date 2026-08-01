@@ -33,6 +33,8 @@ Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain 
 
 The gate's invariant, held on every path: **it only ever lowers confidence.** The critique agent cannot upgrade a finding, ensemble disagreement is surfaced as `Contested` rather than resolved by picking a side, and a rejected draft lands on `Insufficient Evidence` — never on the draft's original claim.
 
+That confidence survives to the case level. `AuditResult.overall` is the raw direction; **`AuditResult.disposition` is what the user is told**, and it folds confidence back in — a contested verdict reports as `contested`, not as a confident finding. Case confidence is the *best* among the verdicts driving the direction, not the worst: one solidly-supported contradiction carries the case, and an unrelated ambiguity elsewhere shouldn't suppress a finding the system can fully substantiate.
+
 Also built: the graph layer (`backend/app/graph/`) with the insurer-pattern traversal, the regulation version registry (`backend/app/retrieval/temporal.py`), and the eval harness (`backend/app/eval/`). All run without external services — the in-memory graph store is the reference implementation, Neo4j is a swap-in, and 89 tests pass offline.
 
 ---
@@ -115,9 +117,25 @@ else's finances, so the counts are reported and the reader applies their own.
   the evidence they should have. A correct finding that never cites the clause
   it turns on reached the answer some other way, which in a system whose
   product is the citation chain is close to a miss.
+- **Contested rate** — how often the gate had a leaning it couldn't
+  substantiate. Tracked separately because it's what shows the confidence gate
+  is doing work rather than sitting inert.
 
 Rates with an empty denominator report `None`, not `0.0` — "not measured yet"
-and "measured, scored zero" are different claims.
+and "measured, scored zero" are different claims. Crashes get their own
+outcome class rather than being folded into a direction error, and are
+excluded from the abstention denominators: a crash is not a decision to
+abstain, and counting it as one would let a broken run read as
+well-calibrated.
+
+**Denial-date extraction is checked independently of the verdict.** The
+pipeline takes the denial date from the letter — that's the behaviour under
+test — and the harness cross-checks it against the golden metadata. If
+extraction fails, temporal filtering silently disables and every statute
+version becomes eligible, including ones enacted after the denial. A case can
+still reach the right answer that way, so the report flags it separately:
+right verdict, wrong law, and the statute citations are unreliable regardless
+of what the accuracy line says.
 
 ### The discriminating pair
 

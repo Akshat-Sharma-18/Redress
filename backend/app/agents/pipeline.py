@@ -22,7 +22,7 @@ from datetime import date
 
 from app.agents.decomposition import DecompositionAgent, DecomposedDenial
 from app.agents.gate import GatedAdjudicator
-from app.core.models import ScoredChunk, SourceKind, Verdict
+from app.core.models import Confidence, ScoredChunk, SourceKind, Verdict
 from app.graph.evidence import GraphEnricher
 from app.retrieval.hybrid import HybridRetriever, RetrievalTrace
 
@@ -40,6 +40,14 @@ class SubClaimResult:
     traces: dict[str, RetrievalTrace] = field(default_factory=dict)
 
 
+#: Confidence ordered by how much the system is willing to assert.
+_CONFIDENCE_RANK = {
+    Confidence.INSUFFICIENT: 0,
+    Confidence.CONTESTED: 1,
+    Confidence.SUPPORTED: 2,
+}
+
+
 @dataclass
 class AuditResult:
     """Everything the frontend needs to render one case."""
@@ -49,17 +57,73 @@ class AuditResult:
 
     @property
     def overall(self) -> str:
-        """Coarse case-level summary derived from sub-claim findings.
+        """Case-level *direction*, ignoring how confident the system is.
 
-        Any verified contradiction makes the case worth appealing, so
-        'contradicted' dominates; all-insufficient means the system declines
-        to characterize the denial at all.
+        Any contradiction makes the case worth appealing, so 'contradicted'
+        dominates; all-insufficient means the system declines to characterize
+        the denial at all.
+
+        This is the raw finding and is not what the user should be shown —
+        see `disposition`, which folds in confidence.
         """
         findings = {r.verdict.finding for r in self.results}
         if "contradicted" in findings or "mixed" in findings:
             return "contradicted"
         if "justified" in findings:
             return "justified"
+        return "insufficient"
+
+    @property
+    def confidence(self) -> Confidence:
+        """Best confidence among the verdicts that drive `overall`.
+
+        `max`, not `min`: one solidly-supported contradiction is enough to
+        say the denial is contradicted, even if a second sub-claim came back
+        contested. Taking the minimum would let an unrelated ambiguity
+        suppress a finding the system can fully substantiate.
+        """
+        direction = self.overall
+        if direction == "contradicted":
+            driving = [
+                r.verdict
+                for r in self.results
+                if r.verdict.finding in ("contradicted", "mixed")
+            ]
+        elif direction == "justified":
+            driving = [
+                r.verdict for r in self.results if r.verdict.finding == "justified"
+            ]
+        else:
+            return Confidence.INSUFFICIENT
+
+        return max(
+            (v.confidence for v in driving),
+            key=lambda c: _CONFIDENCE_RANK[c],
+            default=Confidence.INSUFFICIENT,
+        )
+
+    @property
+    def disposition(self) -> str:
+        """What the user is actually told — finding and confidence together.
+
+        Without this, the confidence gate's entire output is discarded at the
+        case level: a verdict the ensemble flagged as contested would roll up
+        indistinguishably from one that survived every check, and three
+        phases of fail-safe machinery would have no effect on what anyone
+        sees.
+
+        'contested' and 'insufficient' are both non-assertions. They differ
+        in whether the system has a leaning it cannot substantiate, which is
+        worth telling the user, but neither is a claim about their denial.
+        """
+        direction = self.overall
+        if direction == "insufficient":
+            return "insufficient"
+        confidence = self.confidence
+        if confidence is Confidence.SUPPORTED:
+            return direction
+        if confidence is Confidence.CONTESTED:
+            return "contested"
         return "insufficient"
 
 

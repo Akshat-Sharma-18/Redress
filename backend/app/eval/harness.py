@@ -23,7 +23,7 @@ from app.agents.pipeline import AuditPipeline
 from app.agents.reconciliation import ReconciliationAgent
 from app.core.models import Chunk, SourceKind
 from app.eval.dataset import GoldenCase
-from app.eval.metrics import CaseEvaluation, Outcome, Report, classify
+from app.eval.metrics import ERROR, CaseEvaluation, Outcome, Report, classify
 from app.retrieval.bm25 import BM25Index
 from app.retrieval.dense import DenseIndex, Embedder
 from app.retrieval.hybrid import HybridRetriever
@@ -134,17 +134,18 @@ class EvalHarness:
                 statute_ids=case.statute_ids,
             )
         except Exception as exc:  # noqa: BLE001 - an exception is a result
-            # A crash is scored as a failure to answer, not dropped. Silently
-            # excluding errored cases would shrink the denominator and inflate
-            # every rate in the report.
+            # A crash is recorded as its own outcome, not dropped and not
+            # folded into a direction class. Dropping it would shrink the
+            # denominator and inflate every rate; misfiling it as a semantic
+            # error would hide a bug behind a plausible-looking metric.
             return CaseEvaluation(
                 case_id=case.id,
                 category=case.category,
                 expected=case.expected.overall,
-                predicted="error",
+                predicted=ERROR,
                 outcome=classify(
                     expected=case.expected.overall,
-                    predicted="error",
+                    predicted=ERROR,
                     category=case.category,
                 ),
                 error=f"{type(exc).__name__}: {exc}",
@@ -158,7 +159,11 @@ class EvalHarness:
         required = set(case.expected.must_cite)
         forbidden = set(case.expected.must_not_cite)
 
-        predicted = result.overall
+        # Scored against `disposition`, not `overall`: `overall` is the raw
+        # direction and discards the confidence gate's output, so a contested
+        # verdict would score identically to one that survived every check —
+        # and the eval would be blind to the system's headline capability.
+        predicted = result.disposition
         return CaseEvaluation(
             case_id=case.id,
             category=case.category,
@@ -172,6 +177,12 @@ class EvalHarness:
             cited=cited,
             missing_required_citations=required - cited,
             forbidden_citations=forbidden & cited,
+            # The pipeline takes the denial date from the letter, which is
+            # the behaviour under test. The golden metadata is the answer
+            # key: without this cross-check, a failed extraction silently
+            # disables temporal filtering and the case can still pass.
+            expected_denial_date=case.denial_date,
+            extracted_denial_date=result.denial.denial_date,
         )
 
     def run(

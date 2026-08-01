@@ -18,6 +18,7 @@ from __future__ import annotations
 from datetime import date
 from enum import Enum
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, Field
@@ -39,21 +40,34 @@ class Category(str, Enum):
 
 
 class GoldenChunk(BaseModel):
-    """A policy/statute/precedent chunk supplied with the case."""
+    """A policy/statute/precedent chunk supplied with the case.
+
+    `source_kind` is constrained rather than free text: an unrecognised value
+    only fails when the harness converts it, where the broad exception
+    handler records it as a crashed case. A typo in a fixture should be a
+    load error, not a mysterious runtime failure inside a scored run.
+    """
 
     id: str
     text: str
-    source_kind: str = "policy"
+    source_kind: Literal["policy", "denial", "statute", "precedent"] = "policy"
     locator: str | None = None
     effective_from: date | None = None
     effective_to: date | None = None
 
 
 class Expectation(BaseModel):
-    overall: str = Field(
-        description="Expected case-level finding: justified | contradicted | "
-        "mixed | insufficient"
-    )
+    #: Constrained to the vocabulary the pipeline can actually produce.
+    #: A typo here ("contradicated") would otherwise be accepted silently and
+    #: never match any prediction, so the case would score as a failure
+    #: forever and quietly drag down every reported rate.
+    #:
+    #: 'contested' is a legal expectation: it is what the system returns when
+    #: it has a leaning it cannot substantiate, which for some cases is the
+    #: correct outcome.
+    overall: Literal[
+        "justified", "contradicted", "mixed", "contested", "insufficient"
+    ] = Field(description="Expected case-level disposition")
     must_cite: list[str] = Field(
         default_factory=list,
         description=(

@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import date
 
 from app.agents.critique import CritiqueAgent, CritiqueResult
-from app.agents.decomposition import DecompositionAgent
+from app.agents.decomposition import DecompositionAgent, DecomposedDenial
 from app.agents.gate import GatedAdjudicator
 from app.agents.pipeline import AuditPipeline
 from app.agents.reconciliation import ReconciliationAgent
@@ -232,6 +232,71 @@ class TestDecomposition:
         llm = FakeLLM([decomp])
         result = DecompositionAgent(llm).decompose("...")
         assert result.sub_claims[0].kind == "legal"
+
+
+class TestCaseRollup:
+    """Case-level rollup must not discard the confidence gate's output."""
+
+    @staticmethod
+    def _result(*verdicts):
+        from app.agents.pipeline import AuditResult, SubClaimResult
+
+        return AuditResult(
+            denial=DecomposedDenial([], "r", None, None, [], []),
+            results=[SubClaimResult(verdict=v) for v in verdicts],
+        )
+
+    @staticmethod
+    def _verdict(finding, confidence):
+        from app.core.models import Verdict
+
+        return Verdict(
+            sub_claim_id="sc",
+            finding=finding,
+            confidence=confidence,
+            rationale="...",
+        )
+
+    def test_contested_does_not_read_as_a_confident_finding(self):
+        """The defect this exists to prevent: three phases of fail-safe
+        machinery having no effect on what the user is shown."""
+        contested = self._result(
+            self._verdict("contradicted", Confidence.CONTESTED)
+        )
+        supported = self._result(
+            self._verdict("contradicted", Confidence.SUPPORTED)
+        )
+
+        # Direction is the same...
+        assert contested.overall == supported.overall == "contradicted"
+        # ...but what the user is told is not.
+        assert contested.disposition == "contested"
+        assert supported.disposition == "contradicted"
+
+    def test_one_supported_contradiction_carries_the_case(self):
+        """max, not min: an unrelated ambiguity must not suppress a finding
+        the system can fully substantiate."""
+        result = self._result(
+            self._verdict("contradicted", Confidence.SUPPORTED),
+            self._verdict("contradicted", Confidence.CONTESTED),
+        )
+        assert result.disposition == "contradicted"
+
+    def test_confidence_ignores_non_driving_verdicts(self):
+        """An insufficient sub-claim shouldn't drag down a supported one."""
+        result = self._result(
+            self._verdict("justified", Confidence.SUPPORTED),
+            self._verdict("insufficient", Confidence.INSUFFICIENT),
+        )
+        assert result.overall == "justified"
+        assert result.disposition == "justified"
+
+    def test_all_insufficient_disposition(self):
+        result = self._result(
+            self._verdict("insufficient", Confidence.INSUFFICIENT)
+        )
+        assert result.disposition == "insufficient"
+        assert result.confidence is Confidence.INSUFFICIENT
 
 
 class TestPipeline:
