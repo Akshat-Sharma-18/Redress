@@ -33,7 +33,7 @@ GOLDEN = Path(__file__).resolve().parents[2] / "data" / "golden"
 OUT = Path(__file__).resolve().parents[2] / "frontend" / "src" / "fixtures"
 
 
-def main(case_ids: list[str], model: str = "qwen2.5:7b") -> int:
+def main(case_ids: list[str], model: str = "qwen2.5:7b", think: bool = False) -> int:
     cases = {c.id: c for c in load_dataset(GOLDEN)}
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -43,7 +43,7 @@ def main(case_ids: list[str], model: str = "qwen2.5:7b") -> int:
             print(f"unknown case {case_id!r}", file=sys.stderr)
             return 1
 
-        llm = OllamaStructuredLLM(model=model)
+        llm = OllamaStructuredLLM(model=model, think=think)
         chunks = [_to_chunk(c, case.id) for c in case.chunks]
         pipeline = AuditPipeline(
             decomposition=DecompositionAgent(llm),
@@ -80,4 +80,7 @@ def main(case_ids: list[str], model: str = "qwen2.5:7b") -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:] or ["ca-emergency-carveback"]))
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    model = next((a.split("=", 1)[1] for a in flags if a.startswith("--model=")), "qwen2.5:7b")
+    raise SystemExit(main(args or ["ca-emergency-carveback"], model, "--think" in flags))

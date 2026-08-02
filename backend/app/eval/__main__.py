@@ -111,7 +111,9 @@ def _ollama_harness(args) -> EvalHarness:
             )
 
     return EvalHarness(
-        llm_factory=lambda: OllamaStructuredLLM(model=args.model, host=args.host),
+        llm_factory=lambda: OllamaStructuredLLM(
+            model=args.model, host=args.host, think=args.think
+        ),
         embedder_factory=lambda: OllamaEmbedder(args.embed_model, host=args.host),
         # No cross-encoder reranker locally: a second model would double an
         # already-slow run for a gain the reranker ablation can measure later.
@@ -173,6 +175,11 @@ def main(argv: list[str] | None = None) -> int:
         help="second embedding model; enables the ensemble cross-check",
     )
     parser.add_argument("--effort", default="high", help="anthropic backend only")
+    parser.add_argument(
+        "--think",
+        action="store_true",
+        help="enable reasoning mode on models that support it (much slower)",
+    )
     parser.add_argument(
         "--ablate",
         action="store_true",

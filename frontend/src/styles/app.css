@@ -645,3 +645,32 @@
   font-style: italic;
   opacity: 0.75;
 }
+
+/* The 3D evidence space. Fixed height so it never competes with the list
+ * below it for vertical room — it is an index, not the content. */
+.evidence-space {
+  flex: none;
+  height: 170px;
+  margin-bottom: 10px;
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(60% 70% at 50% 45%, rgba(201, 162, 75, 0.07), transparent 70%),
+    #080e1a;
+  overflow: hidden;
+}
+
+.evidence-space canvas {
+  display: block;
+  /* setSize(w, h, false) sets the drawing buffer but deliberately leaves CSS
+   * alone to avoid a ResizeObserver feedback loop, so the element must be
+   * sized here. Without it the canvas falls back to its 300x150 HTML default
+   * and renders at the wrong aspect inside a full-width container. */
+  width: 100%;
+  height: 100%;
+}
+
+/* Under prefers-reduced-motion the view stays and the orbit stops -- see
+ * EvidenceSpace. Hiding it outright was the wrong trade: it removed the
+ * spatial overview to avoid motion, when the motion alone is what the
+ * preference is about. */

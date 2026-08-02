@@ -73,6 +73,17 @@ export default function App() {
 
   useEffect(() => setActive(null), [caseId]);
 
+  /** Scroll an evidence card into view when its 3D node is clicked. */
+  const focusEvidence = useCallback((id: string | null) => {
+    if (!id) return;
+    const el = anchors.current.get(id);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.animate(
+      [{ outlineColor: "var(--citation-gold)" }, { outlineColor: "transparent" }],
+      { duration: 1200, easing: "ease-out" },
+    );
+  }, []);
+
   return (
     <div className="app">
       <header className="topbar">
@@ -117,7 +128,12 @@ export default function App() {
           />
         </div>
 
-        <EvidencePanel audit={audit} active={active} onAnchor={register} />
+        <EvidencePanel
+          audit={audit}
+          active={active}
+          onAnchor={register}
+          onFocusEvidence={focusEvidence}
+        />
 
         <CitationBeam claim={active} resolve={resolve} revision={revision} />
       </div>

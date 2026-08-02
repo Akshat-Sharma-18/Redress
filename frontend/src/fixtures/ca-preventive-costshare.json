@@ -4,107 +4,92 @@
   "denial_reason": "Your claim has been processed with member cost-sharing applied. The deductible had not been met at the time of service, and the amount shown is the member's responsibility under Section 3.1 of your Certificate of Coverage.",
   "reason_code": null,
   "denial_date": "2022-03-11",
-  "disposition": "insufficient",
-  "confidence": "insufficient_evidence",
-  "tone": "pending",
+  "disposition": "contradicted",
+  "confidence": "supported",
+  "tone": "contradicted",
   "sub_claims": [
     {
-      "id": "sc-03eebe62",
-      "text": "The deductible had not been met at the time of service",
+      "id": "sc-a48f5030",
+      "text": "The deductible had not been met at the time of service.",
       "kind": "factual",
-      "finding": "insufficient",
-      "confidence": "insufficient_evidence",
-      "tone": "pending",
-      "rationale": "The evidence provided does not specify whether the service in question was a preventive service covered under Section 3.6 or if the deductible had been met at the time of service. Sections 3.1 and 3.7 discuss the general deductible requirement but do not address the specific sub-claim regarding the status of the deductible at the time of a particular service.",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The sub-claim asserts that the deductible had not been met at the time of service, implying that the deductible applies to this specific claim. However, the evidence establishes that the service in question (a screening colonoscopy) is classified as a preventive service under Section 3.7. Section 3.6 explicitly states that for such preventive services, 'No deductible, copayment, or coinsurance applies.' Therefore, the applicability of the deductible is negated by the policy provisions regarding preventive care, contradicting the implication that the unmet status of the general deductible is a valid basis for denial or cost-sharing in this instance.",
       "citations": [
-        {
-          "chunk_id": "p-3-6",
-          "locator": "Section 3.6",
-          "quote": "Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices.",
-          "supports": "no",
-          "span": {
-            "start": 21,
-            "end": 273,
-            "text": "Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices."
-          }
-        },
-        {
-          "chunk_id": "p-3-1",
-          "locator": "Section 3.1",
-          "quote": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.",
-          "supports": "no",
-          "span": {
-            "start": 0,
-            "end": 173,
-            "text": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits."
-          }
-        },
         {
           "chunk_id": "p-3-7",
           "locator": "Section 3.7",
           "quote": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening.",
-          "supports": "no",
+          "supports": "The service is classified as preventive.",
           "span": {
             "start": 0,
             "end": 168,
             "text": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening."
+          }
+        },
+        {
+          "chunk_id": "p-3-6",
+          "locator": "Section 3.6",
+          "quote": "No deductible, copayment, or coinsurance applies to such\nservices.",
+          "supports": "Preventive services are exempt from the deductible.",
+          "span": {
+            "start": 207,
+            "end": 273,
+            "text": "No deductible, copayment, or coinsurance applies to such\nservices."
           }
         }
       ],
       "source_span": null,
-      "critique_notes": null,
-      "draft_rationale": "The evidence provided does not specify whether the service in question was a preventive service covered under Section 3.6 or if the deductible had been met at the time of service. Sections 3.1 and 3.7 discuss the general deductible requirement but do not address the specific sub-claim regarding the status of the deductible at the time of a particular service."
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The sub-claim asserts that the deductible had not been met at the time of service, implying that the deductible applies to this specific claim. However, the evidence establishes that the service in question (a screening colonoscopy) is classified as a preventive service under Section 3.7. Section 3.6 explicitly states that for such preventive services, 'No deductible, copayment, or coinsurance applies.' Therefore, the applicability of the deductible is negated by the policy provisions regarding preventive care, contradicting the implication that the unmet status of the general deductible is a valid basis for denial or cost-sharing in this instance."
     },
     {
-      "id": "sc-ba47fcb4",
-      "text": "The amount shown is the member's responsibility under Section 3.1 of your Certificate of Coverage",
+      "id": "sc-76954a69",
+      "text": "The amount shown is the member's responsibility under Section 3.1 of your Certificate of Coverage.",
       "kind": "legal",
-      "finding": "insufficient",
-      "confidence": "insufficient_evidence",
-      "tone": "pending",
-      "rationale": "The evidence provided does not contain any information regarding the specific sub-claim that the amount shown is the member's responsibility under Section 3.1 of the Certificate of Coverage. While Sections 3.6 and 3.7 provide details about preventive services, they do not address the member's financial responsibility for a screening colonoscopy as per Section 3.1.",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The insurer cites Section 3.1 to assert that the member is responsible for the amount (implying the deductible applies). However, Section 3.1 explicitly states: 'Except as otherwise provided in this Certificate, no benefits are payable until the member has satisfied the annual deductible'. This creates a carve-back for other provisions. Section 3.7 identifies screening colonoscopies for members aged forty-five and older as preventive services for purposes of Section 3.6. Section 3.6 states: 'No deductible, copayment, or coinsurance applies to such services.' Because the service falls under the exception defined in Sections 3.6 and 3.7, the deductible in Section 3.1 does not apply, contradicting the insurer's claim that the member is responsible for the amount under Section 3.1.",
       "citations": [
         {
           "chunk_id": "p-3-1",
           "locator": "Section 3.1",
-          "quote": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.",
-          "supports": "The chunk indicates that there is a deductible, but it does not specify the exact sub-claim about the amount being the member's responsibility.",
+          "quote": "Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits.",
+          "supports": "The general rule is subject to exceptions within the certificate.",
           "span": {
-            "start": 0,
+            "start": 12,
             "end": 173,
-            "text": "Deductible. Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits."
-          }
-        },
-        {
-          "chunk_id": "p-3-6",
-          "locator": "Section 3.6",
-          "quote": "Preventive Services. Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices.",
-          "supports": "This chunk supports that preventive services are generally covered without any member's financial responsibility.",
-          "span": {
-            "start": 0,
-            "end": 273,
-            "text": "Preventive Services. Preventive services rated A or B by the United States Preventive\nServices Task Force are covered at one hundred percent of the allowed amount when furnished\nby a participating provider. No deductible, copayment, or coinsurance applies to such\nservices."
+            "text": "Except as otherwise provided in this Certificate, no benefits are payable until\nthe member has satisfied the annual deductible shown in the Schedule of Benefits."
           }
         },
         {
           "chunk_id": "p-3-7",
           "locator": "Section 3.7",
           "quote": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening.",
-          "supports": "This chunk indicates that a screening colonoscopy is a covered preventive service.",
+          "supports": "The specific service in question is classified as a preventive service under Section 3.6.",
           "span": {
             "start": 0,
             "end": 168,
             "text": "Screening colonoscopy for members aged forty-five and older is a preventive service for\npurposes of Section 3.6, including when a polyp is removed during the screening."
           }
+        },
+        {
+          "chunk_id": "p-3-6",
+          "locator": "Section 3.6",
+          "quote": "No deductible, copayment, or coinsurance applies to such\nservices.",
+          "supports": "Preventive services are exempt from the deductible, directly contradicting the application of Section 3.1.",
+          "span": {
+            "start": 207,
+            "end": 273,
+            "text": "No deductible, copayment, or coinsurance applies to such\nservices."
+          }
         }
       ],
-      "source_span": {
-        "start": 256,
-        "end": 358,
-        "text": "and the amount shown is the member's responsibility under\nSection 3.1 of your Certificate of Coverage."
-      },
-      "critique_notes": null,
-      "draft_rationale": "The evidence provided does not contain any information regarding the specific sub-claim that the amount shown is the member's responsibility under Section 3.1 of the Certificate of Coverage. While Sections 3.6 and 3.7 provide details about preventive services, they do not address the member's financial responsibility for a screening colonoscopy as per Section 3.1."
+      "source_span": null,
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The insurer cites Section 3.1 to assert that the member is responsible for the amount (implying the deductible applies). However, Section 3.1 explicitly states: 'Except as otherwise provided in this Certificate, no benefits are payable until the member has satisfied the annual deductible'. This creates a carve-back for other provisions. Section 3.7 identifies screening colonoscopies for members aged forty-five and older as preventive services for purposes of Section 3.6. Section 3.6 states: 'No deductible, copayment, or coinsurance applies to such services.' Because the service falls under the exception defined in Sections 3.6 and 3.7, the deductible in Section 3.1 does not apply, contradicting the insurer's claim that the member is responsible for the amount under Section 3.1."
     }
   ],
   "evidence": [
@@ -135,7 +120,5 @@
       "derived": false,
       "cited": true
     }
-  ],
-  "expected_disposition": "contradicted",
-  "category": "clear_contradiction"
+  ]
 }

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { EvidenceSpace } from "./EvidenceSpace";
 import type { Audit, Citation, Evidence, SubClaim } from "../types";
 import { TONE_VAR } from "../types";
 
@@ -20,6 +21,10 @@ interface Props {
   audit: Audit;
   active: SubClaim | null;
   onAnchor: (id: string, el: HTMLElement | null) => void;
+  /** Clicking a node in the 3D space scrolls its card into view. The 3D
+   *  view never becomes the only way to reach anything — it is a shortcut
+   *  into the list, not a separate interface. */
+  onFocusEvidence: (id: string | null) => void;
 }
 
 const KIND_LABEL: Record<Evidence["source_kind"], string> = {
@@ -29,7 +34,12 @@ const KIND_LABEL: Record<Evidence["source_kind"], string> = {
   precedent: "Precedent",
 };
 
-export function EvidencePanel({ audit, active, onAnchor }: Props) {
+export function EvidencePanel({
+  audit,
+  active,
+  onAnchor,
+  onFocusEvidence,
+}: Props) {
   const citedBy = new Map<string, Citation>();
   if (active) {
     for (const c of active.citations) citedBy.set(c.chunk_id, c);
@@ -49,6 +59,13 @@ export function EvidencePanel({ audit, active, onAnchor }: Props) {
             : `${audit.evidence.length} retrieved`}
         </span>
       </header>
+
+      {/* Spatial index above the readable list. It shows the shape of the
+       *  retrieval — how many clauses came back, from which sources, and
+       *  which the verdict rests on — without scrolling. The text stays
+       *  below, where it can be read and screen-read; the 3D view is
+       *  aria-hidden because it carries nothing the list does not. */}
+      <EvidenceSpace audit={audit} active={active} onSelect={onFocusEvidence} />
 
       <motion.div
         className="evidence__list"

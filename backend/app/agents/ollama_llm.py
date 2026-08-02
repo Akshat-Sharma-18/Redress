@@ -59,14 +59,24 @@ class OllamaStructuredLLM:
         self,
         model: str = DEFAULT_MODEL,
         host: str = DEFAULT_HOST,
-        timeout: float = 300.0,
+        timeout: float = 900.0,
         num_ctx: int = 8192,
         temperature: float = 0.0,
         max_attempts: int = 2,
+        think: bool = False,
     ):
         self.model = model
         self.host = host.rstrip("/")
+        # Generous because a large model that does not fit in VRAM runs
+        # mostly on CPU: qwen3.6:27b on 8GB measured 2.4 tok/s at a 70/30
+        # CPU/GPU split, where the old 300s ceiling cut calls off mid-answer
+        # and looked like a model failure rather than a timeout.
         self.timeout = timeout
+        # Reasoning models emit a thinking block before the answer. Off by
+        # default: on the same hardware, thinking took a trivial reply from
+        # 4.8s to 75s — a 15x cost for reasoning the schema then constrains
+        # anyway. Turn it on deliberately to trade latency for quality.
+        self.think = think
         # Legal text is long; the default 2048-token context silently
         # truncates the evidence pack, which would look like the model
         # ignoring clauses it was never shown.
@@ -93,6 +103,9 @@ class OllamaStructuredLLM:
             ],
             "stream": False,
             "format": json_schema,
+            # Ignored by models without a reasoning mode, so it is safe to
+            # send unconditionally.
+            "think": self.think,
             "options": {
                 "temperature": self.temperature,
                 "num_ctx": self.num_ctx,

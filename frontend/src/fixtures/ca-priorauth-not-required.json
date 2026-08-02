@@ -1,33 +1,22 @@
 {
   "case_id": "ca-priorauth-not-required",
   "denial_letter": "NOTICE OF ADVERSE BENEFIT DETERMINATION\n\nDate of Notice: May 30, 2022\nClaim: Diagnostic mammogram, May 2022\nReason Code: CO-197\n\nBenefits are not available for the above service. Prior authorization was required and was not\nobtained. Please refer to Section 3.3 of your Certificate of Coverage.\n\nYou may request an internal appeal within 180 days of this notice.\n",
-  "denial_reason": "Benefits are not available for the above service. Prior authorization was required and was not obtained.",
+  "denial_reason": "Prior authorization was required and was not obtained.",
   "reason_code": null,
   "denial_date": "2022-05-30",
-  "disposition": "insufficient",
-  "confidence": "insufficient_evidence",
-  "tone": "pending",
+  "disposition": "contradicted",
+  "confidence": "supported",
+  "tone": "contradicted",
   "sub_claims": [
     {
-      "id": "sc-3d7e3465",
-      "text": "Prior authorization was required and was not obtained.",
-      "kind": "factual",
-      "finding": "insufficient",
-      "confidence": "insufficient_evidence",
-      "tone": "pending",
-      "rationale": "While Section 3.3 of your Certificate of Coverage states that certain services require prior authorization before they are rendered, it does not specify which services fall under this requirement. Additionally, Section 3.4 lists several services that do not require prior authorization. Without more specific information about the service in question, it is insufficient to determine whether prior authorization was required and if it was obtained.",
+      "id": "sc-eb2f2edc",
+      "text": "Prior authorization was required for the diagnostic mammogram service.",
+      "kind": "legal",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The insurer claims that prior authorization was required for the diagnostic mammogram service, citing Section 3.3. However, Section 3.4 of the policy explicitly lists services that do not require prior authorization. This list includes 'diagnostic imaging of the breast.' A diagnostic mammogram falls under the category of diagnostic imaging of the breast. Therefore, the specific provision in Section 3.4 carves out this service from the general requirement in Section 3.3, meaning prior authorization was not required.",
       "citations": [
-        {
-          "chunk_id": "p-3-3",
-          "locator": "Section 3.3",
-          "quote": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained.",
-          "supports": "justified",
-          "span": {
-            "start": 0,
-            "end": 166,
-            "text": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained."
-          }
-        },
         {
           "chunk_id": "p-3-4",
           "locator": "Section 3.4",
@@ -40,35 +29,54 @@
           }
         }
       ],
-      "source_span": {
-        "start": 179,
-        "end": 233,
-        "text": "Prior authorization was required and was not\nobtained."
-      },
-      "critique_notes": null,
-      "draft_rationale": "While Section 3.3 of your Certificate of Coverage states that certain services require prior authorization before they are rendered, it does not specify which services fall under this requirement. Additionally, Section 3.4 lists several services that do not require prior authorization. Without more specific information about the service in question, it is insufficient to determine whether prior authorization was required and if it was obtained."
+      "source_span": null,
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The insurer claims that prior authorization was required for the diagnostic mammogram service, citing Section 3.3. However, Section 3.4 of the policy explicitly lists services that do not require prior authorization. This list includes 'diagnostic imaging of the breast.' A diagnostic mammogram falls under the category of diagnostic imaging of the breast. Therefore, the specific provision in Section 3.4 carves out this service from the general requirement in Section 3.3, meaning prior authorization was not required."
+    },
+    {
+      "id": "sc-eb94a2ba",
+      "text": "Prior authorization was not obtained for the diagnostic mammogram service.",
+      "kind": "factual",
+      "finding": "contradicted",
+      "confidence": "supported",
+      "tone": "contradicted",
+      "rationale": "The insurer's sub-claim asserts that prior authorization was not obtained for a diagnostic mammogram. However, the policy explicitly lists 'diagnostic imaging of the breast' as a service that does not require prior authorization (Chunk p-3-4). Since a diagnostic mammogram falls under diagnostic imaging of the breast, the requirement to obtain prior authorization does not exist for this service. Therefore, the claim that authorization was missing is contradicted by the policy provision exempting such services from that requirement.",
+      "citations": [
+        {
+          "chunk_id": "p-3-4",
+          "locator": "Section 3.4",
+          "quote": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6.",
+          "supports": "contradicted",
+          "span": {
+            "start": 0,
+            "end": 198,
+            "text": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6."
+          }
+        }
+      ],
+      "source_span": null,
+      "critique_notes": "critique: approved",
+      "draft_rationale": "The insurer's sub-claim asserts that prior authorization was not obtained for a diagnostic mammogram. However, the policy explicitly lists 'diagnostic imaging of the breast' as a service that does not require prior authorization (Chunk p-3-4). Since a diagnostic mammogram falls under diagnostic imaging of the breast, the requirement to obtain prior authorization does not exist for this service. Therefore, the claim that authorization was missing is contradicted by the policy provision exempting such services from that requirement."
     }
   ],
   "evidence": [
-    {
-      "id": "p-3-3",
-      "text": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained.\n",
-      "source_kind": "policy",
-      "locator": "Section 3.3",
-      "score": 0.03278688524590164,
-      "derived": false,
-      "cited": true
-    },
     {
       "id": "p-3-4",
       "text": "The following services do not require prior authorization: emergency services, urgent care,\ndiagnostic imaging of the breast, routine prenatal care, and preventive services described in\nSection 3.6.\n",
       "source_kind": "policy",
       "locator": "Section 3.4",
-      "score": 0.03225806451612903,
+      "score": 0.03278688524590164,
       "derived": false,
       "cited": true
+    },
+    {
+      "id": "p-3-3",
+      "text": "Prior Authorization. Certain services require prior authorization before they are rendered.\nBenefits may be denied where required prior authorization is not obtained.\n",
+      "source_kind": "policy",
+      "locator": "Section 3.3",
+      "score": 0.03225806451612903,
+      "derived": false,
+      "cited": false
     }
-  ],
-  "expected_disposition": "contradicted",
-  "category": "clear_contradiction"
+  ]
 }
