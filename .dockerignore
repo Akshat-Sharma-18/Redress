@@ -1,0 +1,28 @@
+# Keep the build context small and keep local state out of the image.
+.git
+.gitignore
+HANDOFF.md
+.devserver
+
+**/node_modules
+**/dist
+**/.vite
+
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+**/htmlcov
+**/.coverage
+
+# Real documents must never enter an image layer.
+data/policies
+data/denials
+
+*.faiss
+*.qdrant
+.cache
+models
+storage

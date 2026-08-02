@@ -3,21 +3,34 @@ import { CitationBeam, type BeamEnd } from "./components/CitationBeam";
 import { DocumentPanel } from "./components/DocumentPanel";
 import { EvidencePanel } from "./components/EvidencePanel";
 import { SubClaimList } from "./components/SubClaimList";
+import { UploadPanel } from "./components/UploadPanel";
 import { VerdictStamp } from "./components/VerdictStamp";
-import type { SubClaim } from "./types";
+import type { Audit, SubClaim } from "./types";
 import { AUDITS } from "./fixtures";
 import "./styles/tokens.css";
 import "./styles/app.css";
+import "./styles/upload.css";
+
+/** What the ledger is currently showing.
+ *
+ *  `upload` is the default rather than a bundled example. The examples are a
+ *  measurement exhibit — real runs against labelled cases, most of which the
+ *  local model gets wrong — and opening on one would present the evaluation
+ *  as the product. Someone arriving with a denial letter should land on the
+ *  thing that reads their denial letter.
+ */
+type View = { kind: "upload" } | { kind: "audit"; audit: Audit } | { kind: "example" };
 
 export default function App() {
+  const [view, setView] = useState<View>({ kind: "upload" });
   const [caseId, setCaseId] = useState(AUDITS[0].case_id);
   const [active, setActive] = useState<SubClaim | null>(null);
   const [revision, bump] = useReducerBump();
 
-  const audit = useMemo(
-    () => AUDITS.find((a) => a.case_id === caseId) ?? AUDITS[0],
-    [caseId],
-  );
+  const audit = useMemo(() => {
+    if (view.kind === "audit") return view.audit;
+    return AUDITS.find((a) => a.case_id === caseId) ?? AUDITS[0];
+  }, [view, caseId]);
 
   const stage = useRef<HTMLDivElement>(null);
   const anchors = useRef(new Map<string, HTMLElement>());
@@ -71,7 +84,7 @@ export default function App() {
     };
   }, [bump]);
 
-  useEffect(() => setActive(null), [caseId]);
+  useEffect(() => setActive(null), [caseId, view]);
 
   /** Scroll an evidence card into view when its 3D node is clicked. */
   const focusEvidence = useCallback((id: string | null) => {
@@ -95,48 +108,74 @@ export default function App() {
           </div>
         </div>
 
-        <label className="case-picker">
-          <span className="case-picker__label">Case</span>
-          <select
-            value={caseId}
-            onChange={(e) => setCaseId(e.target.value)}
-            className="mono"
+        <div className="modes">
+          <button
+            className={`modes__tab${view.kind === "upload" ? " modes__tab--on" : ""}`}
+            onClick={() => setView({ kind: "upload" })}
           >
-            {AUDITS.map((a) => (
-              <option key={a.case_id} value={a.case_id}>
-                {a.case_id} — {a.disposition}
-              </option>
-            ))}
-          </select>
-        </label>
+            New audit
+          </button>
+          <button
+            className={`modes__tab${view.kind === "example" ? " modes__tab--on" : ""}`}
+            onClick={() => setView({ kind: "example" })}
+          >
+            Example cases
+          </button>
+          {view.kind === "audit" && (
+            <span className="modes__tab modes__tab--on">Your audit</span>
+          )}
+
+          {view.kind === "example" && (
+            <label className="case-picker">
+              <span className="case-picker__label">Case</span>
+              <select
+                value={caseId}
+                onChange={(e) => setCaseId(e.target.value)}
+                className="mono"
+              >
+                {AUDITS.map((a) => (
+                  <option key={a.case_id} value={a.case_id}>
+                    {a.case_id} — {a.disposition}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
       </header>
 
-      <div className="stage" ref={stage}>
-        <DocumentPanel
-          audit={audit}
-          active={active}
-          onSelect={setActive}
-          onAnchor={register}
+      {view.kind === "upload" ? (
+        <UploadPanel
+          onComplete={(result) => setView({ kind: "audit", audit: result })}
         />
-
-        <div className="center">
-          <VerdictStamp audit={audit} />
-          <SubClaimList
+      ) : (
+        <div className="stage" ref={stage}>
+          <DocumentPanel
             audit={audit}
             active={active}
             onSelect={setActive}
+            onAnchor={register}
           />
+
+          <div className="center">
+            <VerdictStamp audit={audit} />
+            <SubClaimList
+              audit={audit}
+              active={active}
+              onSelect={setActive}
+            />
+          </div>
+
+          <EvidencePanel
+            audit={audit}
+            active={active}
+            onAnchor={register}
+            onFocusEvidence={focusEvidence}
+          />
+
+          <CitationBeam claim={active} resolve={resolve} revision={revision} />
         </div>
-
-        <EvidencePanel
-          audit={audit}
-          active={active}
-          onAnchor={register}
-          onFocusEvidence={focusEvidence}
-        />
-
-        <CitationBeam claim={active} resolve={resolve} revision={revision} />
-      </div>
+      )}
 
       <footer className="disclaimer">
         Redress is an evidence-retrieval tool, not legal advice. Verdicts are

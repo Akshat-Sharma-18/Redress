@@ -36,5 +36,9 @@ htmlcov/
 # Local working notes, not part of the project
 HANDOFF.md
 
+# Local editor/agent tooling. The tracked dev-server config is .devserver/.
+.claude/
+
 # Frontend build output
 frontend/dist/
+frontend/tsconfig.tsbuildinfo

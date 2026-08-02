@@ -17,6 +17,7 @@ there is an API; doing it here first would just make the tests worse.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -186,6 +187,7 @@ class AuditPipeline:
         *,
         insurer_id: str | None = None,
         statute_ids: list[str] | None = None,
+        on_progress: Callable[[str, dict], None] | None = None,
     ) -> AuditResult:
         """Audit one denial letter.
 
@@ -193,8 +195,26 @@ class AuditPipeline:
         does not reliably carry: the insurer's graph identity comes from the
         caller (letterhead is not an identifier), and the statutes to check
         for amendments come from the ingestion step that indexed them.
+
+        `on_progress` observes stage transitions. A full audit is minutes of
+        local inference, so a caller serving a human needs to say more than
+        "working"; the alternative is an interface that is indistinguishable
+        from a hang. It is an observer and nothing more — it cannot alter the
+        audit, and an exception raised inside it is deliberately not caught,
+        because a silently broken progress feed is worse than a loud one.
         """
+        emit = on_progress or (lambda event, data: None)
+
         denial = self.decomposition.decompose(denial_letter_text)
+        emit(
+            "decomposed",
+            {
+                "sub_claims": len(denial.sub_claims),
+                "denial_date": (
+                    denial.denial_date.isoformat() if denial.denial_date else None
+                ),
+            },
+        )
 
         # Graph and version evidence depends on the case, not the sub-claim,
         # so it is computed once and shared across every sub-claim.
@@ -208,7 +228,12 @@ class AuditPipeline:
             )
 
         results: list[SubClaimResult] = []
-        for sub_claim in denial.sub_claims:
+        total = len(denial.sub_claims)
+        for index, sub_claim in enumerate(denial.sub_claims):
+            emit(
+                "sub_claim_started",
+                {"index": index, "total": total, "text": sub_claim.text},
+            )
             traces: dict[str, RetrievalTrace] = {}
             evidence = self._gather(
                 self.retrievers, sub_claim.text, denial.denial_date, traces
@@ -243,5 +268,16 @@ class AuditPipeline:
                 secondary_evidence=secondary,
             )
             results.append(SubClaimResult(verdict=verdict, traces=traces))
+            emit(
+                "sub_claim_finished",
+                {
+                    "index": index,
+                    "total": total,
+                    "finding": verdict.finding,
+                    "confidence": verdict.confidence.value,
+                },
+            )
 
-        return AuditResult(denial=denial, results=results)
+        result = AuditResult(denial=denial, results=results)
+        emit("finished", {"disposition": result.disposition})
+        return result

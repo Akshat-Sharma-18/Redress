@@ -78,6 +78,12 @@ export function VerdictStamp({ audit }: Props) {
  *  is that it tells you when not to trust it.
  */
 function GroundTruth({ audit }: Props) {
+  // A real upload has no label, so there is nothing truthful to say here.
+  // Rendering "Matches the golden label" for a document nobody has reviewed
+  // would manufacture exactly the confidence the rest of this interface is
+  // built to withhold.
+  if (!audit.expected_disposition) return null;
+
   const correct = audit.disposition === audit.expected_disposition;
   const expected = DISPOSITION_COPY[audit.expected_disposition].label;
 

@@ -71,9 +71,15 @@ export interface Audit {
    *  pipeline outputs and the system currently gets most of them wrong; a
    *  demo that showed only the verdict would be presenting a 7B model's
    *  mistakes as findings. Showing the answer key next to the output is the
-   *  difference between a demo and a claim. */
-  expected_disposition: Disposition;
-  category: string;
+   *  difference between a demo and a claim.
+   *
+   *  Absent on a real audit, because a document someone just uploaded has no
+   *  answer key — nobody has labelled it. Optional rather than defaulted:
+   *  "no correct answer is known" and "the correct answer is X" are different
+   *  claims, and filling one in for the other is exactly the kind of
+   *  invented certainty this system exists to avoid. */
+  expected_disposition?: Disposition;
+  category?: string;
 }
 
 /** What the user is told, in their words rather than the system's.

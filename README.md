@@ -26,8 +26,9 @@ The design constraint that shapes everything: **a wrong answer here costs someon
 | 2 | Reconciliation agent v1 (single-pass verdict with citations) | **Done** — decomposition + mechanically verified citations |
 | 3 | Adversarial critique pass + three-way confidence gate | **Done** — critique loop with bounded re-retrieval, ensemble cross-check |
 | 4 | GraphRAG layer (Neo4j) + regulation versioning | **Done** — in-memory + Cypher backends, version registry |
-| 5 | Eval harness — golden dataset, RAGAS, precision/recall | **Harness done** — 5 seed cases; set needs expanding to 30–50 |
-| 6 | Frontend — the Forensic Ledger UI | Not started |
+| 5 | Eval harness — golden dataset, RAGAS, precision/recall | **Done** — 35-case golden set built around near-miss pairs |
+| 6 | Frontend — the Forensic Ledger UI | **Done** — citation beam, verdict stamp, 3D evidence space |
+| 7 | Upload flow — ingestion, HTTP API, deployment | **Done** — PDF/text ingestion, job-based API, Docker |
 
 Built so far: the retrieval stack (`backend/app/retrieval/`), the shared domain model (`backend/app/core/models.py`), and the agent layer (`backend/app/agents/`) — claim decomposition, reconciliation with mechanical citation verification, the adversarial critique loop with bounded re-retrieval, the ensemble cross-check, and the three-way confidence gate. 41 tests, none of which need an API key: the LLM sits behind a `StructuredLLM` protocol, and the suite covers exactly what the model is *not* trusted to do — verbatim-quote enforcement, fabricated-citation detection, critique rejection paths, ensemble disagreement routing to `Contested`, and temporal filtering by denial date.
 
@@ -220,14 +221,66 @@ cd backend && python -m venv .venv && .venv/Scripts/python -m pip install -e ".[
 cd backend && .venv/Scripts/python -m pytest
 ```
 
+### The product: upload a denial, get an answer
+
+Two processes — the API, and the Vite dev server that proxies to it:
+
+```bash
+cd backend && .venv/Scripts/python -m uvicorn app.api.server:app --port 8000
+```
+
+```bash
+npm run dev --prefix frontend
+```
+
+Open <http://localhost:5173>, drop in a denial letter and the policy it cites,
+and the audit runs on your machine. PDF, TXT and MD are accepted; a scanned
+PDF is rejected rather than silently audited as an empty document, because
+the alternative is reporting "insufficient evidence" about a file the system
+never actually read.
+
+An audit is minutes of local inference, so `POST /api/audits` returns a job id
+and the client polls `GET /api/audits/{id}`. Progress names the stage
+("checking claim 2 of 5") rather than drawing a percentage against an unknown
+number of model calls.
+
+**Uploaded documents are never written to disk.** They are held in the API
+process's memory for the life of the job and dropped 30 minutes after it
+finishes. There is no upload directory, and a restart loses jobs rather than
+retaining someone's medical denial.
+
+### Deploying it
+
+```bash
+docker compose up --build
+docker compose exec ollama ollama pull qwen3.5:9b
+docker compose exec ollama ollama pull nomic-embed-text
+```
+
+Two containers: the app (API + built SPA on one origin, port 8000) and
+Ollama. Model weights live in a named volume, so they survive `down` and are
+not baked into an image. Ollama's port is deliberately not published — it has
+no authentication, and only the app needs to reach it.
+
+This wants a GPU with ~8 GB of VRAM. It runs CPU-only if you remove the
+`deploy` block, but a 9B model on CPU turns a several-minute audit into an
+afternoon — that is a real cost of self-hosting a model, not a setting to
+tune.
+
 ### No API key required
 
 Redress runs end to end on local models via [Ollama](https://ollama.com) —
-no key, no cost. Two models, ~5 GB total:
+no key, no cost. Two models, ~7 GB total:
 
 ```bash
-ollama pull qwen2.5:7b && ollama pull nomic-embed-text
+ollama pull qwen3.5:9b && ollama pull nomic-embed-text
 ```
+
+`qwen3.5:9b` is the default because it is the largest model that still fits
+entirely in 8 GB of VRAM, and full GPU offload is worth more here than
+parameter count: a 27B model at a 70/30 CPU/GPU split measured 2.4 tok/s on
+this hardware, which turns a 35-case eval into an overnight job. Set
+`REDRESS_MODEL` to override.
 
 ```bash
 cd backend && .venv/Scripts/python -m app.eval

@@ -1,0 +1,68 @@
+# Redress, deployable in two containers.
+#
+#   docker compose up --build
+#   docker compose exec ollama ollama pull qwen3.5:9b
+#   docker compose exec ollama ollama pull nomic-embed-text
+#   open http://localhost:8000
+#
+# The pulls are a separate step on purpose: they are several gigabytes, they
+# only need doing once, and burying them in the image build would mean every
+# rebuild re-downloads them.
+#
+# HARDWARE: this needs a GPU with roughly 8 GB of VRAM to be usable. It will
+# run CPU-only — remove the `deploy` block below — but a 9B model on CPU is
+# minutes per LLM call and an audit makes dozens, so a single audit becomes an
+# afternoon. That is a real constraint of self-hosting a model, not a
+# configuration problem to tune around.
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      # Named volume so pulled models survive `docker compose down`.
+      - ollama-models:/root/.ollama
+    # Not published to the host by default. Ollama has no authentication, and
+    # anything that can reach it can run arbitrary models and read every
+    # prompt. Only the app container needs it. Uncomment to debug locally.
+    # ports:
+    #   - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      REDRESS_MODEL: qwen3.5:9b
+      REDRESS_EMBED_MODEL: nomic-embed-text
+      # Same-origin in this deployment, so no browser origin needs allowing.
+      # Set this only if the SPA is served from somewhere else.
+      REDRESS_CORS_ORIGINS: ""
+    depends_on:
+      ollama:
+        condition: service_healthy
+    # Uploaded documents are held in memory and never written to disk, so the
+    # filesystem can be read-only. tmpfs covers anything that insists on /tmp.
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  ollama-models:
