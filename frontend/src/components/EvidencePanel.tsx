@@ -61,21 +61,43 @@ export function EvidencePanel({ audit, active, onAnchor }: Props) {
           shown: { transition: { staggerChildren: 0.05, delayChildren: 0.12 } },
         }}
       >
-        {ordered.map((item) => (
-          <EvidenceCard
-            key={item.id}
-            item={item}
-            citation={citedBy.get(item.id) ?? null}
-            hasSelection={Boolean(active)}
-            tone={active?.tone ?? "pending"}
-            onAnchor={onAnchor}
-          />
-        ))}
+        {ordered.map((item, i) => {
+          const cited = citedBy.has(item.id);
+          // Divider at the cited/uncited boundary. Without it the unused
+          // clauses read as clutter; the whole point is that the system
+          // retrieved them and chose not to rely on them, which is what
+          // separates "never found the clause" from "found it and rejected
+          // it". That distinction is the audit trail.
+          const startsRest =
+            Boolean(active) && !cited && (i === 0 || citedBy.has(ordered[i - 1].id));
+
+          return (
+            <div key={item.id} className="evidence__slot">
+              {startsRest && (
+                <p className="evidence__divider">
+                  Retrieved, not relied on
+                  <span className="evidence__divider-note">
+                    the system considered these and the verdict does not rest
+                    on them
+                  </span>
+                </p>
+              )}
+              <EvidenceCard
+                item={item}
+                citation={citedBy.get(item.id) ?? null}
+                hasSelection={Boolean(active)}
+                tone={active?.tone ?? "pending"}
+                onAnchor={onAnchor}
+              />
+            </div>
+          );
+        })}
       </motion.div>
 
       {!active && (
         <p className="evidence__hint">
-          Select a sub-claim to open the clauses it rests on.
+          Everything the search returned for this case. Select a sub-claim to
+          see which of it the verdict actually rests on.
         </p>
       )}
     </section>

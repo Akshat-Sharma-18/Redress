@@ -74,7 +74,7 @@
         "end": 353,
         "text": "The therapy submitted\nis considered experimental or investigational for the diagnosis reported\non the claim, and is excluded under Section 6.1 of your Certificate of\nCoverage."
       },
-      "critique_notes": "critique rejected: ",
+      "critique_notes": "critique rejected the draft but gave no reason; treated as unverified",
       "draft_rationale": "Section 6.1 of the policy excludes benefits for services, drugs, or devices that are Experimental or Investigational for the condition being treated. However, Section 6.3 indicates that benefits are provided for drugs and biologicals that have received approval from the United States Food and Drug Administration (FDA) and are administered consistent with their labeled indications. This suggests that if a drug is FDA-approved, it would not be considered Experimental or Investigational under this policy."
     }
   ],

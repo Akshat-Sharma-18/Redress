@@ -616,3 +616,32 @@
 .evidence-card__body {
   overflow: hidden;
 }
+
+/* Boundary between the clauses a verdict rests on and the ones the search
+ * returned but the verdict ignored. Both belong on screen: hiding the
+ * second set would make "the system never retrieved the governing clause"
+ * indistinguishable from "it retrieved it and chose not to rely on it". */
+.evidence__slot {
+  display: contents;
+}
+
+.evidence__divider {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0 2px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--ink-line);
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.evidence__divider-note {
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-style: italic;
+  opacity: 0.75;
+}

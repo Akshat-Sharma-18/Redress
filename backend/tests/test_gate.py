@@ -82,6 +82,30 @@ class TestCritiqueLoop:
         # Draft preserved for the audit trail
         assert verdict.draft_rationale == "The exclusion covers this service."
 
+    def test_rejection_without_reasons_says_so(self):
+        """A rejection with an empty issues list produced 'critique rejected: '
+        — a dangling colon that reported a verdict was thrown out and nothing
+        about why. It must still downgrade: treating a malformed critique as
+        an approval would invert the gate's one invariant.
+        """
+        llm = FakeLLM([
+            _good_draft(),
+            CritiqueResult(approved=False, issues=[]),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+
+        assert verdict.finding == "insufficient"
+        assert not verdict.critique_notes.endswith(": ")
+        assert "gave no reason" in verdict.critique_notes
+
+    def test_blank_issue_strings_are_not_reported_as_reasons(self):
+        llm = FakeLLM([
+            _good_draft(),
+            CritiqueResult(approved=False, issues=["", "   "]),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+        assert "gave no reason" in verdict.critique_notes
+
     def test_narrowed_query_triggers_reretrieval_and_redraft(self):
         """Critique spots missing evidence -> re-retrieve -> approved redraft."""
         redraft = DraftVerdict(

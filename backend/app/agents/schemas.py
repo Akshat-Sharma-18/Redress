@@ -99,7 +99,14 @@ class DraftCitation(BaseModel):
         )
     )
     supports: str = Field(
-        description="One sentence: what this quote establishes"
+        description=(
+            "A full sentence stating what this quote establishes and how it "
+            "bears on the sub-claim, e.g. 'This carves emergency services "
+            "back out of the exclusion the insurer relied on.' Never restate "
+            "the finding as a bare label like 'justified' — this text is "
+            "shown to the policyholder beneath the quote, where a single "
+            "word explains nothing."
+        )
     )
 
 

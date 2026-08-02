@@ -27,6 +27,27 @@ from app.core.models import Confidence, ScoredChunk, SubClaim, Verdict
 RetrieveFn = Callable[[str], list[ScoredChunk]]
 
 
+def _rejection_note(issues: list[str]) -> str:
+    """Render the critique's reasons, or say plainly that it gave none.
+
+    Joining an empty list produced "critique rejected: " — a dangling colon
+    that told a reader the verdict was thrown out and nothing about why. The
+    critique agent's own instructions call a vague rejection as useless as a
+    wrong approval, so the same standard applies to how we report it.
+
+    A reason-less rejection still downgrades. Treating it as an approval
+    would let a malformed critique response upgrade a verdict, which inverts
+    the one property this gate exists to hold.
+    """
+    reasons = [i.strip() for i in issues if i and i.strip()]
+    if not reasons:
+        return (
+            "critique rejected the draft but gave no reason; treated as "
+            "unverified"
+        )
+    return "critique rejected: " + "; ".join(reasons)
+
+
 def _merge_evidence(
     base: list[ScoredChunk], extra: list[ScoredChunk]
 ) -> list[ScoredChunk]:
@@ -121,8 +142,7 @@ class GatedAdjudicator:
                         citations=verdict.citations,
                         retrieval_trace=evidence,
                         draft_rationale=verdict.rationale,
-                        critique_notes="critique rejected: "
-                        + "; ".join(critique.issues),
+                        critique_notes=_rejection_note(critique.issues),
                     ),
                     evidence,
                 )
