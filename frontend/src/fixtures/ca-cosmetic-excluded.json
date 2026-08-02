@@ -4,115 +4,50 @@
   "denial_reason": "Benefits are not available for the above procedure. The submitted documentation describes the procedure as performed to improve appearance. There is no indication of functional impairment or of reconstruction following injury or surgery. Cosmetic procedures are excluded under Section 4.3.",
   "reason_code": null,
   "denial_date": "2022-04-19",
-  "disposition": "contradicted",
+  "disposition": "justified",
   "confidence": "supported",
-  "tone": "contradicted",
+  "tone": "verified",
   "sub_claims": [
     {
-      "id": "sc-ea68573c",
+      "id": "sc-07149e4a",
       "text": "The submitted documentation describes the procedure as performed to improve appearance.",
       "kind": "factual",
-      "finding": "contradicted",
-      "confidence": "supported",
-      "tone": "contradicted",
-      "rationale": "The policy explicitly states in Section 4.3 that the plan does not provide benefits for cosmetic surgery, defining it as a procedure performed principally to improve appearance and not to restore bodily function (p-4-3). Additionally, Section 4.4 clarifies that reconstructive surgery to restore function is not considered cosmetic surgery (p-4-4). The sub-claim that the submitted documentation describes the procedure as performed to improve appearance directly contradicts these policy provisions.",
-      "citations": [
-        {
-          "chunk_id": "p-4-3",
-          "locator": "Section 4.3",
-          "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
-          "supports": "contradicted",
-          "span": {
-            "start": 0,
-            "end": 172,
-            "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function."
-          }
-        },
-        {
-          "chunk_id": "p-4-4",
-          "locator": "Section 4.4",
-          "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
-          "supports": "contradicted",
-          "span": {
-            "start": 0,
-            "end": 160,
-            "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3."
-          }
-        }
-      ],
-      "source_span": {
-        "start": 175,
-        "end": 262,
-        "text": "The submitted documentation describes the\nprocedure as performed to improve appearance."
-      },
-      "critique_notes": "critique: approved",
-      "draft_rationale": "The policy explicitly states in Section 4.3 that the plan does not provide benefits for cosmetic surgery, defining it as a procedure performed principally to improve appearance and not to restore bodily function (p-4-3). Additionally, Section 4.4 clarifies that reconstructive surgery to restore function is not considered cosmetic surgery (p-4-4). The sub-claim that the submitted documentation describes the procedure as performed to improve appearance directly contradicts these policy provisions."
+      "finding": "insufficient",
+      "confidence": "insufficient_evidence",
+      "tone": "pending",
+      "rationale": "The sub-claim asserts that the submitted documentation describes the procedure as performed to improve appearance. The provided evidence chunks define 'cosmetic surgery' (p-4-3), provide a carve-back for reconstructive surgery (p-4-4), and state general coverage requirements for surgical services (p-6-2). However, none of the provided chunks contain the actual submitted documentation or any factual description of the specific procedure in question. Therefore, there is no evidence to verify whether the documentation describes the procedure as performed to improve appearance.",
+      "citations": [],
+      "source_span": null,
+      "critique_notes": null,
+      "draft_rationale": "The sub-claim asserts that the submitted documentation describes the procedure as performed to improve appearance. The provided evidence chunks define 'cosmetic surgery' (p-4-3), provide a carve-back for reconstructive surgery (p-4-4), and state general coverage requirements for surgical services (p-6-2). However, none of the provided chunks contain the actual submitted documentation or any factual description of the specific procedure in question. Therefore, there is no evidence to verify whether the documentation describes the procedure as performed to improve appearance."
     },
     {
-      "id": "sc-ffc40ca4",
+      "id": "sc-9afdb4c7",
       "text": "There is no indication of functional impairment or of reconstruction following injury or surgery.",
       "kind": "factual",
       "finding": "insufficient",
       "confidence": "insufficient_evidence",
       "tone": "pending",
-      "rationale": "The provided evidence does not explicitly address whether there was functional impairment or reconstruction following injury or surgery. While Sections 4.3 and 4.4 discuss the distinction between cosmetic and reconstructive surgery, they do not provide information on the presence of functional impairment or reconstruction in this specific case.",
-      "citations": [
-        {
-          "chunk_id": "p-4-4",
-          "locator": "Section 4.4",
-          "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
-          "supports": "No",
-          "span": {
-            "start": 0,
-            "end": 160,
-            "text": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3."
-          }
-        },
-        {
-          "chunk_id": "p-4-3",
-          "locator": "Section 4.3",
-          "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
-          "supports": "No",
-          "span": {
-            "start": 0,
-            "end": 172,
-            "text": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function."
-          }
-        },
-        {
-          "chunk_id": "p-6-2",
-          "locator": "Section 6.2",
-          "quote": "Surgical services are covered when Medically Necessary and furnished by a participating\nprovider.",
-          "supports": "No",
-          "span": {
-            "start": 0,
-            "end": 97,
-            "text": "Surgical services are covered when Medically Necessary and furnished by a participating\nprovider."
-          }
-        }
-      ],
-      "source_span": {
-        "start": 263,
-        "end": 360,
-        "text": "There is no indication of functional impairment or\nof reconstruction following injury or surgery."
-      },
+      "rationale": "The provided evidence chunks define policy terms regarding cosmetic surgery, reconstructive surgery, and medical necessity (Sections 4.3, 4.4, and 6.2). However, none of the chunks contain any factual information about the specific claimant's condition, injury, or surgical history. The sub-claim asserts a factual finding ('There is no indication of functional impairment...'), but the evidence provided consists solely of contractual definitions and coverage criteria. Without medical records, clinical notes, or adjudication findings included in the evidence set, it is impossible to verify whether there was or was not an indication of functional impairment or reconstruction. Therefore, the evidence is insufficient to support or contradict the factual assertion.",
+      "citations": [],
+      "source_span": null,
       "critique_notes": null,
-      "draft_rationale": "The provided evidence does not explicitly address whether there was functional impairment or reconstruction following injury or surgery. While Sections 4.3 and 4.4 discuss the distinction between cosmetic and reconstructive surgery, they do not provide information on the presence of functional impairment or reconstruction in this specific case."
+      "draft_rationale": "The provided evidence chunks define policy terms regarding cosmetic surgery, reconstructive surgery, and medical necessity (Sections 4.3, 4.4, and 6.2). However, none of the chunks contain any factual information about the specific claimant's condition, injury, or surgical history. The sub-claim asserts a factual finding ('There is no indication of functional impairment...'), but the evidence provided consists solely of contractual definitions and coverage criteria. Without medical records, clinical notes, or adjudication findings included in the evidence set, it is impossible to verify whether there was or was not an indication of functional impairment or reconstruction. Therefore, the evidence is insufficient to support or contradict the factual assertion."
     },
     {
-      "id": "sc-857180c8",
+      "id": "sc-85a1aa9e",
       "text": "Cosmetic procedures are excluded under Section 4.3.",
       "kind": "legal",
-      "finding": "mixed",
+      "finding": "justified",
       "confidence": "supported",
-      "tone": "contested",
-      "rationale": "The policy explicitly excludes benefits for cosmetic surgery under Section 4.3 (p-4-3). However, Section 4.4 (p-4-4) clarifies that reconstructive surgery to restore function is not considered cosmetic surgery and would be covered. Therefore, the evidence cuts both ways on whether a specific cosmetic procedure in question would be excluded or not.",
+      "tone": "verified",
+      "rationale": "The insurer's sub-claim is that cosmetic procedures are excluded under Section 4.3. The evidence in chunk p-4-3 explicitly states: 'This plan does not provide benefits for cosmetic surgery.' It further defines cosmetic surgery as a procedure performed principally to improve appearance and not to restore bodily function. While chunk p-4-4 provides a carve-back stating that reconstructive surgery to restore function is not considered cosmetic surgery for purposes of Section 4.3, this limitation applies only to procedures meeting the definition of reconstructive/functional restoration. The sub-claim broadly asserts the exclusion of 'cosmetic procedures' under Section 4.3. Since Section 4.3 does indeed exclude procedures defined as cosmetic (i.e., principally for appearance), and the carve-back in p-4-4 merely clarifies that functional reconstruction is not *classified* as cosmetic (and thus falls outside the exclusion's scope rather than reversing it), the statement that cosmetic procedures are excluded under Section 4.3 is supported by the text of Section 4.3 itself. The existence of a carve-back does not contradict the fact that the section excludes what it defines as cosmetic surgery; it simply narrows the definition of what constitutes 'cosmetic' in this context. Therefore, the evidence supports the insurer's citation.",
       "citations": [
         {
           "chunk_id": "p-4-3",
           "locator": "Section 4.3",
           "quote": "This plan does not provide benefits for cosmetic surgery. Cosmetic surgery means a procedure\nperformed principally to improve appearance and not to restore bodily function.",
-          "supports": "justified",
+          "supports": "The exclusion of cosmetic surgery under Section 4.3",
           "span": {
             "start": 0,
             "end": 172,
@@ -123,7 +58,7 @@
           "chunk_id": "p-4-4",
           "locator": "Section 4.4",
           "quote": "Reconstructive surgery to restore function following injury, infection, disease, or a prior\ncovered surgery is not cosmetic surgery for purposes of Section 4.3.",
-          "supports": "contradicted",
+          "supports": "Clarifies the scope of the exclusion but does not negate the exclusion of procedures defined as cosmetic",
           "span": {
             "start": 0,
             "end": 160,
@@ -131,13 +66,9 @@
           }
         }
       ],
-      "source_span": {
-        "start": 361,
-        "end": 412,
-        "text": "Cosmetic procedures are excluded under\nSection 4.3."
-      },
+      "source_span": null,
       "critique_notes": "critique: approved",
-      "draft_rationale": "The policy explicitly excludes benefits for cosmetic surgery under Section 4.3 (p-4-3). However, Section 4.4 (p-4-4) clarifies that reconstructive surgery to restore function is not considered cosmetic surgery and would be covered. Therefore, the evidence cuts both ways on whether a specific cosmetic procedure in question would be excluded or not."
+      "draft_rationale": "The insurer's sub-claim is that cosmetic procedures are excluded under Section 4.3. The evidence in chunk p-4-3 explicitly states: 'This plan does not provide benefits for cosmetic surgery.' It further defines cosmetic surgery as a procedure performed principally to improve appearance and not to restore bodily function. While chunk p-4-4 provides a carve-back stating that reconstructive surgery to restore function is not considered cosmetic surgery for purposes of Section 4.3, this limitation applies only to procedures meeting the definition of reconstructive/functional restoration. The sub-claim broadly asserts the exclusion of 'cosmetic procedures' under Section 4.3. Since Section 4.3 does indeed exclude procedures defined as cosmetic (i.e., principally for appearance), and the carve-back in p-4-4 merely clarifies that functional reconstruction is not *classified* as cosmetic (and thus falls outside the exclusion's scope rather than reversing it), the statement that cosmetic procedures are excluded under Section 4.3 is supported by the text of Section 4.3 itself. The existence of a carve-back does not contradict the fact that the section excludes what it defines as cosmetic surgery; it simply narrows the definition of what constitutes 'cosmetic' in this context. Therefore, the evidence supports the insurer's citation."
     }
   ],
   "evidence": [
@@ -166,9 +97,7 @@
       "locator": "Section 6.2",
       "score": 0.015873015873015872,
       "derived": false,
-      "cited": true
+      "cited": false
     }
-  ],
-  "expected_disposition": "justified",
-  "category": "clear_justification"
+  ]
 }
