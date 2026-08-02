@@ -9,7 +9,14 @@ from __future__ import annotations
 
 from datetime import date
 
+import pytest
+
 from app.agents.critique import CritiqueAgent, CritiqueResult
+from app.agents.ollama_llm import (
+    DEFAULT_REASONING_EFFORT,
+    OllamaError,
+    OllamaStructuredLLM,
+)
 from app.agents.decomposition import DecompositionAgent, DecomposedDenial
 from app.agents.gate import GatedAdjudicator
 from app.agents.pipeline import AuditPipeline
@@ -581,3 +588,47 @@ class TestPipeline:
         )
         result = pipeline.run("...")
         assert result.overall == "insufficient"
+
+
+class TestReasoningOnlyModels:
+    """A reasoning-only model must never be sent think=False.
+
+    gpt-oss answers through a channel separate from its reasoning. Given
+    `think: false` it does not answer tersely — it returns nothing, and the
+    empty string fails schema validation on every call. That produced 35/35
+    case errors on the golden set, all at decomposition, none of which said
+    anything about whether the model can read a denial letter.
+
+    The cost of getting this wrong is not a crash, it is a *misattribution*:
+    a plumbing fault that reads as a model too weak to follow a schema.
+    """
+
+    def test_reasoning_only_model_never_gets_thinking_disabled(self):
+        llm = OllamaStructuredLLM(model="gpt-oss:20b")
+        assert llm.think == DEFAULT_REASONING_EFFORT
+
+    def test_explicit_effort_is_respected(self):
+        assert OllamaStructuredLLM(model="gpt-oss:20b", think="high").think == "high"
+
+    def test_ordinary_model_still_defaults_to_no_thinking(self):
+        assert OllamaStructuredLLM(model="qwen2.5:7b").think is False
+
+    def test_empty_response_is_reported_as_empty_not_as_bad_schema(self, monkeypatch):
+        """The error must name the real cause, or it sends the reader hunting
+        for a prompt problem that does not exist."""
+        import app.agents.ollama_llm as module
+
+        monkeypatch.setattr(
+            module,
+            "_post",
+            lambda *a, **k: {"message": {"content": "", "thinking": "reasoned..."}},
+        )
+        llm = OllamaStructuredLLM(model="qwen2.5:7b")
+        with pytest.raises(OllamaError) as exc:
+            llm.generate(system="s", prompt="p", schema=Decomposition)
+
+        message = str(exc.value)
+        assert "empty response" in message
+        assert "reasons unconditionally" in message
+        # It must not be dressed up as a schema failure.
+        assert "invalid output" not in message

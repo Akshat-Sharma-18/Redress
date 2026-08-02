@@ -41,9 +41,24 @@ from app.retrieval.hybrid import HybridRetriever
 DEFAULT_MODEL = os.environ.get("REDRESS_MODEL", OLLAMA_DEFAULT_MODEL)
 DEFAULT_EMBED_MODEL = os.environ.get("REDRESS_EMBED_MODEL", "nomic-embed-text")
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-#: Reasoning mode roughly quadruples latency for a schema-constrained answer.
-#: Off unless deliberately enabled.
-DEFAULT_THINK = os.environ.get("REDRESS_THINK", "").lower() in ("1", "true", "yes")
+def _parse_think(raw: str) -> bool | str:
+    """REDRESS_THINK as either a switch or a reasoning effort level.
+
+    Models differ in how they express reasoning: some toggle it, gpt-oss
+    grades it. Accepting both here means switching models is still only an
+    env change, which is the property that makes the model choice testable.
+    """
+    value = raw.strip().lower()
+    if value in ("low", "medium", "high"):
+        return value
+    return value in ("1", "true", "yes")
+
+
+#: Reasoning mode roughly quadruples latency for a schema-constrained answer,
+#: so it is off unless deliberately enabled. Models that reason
+#: unconditionally ignore this and pick their own floor — see
+#: `REASONING_ONLY_PREFIXES`.
+DEFAULT_THINK = _parse_think(os.environ.get("REDRESS_THINK", ""))
 
 
 class NoEvidenceError(ValueError):
@@ -92,7 +107,7 @@ def build_pipeline(
     model: str = DEFAULT_MODEL,
     embed_model: str = DEFAULT_EMBED_MODEL,
     host: str = OLLAMA_HOST,
-    think: bool = DEFAULT_THINK,
+    think: bool | str = DEFAULT_THINK,
 ) -> tuple[AuditPipeline, dict[str, int]]:
     """Build a pipeline over the request's documents.
 
