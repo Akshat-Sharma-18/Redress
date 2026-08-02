@@ -25,6 +25,9 @@ from dataclasses import dataclass, field
 from app.agents.critique import CritiqueAgent
 from app.agents.decomposition import DecompositionAgent
 from app.agents.gate import GatedAdjudicator
+from app.agents.ollama_llm import (
+    DEFAULT_MODEL as OLLAMA_DEFAULT_MODEL,
+)
 from app.agents.ollama_llm import OllamaEmbedder, OllamaStructuredLLM
 from app.agents.pipeline import AuditPipeline
 from app.agents.reconciliation import ReconciliationAgent
@@ -35,7 +38,7 @@ from app.retrieval.bm25 import BM25Index
 from app.retrieval.dense import DenseIndex
 from app.retrieval.hybrid import HybridRetriever
 
-DEFAULT_MODEL = os.environ.get("REDRESS_MODEL", "qwen3.5:9b")
+DEFAULT_MODEL = os.environ.get("REDRESS_MODEL", OLLAMA_DEFAULT_MODEL)
 DEFAULT_EMBED_MODEL = os.environ.get("REDRESS_EMBED_MODEL", "nomic-embed-text")
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 #: Reasoning mode roughly quadruples latency for a schema-constrained answer.

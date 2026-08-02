@@ -165,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--model",
         default=None,
-        help="default: qwen3.5:9b (ollama) or claude-opus-5 (anthropic)",
+        help="default: qwen2.5:7b (ollama) or claude-opus-5 (anthropic)",
     )
     parser.add_argument("--host", default="http://localhost:11434")
     parser.add_argument("--embed-model", default="nomic-embed-text")

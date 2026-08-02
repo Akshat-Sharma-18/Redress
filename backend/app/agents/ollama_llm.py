@@ -30,14 +30,32 @@ SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
 DEFAULT_HOST = "http://localhost:11434"
 
-#: Measured on the 8GB-VRAM development machine against the four cases
-#: qwen2.5:7b got wrong: 2/4 correct at 23.6 tok/s with 86% of the weights on
-#: the GPU. qwen2.5:7b scored 0/4 and qwen3.6:27b scored 4/4, but the 27B runs
-#: at 2.4 tok/s — a full eval takes many hours — and it paraphrases sub-claims
-#: rather than quoting them, so `source_span` is null and the citation beam has
-#: no origin. This model is the point where accuracy, speed, and a working
-#: citation anchor all hold at once.
-DEFAULT_MODEL = "qwen3.5:9b"
+#: Chosen on the full 35-case golden set, not a spot check. Both models were
+#: run back to back on the same code:
+#:
+#:                        qwen2.5:7b   qwen3.5:9b
+#:   false assurance            5.7%        11.4%   <- the one that costs money
+#:   accuracy                  42.9%        34.3%
+#:   over-abstention           48.1%        59.3%
+#:   justified P/R        55.6/50.0%   16.7/10.0%
+#:   correct abstention        62.5%        75.0%
+#:   speed                 ~40 tok/s    23.6 tok/s
+#:
+#: The 9B looked like the clear winner on a four-case spot check (2/4 against
+#: the 7B's 0/4) and is worse on the full set at exactly the metric this
+#: system exists to protect: it told four people a winnable denial was
+#: justified, against the 7B's two. It also failed to extract a denial date on
+#: four cases, silently disabling temporal filtering.
+#:
+#: That reversal is the whole lesson, and it is the second time this project
+#: has been bitten by it — see the 5-case run that reported 0% false assurance
+#: before the set grew to 35. A model comparison smaller than the full golden
+#: set is not evidence.
+#:
+#: qwen3.6:27b remains unmeasured beyond four cases. At 2.4 tok/s on 8GB VRAM
+#: a full run is an overnight job, and it is the outstanding measurement that
+#: could genuinely change this choice.
+DEFAULT_MODEL = "qwen2.5:7b"
 
 
 class OllamaError(RuntimeError):
