@@ -33,7 +33,7 @@ GOLDEN = Path(__file__).resolve().parents[2] / "data" / "golden"
 OUT = Path(__file__).resolve().parents[2] / "frontend" / "src" / "fixtures"
 
 
-def main(case_ids: list[str], model: str = "qwen2.5:7b", think: bool = False) -> int:
+def main(case_ids: list[str], model: str = "qwen3.5:9b", think: bool = False) -> int:
     cases = {c.id: c for c in load_dataset(GOLDEN)}
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -82,5 +82,5 @@ def main(case_ids: list[str], model: str = "qwen2.5:7b", think: bool = False) ->
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
-    model = next((a.split("=", 1)[1] for a in flags if a.startswith("--model=")), "qwen2.5:7b")
+    model = next((a.split("=", 1)[1] for a in flags if a.startswith("--model=")), "qwen3.5:9b")
     raise SystemExit(main(args or ["ca-emergency-carveback"], model, "--think" in flags))

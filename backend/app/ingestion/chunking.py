@@ -33,10 +33,19 @@ from app.ingestion.extract import ExtractedDocument
 #: room for the denial letter, the system prompt, and the response.
 MAX_CHUNK_CHARS = 1600
 
-#: A section shorter than this is treated as a heading that got separated from
-#: its body ("ARTICLE IV" alone on a line) and is merged into what follows.
-#: Retrieving a bare heading wastes one of six evidence slots on nothing.
-MIN_CHUNK_CHARS = 80
+#: A section whose body is shorter than this — *excluding* its own heading —
+#: is treated as a heading that got separated from its text ("ARTICLE IV" alone
+#: on a line) and is merged into a neighbour. Retrieving a bare heading spends
+#: one of six evidence slots on nothing.
+#:
+#: Measured against the body rather than the whole section on purpose. A plain
+#: length threshold also swallows short-but-complete clauses, and the shortest
+#: clauses are disproportionately the dangerous ones: "7.2(b) Notwithstanding
+#: 7.2(a), emergency care is covered." is 60 characters, and merging it into
+#: the exclusion it limits would cost it its own locator and its ability to be
+#: retrieved on its own — the exact failure the carve-back case exists to
+#: catch.
+MIN_BODY_CHARS = 16
 
 #: Section headings, anchored to line starts. Ordered most specific first so
 #: "Section 7.2(a)" wins over the bare-numeric pattern.
@@ -76,25 +85,27 @@ def _trim(text: str, start: int) -> tuple[str, int, int]:
     return trimmed, start + lead, start + lead + len(trimmed)
 
 
-def _sections(text: str) -> list[tuple[str | None, int, int]]:
-    """Split into (locator, start, end) triples on detected headings.
+def _sections(text: str) -> list[tuple[str | None, int, int, int]]:
+    """Split into (locator, start, body_start, end) tuples on detected headings.
 
-    Text before the first heading becomes a leading section with no locator —
-    on a policy that is the cover page and definitions preamble, which is
-    ordinary evidence and must not be dropped.
+    `body_start` is where the heading ends, so callers can measure a section's
+    content without counting its own title. Text before the first heading
+    becomes a leading section with no locator — on a policy that is the cover
+    page and definitions preamble, which is ordinary evidence and must not be
+    dropped.
     """
     matches = list(_HEADING.finditer(text))
     if not matches:
-        return [(None, 0, len(text))]
+        return [(None, 0, 0, len(text))]
 
-    spans: list[tuple[str | None, int, int]] = []
+    spans: list[tuple[str | None, int, int, int]] = []
     if matches[0].start() > 0:
-        spans.append((None, 0, matches[0].start()))
+        spans.append((None, 0, 0, matches[0].start()))
 
     for index, match in enumerate(matches):
         end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
         locator = " ".join(match.group(1).split())
-        spans.append((locator, match.start(), end))
+        spans.append((locator, match.start(), match.end(), end))
     return spans
 
 
@@ -140,25 +151,42 @@ def chunk_document(
     text = document.text
     raw_sections = _sections(text)
 
-    # Absorb runt sections into a neighbour. A heading separated from its body
-    # ("ARTICLE IV" alone on a line) has no citable content, and retrieving one
-    # would spend an evidence slot on nothing.
+    # Absorb bodyless sections into a neighbour. A heading separated from its
+    # text ("ARTICLE IV" alone on a line) has no citable content, and
+    # retrieving one would spend an evidence slot on nothing.
     #
-    # Runts merge *backwards* by default, which deliberately leaves the
-    # following section's own locator intact — "Section 7.2 Exclusions" as a
-    # bare heading is less useful to cite than the "7.2(a)" that follows it. A
-    # runt at the very start of the document has nothing behind it, so it
-    # merges forwards instead and lends its locator to what follows.
+    # Bodyless sections merge *forwards*, lending their locator to the section
+    # that follows only when that one has none of its own. "ARTICLE IV"
+    # followed by "7.2(a) ..." yields one chunk cited as 7.2(a) — the more
+    # specific locator wins, because that is the one an appeal has to quote.
+    def _is_bodyless(span: tuple[str | None, int, int, int]) -> bool:
+        _, _, body_start, end = span
+        return len(text[body_start:end].strip()) < MIN_BODY_CHARS
+
     merged: list[tuple[str | None, int, int]] = []
-    for locator, start, end in raw_sections:
-        if merged and (end - start) < MIN_CHUNK_CHARS:
-            previous_locator, previous_start, _ = merged[-1]
-            merged[-1] = (previous_locator, previous_start, end)
-        elif merged and (merged[-1][2] - merged[-1][1]) < MIN_CHUNK_CHARS:
-            keep_locator = merged[-1][0] or locator
-            merged[-1] = (keep_locator, merged[-1][1], end)
+    pending_locator: str | None = None
+    pending_start: int | None = None
+    for span in raw_sections:
+        locator, start, _, end = span
+        if _is_bodyless(span):
+            # Hold it open and let the next section supply the body.
+            if pending_start is None:
+                pending_start, pending_locator = start, locator
+            continue
+        if pending_start is not None:
+            start, locator = pending_start, (locator or pending_locator)
+            pending_start, pending_locator = None, None
+        merged.append((locator, start, end))
+
+    # A bodyless section with nothing after it (a trailing "ARTICLE X") has no
+    # body to borrow, so it is appended to the last real chunk rather than
+    # dropped — it is still text from the user's document.
+    if pending_start is not None:
+        if merged:
+            last_locator, last_start, _ = merged[-1]
+            merged[-1] = (last_locator, last_start, len(text))
         else:
-            merged.append((locator, start, end))
+            merged.append((pending_locator, pending_start, len(text)))
 
     chunks: list[Chunk] = []
     used_ids: set[str] = set()

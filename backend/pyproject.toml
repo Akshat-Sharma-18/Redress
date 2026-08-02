@@ -35,6 +35,10 @@ eval = [
 dev = [
     "pytest>=8.2",
     "ruff>=0.5",
+    # Generates PDF fixtures for the ingestion tests. PDF is the format users
+    # actually upload and the only one whose extraction is lossy, so those
+    # tests run against a real rendered file rather than a .txt stand-in.
+    "reportlab>=4.0",
 ]
 
 [build-system]

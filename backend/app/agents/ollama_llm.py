@@ -29,7 +29,15 @@ from pydantic import BaseModel, ValidationError
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
 DEFAULT_HOST = "http://localhost:11434"
-DEFAULT_MODEL = "qwen2.5:7b-instruct"
+
+#: Measured on the 8GB-VRAM development machine against the four cases
+#: qwen2.5:7b got wrong: 2/4 correct at 23.6 tok/s with 86% of the weights on
+#: the GPU. qwen2.5:7b scored 0/4 and qwen3.6:27b scored 4/4, but the 27B runs
+#: at 2.4 tok/s — a full eval takes many hours — and it paraphrases sub-claims
+#: rather than quoting them, so `source_span` is null and the citation beam has
+#: no origin. This model is the point where accuracy, speed, and a working
+#: citation anchor all hold at once.
+DEFAULT_MODEL = "qwen3.5:9b"
 
 
 class OllamaError(RuntimeError):

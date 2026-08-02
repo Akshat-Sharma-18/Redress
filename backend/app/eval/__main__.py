@@ -165,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--model",
         default=None,
-        help="default: qwen2.5:7b (ollama) or claude-opus-5 (anthropic)",
+        help="default: qwen3.5:9b (ollama) or claude-opus-5 (anthropic)",
     )
     parser.add_argument("--host", default="http://localhost:11434")
     parser.add_argument("--embed-model", default="nomic-embed-text")
@@ -197,9 +197,15 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.model is None:
-        args.model = (
-            "qwen2.5:7b" if args.backend == "ollama" else "claude-opus-5"
-        )
+        if args.backend == "ollama":
+            # Imported here, like the harness below, so the Anthropic path
+            # never pays for a module it does not use. Sourced from the
+            # backend rather than repeated, so the default cannot drift.
+            from app.agents.ollama_llm import DEFAULT_MODEL
+
+            args.model = DEFAULT_MODEL
+        else:
+            args.model = "claude-opus-5"
 
     cases = load_dataset(args.dataset)
     arms = ABLATION_ARMS if args.ablate else [AblationConfig()]
