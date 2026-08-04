@@ -19,6 +19,7 @@ from pathlib import Path
 from app.eval.dataset import load_dataset
 from app.eval.harness import AblationConfig, EvalHarness, ablation_table
 from app.eval.metrics import Outcome, Report
+from app.eval.stability import RepeatedReport
 
 
 def per_case_table(report: Report) -> str:
@@ -192,6 +193,17 @@ def main(argv: list[str] | None = None) -> int:
         "--yes", action="store_true", help="skip the spend confirmation prompt"
     )
     parser.add_argument(
+        "--repeat",
+        type=int,
+        default=1,
+        help=(
+            "run the whole set N times and report the mean and spread. "
+            "Greedy decoding is not reproducible when a model is split "
+            "across GPU and CPU, and the variance has measured wider than "
+            "the differences being compared; use this before believing one"
+        ),
+    )
+    parser.add_argument(
         "--save",
         type=Path,
         default=None,
@@ -237,6 +249,38 @@ def main(argv: list[str] | None = None) -> int:
         print(ablation_table(reports))
         print()
         print(reports["full"].summary())
+    elif args.repeat > 1:
+        runs: list[Report] = []
+        for index in range(args.repeat):
+            print(f"\n--- run {index + 1} of {args.repeat} ---", flush=True)
+            run = harness.run(cases)
+            runs.append(run)
+            # Printed per run rather than only at the end, because these runs
+            # take half an hour each and an interrupted repeat should still
+            # leave something readable behind.
+            print(run.summary())
+
+        repeated = RepeatedReport(runs)
+        print()
+        print(repeated.summary())
+
+        if args.save:
+            args.save.write_text(
+                json.dumps(
+                    {
+                        "repeat": args.repeat,
+                        "noise_floor": repeated.noise_floor,
+                        "unstable_cases": {
+                            case_id: dict(counts)
+                            for case_id, counts in repeated.unstable_cases.items()
+                        },
+                        "runs": [_serialisable(r) for r in runs],
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+            print(f"\nwrote {args.save}")
     else:
         report = harness.run(cases)
         print()
