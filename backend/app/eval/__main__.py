@@ -89,6 +89,9 @@ ABLATION_ARMS = [
     AblationConfig(name="no-reranker", use_reranker=False),
     AblationConfig(name="no-critique", use_critique=False),
     AblationConfig(name="no-ensemble", use_ensemble=False),
+    AblationConfig(
+        name="symmetric-assurance", use_asymmetric_assurance=False
+    ),
 ]
 
 

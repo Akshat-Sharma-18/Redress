@@ -1,0 +1,555 @@
+{
+  "cases": [
+    {
+      "case_id": "ca-ambulance-nearest-facility",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "outcome": "correct",
+      "cited": [
+        "p-7-8"
+      ],
+      "missing_required_citations": [
+        "p-7-9"
+      ],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-boundary-defined-term",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "insufficient",
+      "outcome": "correct_abstention",
+      "cited": [
+        "p-1-4",
+        "p-4-1",
+        "p-4-2"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-bundling-plus-modifier",
+      "category": "mixed",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-8-10",
+        "p-8-9"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-cited-section-absent",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "insufficient",
+      "outcome": "correct_abstention",
+      "cited": [
+        "p-12-2",
+        "p-12-3",
+        "p-12-6"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-cob-no-other-coverage",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-9-5",
+        "p-9-6"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-competing-clauses",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "justified",
+      "outcome": "under_abstention",
+      "cited": [
+        "p-6-1",
+        "p-6-3"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-conflicting-assertions",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "insufficient",
+      "outcome": "correct_abstention",
+      "cited": [
+        "p-5-2",
+        "p-5-4",
+        "p-5-6"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-cosmetic-excluded",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "contradicted",
+      "outcome": "false_alarm",
+      "cited": [
+        "p-4-3",
+        "p-4-4",
+        "p-6-2"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-coverage-terminated",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "justified",
+      "outcome": "correct",
+      "cited": [
+        "p-2-6",
+        "p-2-7"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-custodial-care-justified",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "justified",
+      "outcome": "correct",
+      "cited": [
+        "p-4-1"
+      ],
+      "missing_required_citations": [
+        "p-1-4"
+      ],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-dental-not-covered",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "justified",
+      "outcome": "correct",
+      "cited": [
+        "p-4-9"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-discretionary-standard",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "insufficient",
+      "outcome": "correct_abstention",
+      "cited": [
+        "p-11-2",
+        "p-2-2",
+        "p-6-16"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-dme-comfort-item",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "contradicted",
+      "outcome": "false_alarm",
+      "cited": [
+        "p-6-6",
+        "p-6-7"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-duplicate-different-dos",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "justified",
+      "outcome": "false_assurance",
+      "cited": [
+        "p-8-6"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-emergency-carveback",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-1-9",
+        "p-7-2-a",
+        "p-7-2-b"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-experimental-not-approved",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-6-1",
+        "p-6-3",
+        "p-6-5"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-experimental-on-label",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-6-1",
+        "p-6-3"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-medical-necessity-no-records",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "insufficient",
+      "outcome": "correct_abstention",
+      "cited": [
+        "p-2-2",
+        "p-2-3",
+        "p-5-4"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-mh-parity-visit-limit",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-6-10",
+        "p-6-11",
+        "p-6-9"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-oon-elective-no-emergency",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "contradicted",
+      "outcome": "false_alarm",
+      "cited": [
+        "p-5-2",
+        "p-5-4",
+        "p-7-5"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-oop-max-reached",
+      "category": "mixed",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-2",
+        "p-3-9"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-policy-statute-conflict",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "contradicted",
+      "outcome": "under_abstention",
+      "cited": [
+        "p-3-8",
+        "s-1367-24"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-preex-group-plan",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-1-2",
+        "p-4-7",
+        "p-4-8"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-preventive-costshare",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-1",
+        "p-3-6",
+        "p-3-7"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-priorauth-genuinely-required",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-3",
+        "p-3-4",
+        "p-3-5"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-priorauth-not-required",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-3",
+        "p-3-4"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-prudent-layperson",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-1-9",
+        "p-5-2",
+        "p-7-5"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-snf-days-plus-carveout",
+      "category": "mixed",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "outcome": "correct",
+      "cited": [
+        "p-6-14",
+        "p-6-15"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-step-therapy-prior-failure",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-10-3",
+        "p-10-4"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-superseded-statute",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-3",
+        "s-1371-4-2019"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-timeline-unresolved",
+      "category": "ambiguous",
+      "expected": "insufficient",
+      "predicted": "justified",
+      "outcome": "under_abstention",
+      "cited": [
+        "p-9-1",
+        "p-9-2",
+        "p-9-4"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-timely-filing-genuinely-late",
+      "category": "clear_justification",
+      "expected": "justified",
+      "predicted": "contradicted",
+      "outcome": "false_alarm",
+      "cited": [
+        "p-8-2",
+        "p-8-3"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-timely-filing",
+      "category": "clear_contradiction",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "outcome": "correct",
+      "cited": [
+        "p-8-2",
+        "p-8-3"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-two-grounds-one-bad",
+      "category": "mixed",
+      "expected": "contradicted",
+      "predicted": "insufficient",
+      "outcome": "over_abstention",
+      "cited": [
+        "p-3-5",
+        "p-5-2"
+      ],
+      "missing_required_citations": [],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    },
+    {
+      "case_id": "ca-visit-limit-partial",
+      "category": "mixed",
+      "expected": "contradicted",
+      "predicted": "justified",
+      "outcome": "false_assurance",
+      "cited": [
+        "p-6-12"
+      ],
+      "missing_required_citations": [
+        "p-8-8"
+      ],
+      "forbidden_citations": [],
+      "date_error": null,
+      "error": null
+    }
+  ],
+  "totals": {
+    "n": 35,
+    "accuracy": 0.3142857142857143,
+    "false_assurance_rate": 0.05714285714285714,
+    "correct_abstention_rate": 0.625,
+    "over_abstention_rate": 0.5555555555555556,
+    "contested_rate": 0.0,
+    "grounding_accuracy": 0.8181818181818182,
+    "errors": 0
+  }
+}

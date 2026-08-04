@@ -42,6 +42,10 @@ class AblationConfig:
     use_reranker: bool = True
     use_critique: bool = True
     use_ensemble: bool = True
+    #: Hold `justified` findings to a higher standard than `contradicted`.
+    #: Its ablation arm is the one that prices the trade this system is built
+    #: around: how many correct assurances it gives up per false one avoided.
+    use_asymmetric_assurance: bool = True
     name: str = "full"
 
 
@@ -117,7 +121,11 @@ class EvalHarness:
 
         return AuditPipeline(
             decomposition=DecompositionAgent(llm),
-            adjudicator=GatedAdjudicator(ReconciliationAgent(llm), critique),
+            adjudicator=GatedAdjudicator(
+                ReconciliationAgent(llm),
+                critique,
+                asymmetric_assurance=config.use_asymmetric_assurance,
+            ),
             retrievers=retrievers,
             secondary_retrievers=secondary,
         )

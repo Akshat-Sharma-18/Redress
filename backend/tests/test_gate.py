@@ -6,7 +6,7 @@ one property every path must hold: the gate only ever lowers confidence.
 
 from __future__ import annotations
 
-from app.agents.critique import CritiqueAgent, CritiqueResult
+from app.agents.critique import CitationCheck, CritiqueAgent, CritiqueResult
 from app.agents.gate import GatedAdjudicator
 from app.agents.reconciliation import ReconciliationAgent
 from app.agents.schemas import DraftCitation, DraftVerdict
@@ -255,3 +255,98 @@ class TestEnsembleCrossCheck:
         verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
         assert verdict.confidence == Confidence.SUPPORTED
         assert len(llm.calls) == 2
+
+
+class TestAsymmetricAssurance:
+    """A `justified` finding is held to a higher bar than a `contradicted` one.
+
+    The two errors do not cost the same. Telling someone their denial was
+    justified tells them to stop, and if that is wrong they lose money they
+    were owed. Telling them it was contradicted sends them to an appeal, where
+    a human reads it next. `app/eval/metrics.py` has scored those differently
+    since Phase 5; these tests are the gate finally *deciding* differently.
+    """
+
+    def _critique_check(self, chunk_id="p2", supports=True):
+        return CitationCheck(
+            chunk_id=chunk_id, supports_claim=supports, note="what it shows"
+        )
+
+    def test_qualified_approval_does_not_assure(self):
+        """An approval issued alongside named defects is a qualified one."""
+        llm = FakeLLM([
+            _good_draft("justified"),
+            CritiqueResult(
+                approved=True,
+                issues=["the carve-back in 7.2(b) was not addressed"],
+            ),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+
+        assert verdict.finding == "insufficient"
+        assert verdict.confidence == Confidence.INSUFFICIENT
+        assert "7.2(b)" in verdict.critique_notes
+        # The audit trail survives the downgrade.
+        assert verdict.draft_rationale == "The exclusion covers this service."
+        assert verdict.citations
+
+    def test_unconfirmed_citation_does_not_assure(self):
+        llm = FakeLLM([
+            _good_draft("justified"),
+            CritiqueResult(
+                approved=True,
+                citation_checks=[self._critique_check(supports=False)],
+            ),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+        assert verdict.finding == "insufficient"
+        assert "not confirmed to support" in verdict.critique_notes
+
+    def test_finding_that_does_not_follow_does_not_assure(self):
+        llm = FakeLLM([
+            _good_draft("justified"),
+            CritiqueResult(
+                approved=True,
+                finding_follows=False,
+                citation_checks=[self._critique_check()],
+            ),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+        assert verdict.finding == "insufficient"
+
+    def test_clean_approval_still_assures(self):
+        """The bar must not swallow every justified verdict, or it is just an
+        expensive way to abstain."""
+        llm = FakeLLM([
+            _good_draft("justified"),
+            CritiqueResult(
+                approved=True,
+                finding_follows=True,
+                citation_checks=[self._critique_check()],
+            ),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+        assert verdict.finding == "justified"
+        assert verdict.confidence == Confidence.SUPPORTED
+
+    def test_contradicted_is_not_held_to_the_higher_bar(self):
+        """The asymmetry is the point: the same qualified approval stands when
+        the finding sends the user to an appeal rather than away from one."""
+        llm = FakeLLM([
+            _good_draft("contradicted"),
+            CritiqueResult(approved=True, issues=["minor wording concern"]),
+        ])
+        verdict = _gate(llm).adjudicate(_claim(), [_chunk("p2", EXCLUSION_TEXT)])
+        assert verdict.finding == "contradicted"
+        assert verdict.confidence == Confidence.SUPPORTED
+
+    def test_ablation_switch_restores_symmetric_behaviour(self):
+        """A safety rule nobody can turn off is a safety rule nobody can price."""
+        llm = FakeLLM([
+            _good_draft("justified"),
+            CritiqueResult(approved=True, issues=["unaddressed carve-back"]),
+        ])
+        verdict = _gate(llm, asymmetric_assurance=False).adjudicate(
+            _claim(), [_chunk("p2", EXCLUSION_TEXT)]
+        )
+        assert verdict.finding == "justified"
