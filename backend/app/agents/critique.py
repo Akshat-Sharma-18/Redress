@@ -47,8 +47,13 @@ against that number yourself; do not accept that the clause was matched on \
 category alone. A clause about duplicate claims is not support for "this \
 was a duplicate" unless the dates given actually match. A twenty-visit cap \
 supports denying visit 21 onward, not a block of visits that starts below \
-the cap. Then decide whether the finding follows from the citations you \
-accepted.
+the cap. When a citation confirms a factual sub-claim is true, check \
+separately what that fact means under the provision it triggers — a \
+confirmed fact that satisfies a carve-back or exception argues against the \
+denial, not for it, even though the fact was read correctly. A draft that \
+treats "this fact is confirmed" as "this fact justifies the denial" without \
+making that second check has not earned its finding. Then decide whether \
+the finding follows from the citations you accepted.
 
 Approve when the citations you accepted are sufficient to support the \
 finding. A verdict does not need to cite every relevant clause, address \
@@ -57,8 +62,10 @@ written. It needs to be supported by what it cites.
 
 Reject only when you can name a specific defect: a quote that does not say \
 what it is offered for, a load-bearing claim that no citation covers, a \
-numeric condition the sub-claim's own facts do not actually satisfy, or a \
-finding that does not follow even though each citation is accurate. "The \
+numeric condition the sub-claim's own facts do not actually satisfy, a \
+confirmed fact treated as support for the denial when the provision it \
+triggers actually argues against it, or a finding that does not follow \
+even though each citation is accurate. "The \
 evidence could be more complete" is not a defect. If, and only if, a \
 citation references material that is genuinely absent from the evidence (a \
 definition or section referred to but not present), supply a narrowed \

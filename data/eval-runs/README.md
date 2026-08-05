@@ -168,6 +168,45 @@ what it was. The cost -- more over-abstention, one newly-surfaced bug
 elsewhere -- is real and stated plainly rather than folded into the headline
 number.
 
+## Factual/legal rollup fix: false assurance reaches zero on the golden set
+
+The new bug surfaced above had a specific shape: decomposition splits a
+denial into legal and factual sub-claims, and reconciliation confirmed a
+factual sub-claim was *true* and read that as `justified`, without checking
+what the confirmed fact meant under the policy provision it triggered. A
+true fact that satisfies a carve-back argues against the denial, not for
+it -- the same clause, read correctly, supports the opposite finding from
+the one the model gave it.
+
+Added a rule to `reconciliation.py` and `critique.py` requiring the model to
+trace a confirmed factual sub-claim through the provision it triggers before
+choosing a finding, and making a rollup that skips this step a nameable
+critique-rejection reason. Measured with `--repeat 3` against the numeric-check
+baseline above:
+
+| metric | numeric-check | + rollup fix |
+|---|---|---|
+| **False assurance** | 2.9% (2.9-2.9%) | **0.0% (0.0-0.0%)** |
+| Accuracy | 27.6% (25.7-31.4%) | 31.4% (31.4-31.4%) |
+| Over-abstention | 65.4% (63.0-66.7%) | 63.0% (63.0-63.0%) |
+| Grounding | 100.0% | 100.0% |
+| Unstable cases | 4 of 35 | **0 of 35** |
+
+Zero cases changed answer across all 3 runs -- the tightest result measured
+on this project. `ca-step-therapy-prior-failure`, the case that motivated
+the fix, moved from `justified` to `contradicted` and held. Checked that
+this isn't the model simply refusing to say `justified`: it still predicts
+`justified` 6 times across the set, at 50% precision including genuine
+hits -- it has just stopped doing so on any case where the true answer was
+`contradicted`, which is the specific claim false assurance measures.
+
+This is the first run on this project where false assurance reached zero on
+the full golden set. It is 35 cases, not a guarantee; and the diagnostic
+method that found both this bug and the numeric-condition one -- reading
+actual model rationale on the cases that survived every prior intervention,
+rather than only reading the aggregate rate -- is the thing worth repeating
+before believing the next metric that looks stuck.
+
 ## Read this before quoting any of it
 
 **No model here is good enough to put a verdict in front of a person.** Accuracy

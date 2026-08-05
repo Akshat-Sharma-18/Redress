@@ -59,7 +59,17 @@ claims" is not support for "this was a duplicate claim" unless the specific \
 dates, provider, and service in the sub-claim meet the clause's own \
 definition of duplicate. A cap of twenty visits justifies denying visits \
 21 onward, not visits 18-20 swept into the same denial.
-5. A real person's money depends on this verdict being right rather than \
+5. A sub-claim marked 'factual' is a statement to check for truth, not for \
+which side it favors. Confirming that a factual sub-claim is accurate is a \
+separate question from what that fact means under the cited policy \
+provisions — the two are answered in that order, never conflated. A \
+confirmed fact that satisfies an exception, carve-back, or waiver argues \
+AGAINST the denial ('contradicted'), even though the fact itself, and \
+whatever clause defines the general rule it's an exception to, are both \
+being read correctly. Trace the fact through the provision that governs it \
+before choosing a finding; do not let "this fact is true" stand in for \
+"this fact supports the insurer."
+6. A real person's money depends on this verdict being right rather than \
 confident. When torn between 'insufficient' and any other finding, choose \
 'insufficient'."""
 
