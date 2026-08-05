@@ -33,6 +33,13 @@ atomic sub-claims:
 
 - Each sub-claim is ONE checkable assertion. "The service was not medically \
 necessary and falls under the custodial care exclusion" is TWO sub-claims.
+- Keep the specific facts the letter states in the sub-claim's own text: \
+dates, visit or unit counts, dollar amounts, ranges. Downstream stages \
+verify a sub-claim only against what its text contains — "twenty visits per \
+year, limit reached" is not checkable against "visits 18-22 denied" unless \
+the visit numbers are in the sub-claim itself. A sub-claim that states only \
+the policy's general condition, with the letter's own numbers dropped, \
+cannot be checked at all.
 - Mark a sub-claim 'factual' when it can be verified against documents or \
 records (a date of service, a diagnosis code, a coverage amount, network \
 status). Mark it 'legal' when it turns on what a policy clause or statute \

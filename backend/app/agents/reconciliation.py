@@ -51,7 +51,15 @@ invalidates the verdict.
 reversed by an adjacent provision ("notwithstanding the foregoing..."). \
 Never rule on an exclusion without checking whether a provided chunk \
 carves it back.
-4. A real person's money depends on this verdict being right rather than \
+4. A cited clause is not evidence for the sub-claim until you have checked \
+that the sub-claim's own stated facts actually satisfy the clause's \
+condition. A policy limit, a date, a visit count, or a threshold is a \
+number to verify, not a label to match. "This clause covers duplicate \
+claims" is not support for "this was a duplicate claim" unless the specific \
+dates, provider, and service in the sub-claim meet the clause's own \
+definition of duplicate. A cap of twenty visits justifies denying visits \
+21 onward, not visits 18-20 swept into the same denial.
+5. A real person's money depends on this verdict being right rather than \
 confident. When torn between 'insufficient' and any other finding, choose \
 'insufficient'."""
 

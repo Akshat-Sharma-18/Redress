@@ -108,6 +108,66 @@ from a different LLM call (not a different embedder) over the same evidence
 is the more likely next lever, since it varies the step that is actually
 wrong.
 
+## Numeric-condition check: false assurance halved, at a real cost
+
+Reading the model's own rationale on the two false-assurance cases that had
+survived every prior intervention showed one shared bug: the model confirms a
+cited clause exists and matches the denial's general category, but never
+checks whether the letter's own specific numbers -- dates, visit counts --
+actually satisfy the clause's condition. `ca-duplicate-different-dos` cites a
+"duplicate claim" rule that requires the *same* date of service, while the
+letter's own text gives two different dates. `ca-visit-limit-partial` cites a
+twenty-visit cap to deny visits 18-22, when only 21-22 exceed it. In the
+second case the bug was one stage upstream: decomposition had dropped the
+visit numbers from the sub-claim entirely, so reconciliation never had the
+fact to check.
+
+Added a rule to `reconciliation.py`, `critique.py`, and `decomposition.py`
+requiring a numeric condition to be checked against the sub-claim's own
+stated facts, and requiring decomposition to keep those facts in the
+sub-claim's text rather than only the clause's general category. Measured
+with `--repeat 3`, both models and configurations identical to the "error
+bar" run above:
+
+| metric | before | after |
+|---|---|---|
+| **False assurance** | 5.7% (5.7-5.7%) | **2.9% (2.9-2.9%)** |
+| Accuracy | 36.2% (28.6-40.0%) | 27.6% (25.7-31.4%) |
+| Over-abstention | 51.9% (44.4-59.3%) | 65.4% (63.0-66.7%) |
+| Correct abstention | 62.5% | 50.0% |
+| Grounding | 91.9% (90.0-92.9%) | 100.0% |
+
+Both target cases moved from `justified` to `insufficient` and stayed there
+across all 3 runs -- a reproducible fix, not noise (zero variance on false
+assurance both before and after). But the rule generalized further than
+intended: several previously-correct `contradicted` verdicts became
+over-abstentions, and accuracy dropped by more than the fix's own effect on
+the two target cases can explain. The instruction to verify numbers appears
+to have made the model warier across the board, not only where a number was
+actually being glossed over.
+
+**A new, distinct bug surfaced along the way, unrelated to this fix.**
+`ca-step-therapy-prior-failure` became a new false assurance, stable across
+all 3 runs. Decomposition split the letter into a legal sub-claim (step
+therapy is required) and a factual one (a prior trial was discontinued for
+lack of response -- the letter's own words). The factual sub-claim is true,
+and the cited carve-back clause confirms a discontinued-for-lack-of-response
+trial waives the step-therapy requirement -- which means the denial should
+read `contradicted`. Reconciliation instead read "this fact is confirmed
+true" as `justified`, because its verdict framing does not distinguish "this
+factual sub-claim is accurate" from "this factual sub-claim supports the
+insurer." A true fact that satisfies a carve-back argues against the denial,
+not for it. This is a rollup-semantics gap between decomposition's
+factual/legal split and reconciliation's binary framing, not a regression
+from the prompt change above, and it needs its own pass rather than a rushed
+patch riding on this one.
+
+Net effect kept: false assurance is the metric that decides whether this
+system is safe to put in front of a person, and it is reproducibly half of
+what it was. The cost -- more over-abstention, one newly-surfaced bug
+elsewhere -- is real and stated plainly rather than folded into the headline
+number.
+
 ## Read this before quoting any of it
 
 **No model here is good enough to put a verdict in front of a person.** Accuracy

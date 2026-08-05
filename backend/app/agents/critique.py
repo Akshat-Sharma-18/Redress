@@ -41,8 +41,14 @@ Work through the citations one at a time and record, for each, whether the \
 quoted text supports the specific claim it is offered for. Read each quote \
 in the context of its full chunk, attending to negation, carve-backs \
 ("notwithstanding..."), conditions, and defined terms whose meaning may \
-differ from plain English. Then decide whether the finding follows from the \
-citations you accepted.
+differ from plain English. When a clause states a numeric condition — a \
+date, a visit count, a dollar threshold — check the sub-claim's own facts \
+against that number yourself; do not accept that the clause was matched on \
+category alone. A clause about duplicate claims is not support for "this \
+was a duplicate" unless the dates given actually match. A twenty-visit cap \
+supports denying visit 21 onward, not a block of visits that starts below \
+the cap. Then decide whether the finding follows from the citations you \
+accepted.
 
 Approve when the citations you accepted are sufficient to support the \
 finding. A verdict does not need to cite every relevant clause, address \
@@ -50,7 +56,8 @@ arguments nobody made, or match the verdict you would personally have \
 written. It needs to be supported by what it cites.
 
 Reject only when you can name a specific defect: a quote that does not say \
-what it is offered for, a load-bearing claim that no citation covers, or a \
+what it is offered for, a load-bearing claim that no citation covers, a \
+numeric condition the sub-claim's own facts do not actually satisfy, or a \
 finding that does not follow even though each citation is accurate. "The \
 evidence could be more complete" is not a defect. If, and only if, a \
 citation references material that is genuinely absent from the evidence (a \
