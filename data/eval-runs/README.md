@@ -69,6 +69,45 @@ What follows for the table above:
   points. Its 31.4% is inside the 28.6–40.0% band of doing nothing at all. It
   is neutral on both metrics, not harmful — the earlier reading was noise.
 
+## Where the instability actually lives
+
+The 6 cases that flipped answer across the 3 repeated runs retrieved
+**byte-identical citations every time.** Zero variance in what evidence was
+found; all of the instability is in how the model reasons over it.
+`ca-emergency-carveback` — a general exclusion plus the specific carve-back
+that overrides it, the textbook case this system exists to catch — retrieved
+the correct three clauses in all 3 runs and reasoned through their
+interaction correctly in exactly 1. Retrieval is not the weak link; adjudication
+is.
+
+## The ensemble cross-check does not catch what it was hoped to catch
+
+Ran `qwen2.5:7b` again with a second, architecturally different embedder
+(`all-minilm`, 384-dim, alongside `nomic-embed-text`'s 768) so a non-`justified`
+finding only ships as SUPPORTED when an independent retrieval pass reaches the
+same conclusion (`app/agents/gate.py`, `_ensemble_check`). Result:
+**`contested` stayed at 0.0%.** False assurance stayed at 5.7% — the same two
+cases, `ca-duplicate-different-dos` and `ca-visit-limit-partial`.
+
+Checked directly rather than assumed: both false-assurance cases reached the
+ensemble stage (critique approved the draft in both), and the second
+embedder's fully independent adjudication **agreed with the wrong finding.**
+The mistake is not in what evidence either embedder surfaces — it is in how
+the model reads evidence that both retrieval paths agree on. Two different
+embedders looking at the same clause do not disagree about what the clause
+says; the reasoning step over it is where the error is introduced, and that
+step is identical regardless of which embedder fed it. This matches the
+retrieval-stability finding above: the noise, and now the actual failure
+mode, both sit in adjudication, not retrieval.
+
+The ensemble check is not wasted work — it is real defense against a
+retrieval-caused disagreement, and it is verified to fire correctly (see
+`critique_notes: "... ensemble: agreed"` in a live run). It is simply not the
+mechanism that stops *this* system's specific failure mode. A second opinion
+from a different LLM call (not a different embedder) over the same evidence
+is the more likely next lever, since it varies the step that is actually
+wrong.
+
 ## Read this before quoting any of it
 
 **No model here is good enough to put a verdict in front of a person.** Accuracy
