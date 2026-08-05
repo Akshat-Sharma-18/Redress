@@ -34,24 +34,70 @@ only outcome that costs a user money — it tells someone their winnable denial
 was justified, so they don't appeal. Every other column is a preference; that
 one is the product's reason for existing.
 
+## The error bar, measured
+
+Every column above is a single run. `--repeat 3` on `qwen2.5:7b`, same code and
+same config three times, gives the size of the error bar around them:
+
+| metric | mean | range over 3 runs |
+|---|---|---|
+| **False assurance** | **5.7%** | **5.7% – 5.7%** |
+| Correct abstention | 62.5% | 62.5% – 62.5% |
+| Grounding | 91.9% | 90.0% – 92.9% |
+| Over-abstention | 51.9% | 44.4% – 59.3% |
+| Accuracy | 36.2% | **28.6% – 40.0%** |
+
+**6 of 35 cases (17.1%) gave more than one answer across identical runs**,
+including `ca-emergency-carveback` — the archetypal case this system exists to
+solve — which came back `insufficient` twice and `contradicted` once.
+
+The split matters more than the magnitude. **The consequence-weighted metrics
+are stable and accuracy is not.** False assurance and correct abstention did
+not move at all across three runs; accuracy swung 11.4 points on identical
+inputs. That is a vindication of the metric design in `app/eval/metrics.py`:
+the quantities it was built to track are the reproducible ones, and the
+standard multiclass number everyone reaches for first is the noise.
+
+What follows for the table above:
+
+- **The false-assurance column is real.** 2 vs 4 vs 8 cases sits far outside a
+  metric whose measured variance is zero. The model ranking on the row that
+  decides the default holds.
+- **The accuracy row is not a comparison.** 42.9% vs 34.3% is 8.6 points
+  against an 11.4-point error bar. Treat those as tied.
+- The asymmetric assurance bar (`750b1a0`) looked like it cost 11 accuracy
+  points. Its 31.4% is inside the 28.6–40.0% band of doing nothing at all. It
+  is neutral on both metrics, not harmful — the earlier reading was noise.
+
 ## Read this before quoting any of it
 
-**Neither model is good enough to put a verdict in front of a person.** 34–43%
-accuracy against a ~48.6% baseline of always guessing `contradicted`, with a
+**No model here is good enough to put a verdict in front of a person.** Accuracy
+sits near a ~48.6% baseline of always guessing `contradicted`, with a
 false-assurance rate between one-in-eighteen and one-in-nine. What the numbers
-support is that the *architecture* fails safe — grounding is 93–100%, so when
+support is that the *architecture* fails safe — grounding is 90–100%, so when
 it is right it is right for the stated reason — not that the answers are
 usable.
+
+**Quote a range, not a number.** Any single-run figure in this directory
+carries roughly ±6 points on accuracy. Use `--repeat` before believing a
+difference.
 
 **Always name the model beside the number.** These two differ by 8 accuracy
 points and 2× on false assurance from a single component swap.
 
 **A spot check is not a model comparison.** `qwen3.5:9b` won a four-case
-probe 2/4 against the 7B's 0/4 and lost the full set on every
-consequence-weighted metric. This is the second time small-sample evidence has
+probe 2/4 against the 7B's 0/4 and lost the full set on the metric that
+decides the default. This is the second time small-sample evidence has
 reversed here; the first was a 5-case run reporting 0% false assurance that
 became 5.7% at 35 cases. Below the full golden set, the noise is larger than
 the effect.
+
+**The runs are not reproducible, and that is expected.** Greedy decoding is
+not bit-reproducible when a model is split across GPU and CPU: reduction order
+in a partially offloaded matmul depends on scheduling, and one flipped logit
+at a branch point changes a verdict. `qwen2.5:7b` runs fully on the GPU and
+still moves, because the embedder does not. Measure the variance rather than
+chase it away.
 
 ## A model can fail for reasons that have nothing to do with its ability
 
